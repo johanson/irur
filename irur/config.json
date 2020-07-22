@@ -1,0 +1,51 @@
+{
+  "name": "Irur",
+  "version": "0.2.0",
+  "slug": "irur",
+  "description": "Infrared Universal Remote webUI for Tasmota",
+  "url": "https://github.com/johanson/ha-addons/irur",
+  "arch": [
+    "armhf",
+    "armv7",
+    "aarch64",
+    "amd64",
+    "i386"
+  ],
+  "armor": true,
+  "webui": "[PROTO:ssl]://[HOST]:[PORT:8099]",
+  "ingress": true,
+  "panel_title": "IR Remote",
+  "panel_icon": "mdi:remote",
+  "startup": "application",
+  "boot": "auto",
+  "options": {
+    "mqtt": {
+      "host": "192.168.0.100",
+      "port": 1883,
+      "protocol": "mqtt",
+      "username": "",
+      "password": ""
+    },
+    "topic_listen": "irur/tele/RESULT",
+    "topic_send": "irur/cmnd/IRsend",
+    "dark_theme": false
+  },
+  "schema": {
+    "mqtt": {
+      "host": "str",
+      "port": "int",
+      "protocol": "str",
+      "username": "str",
+      "password": "str"
+    },
+    "topic_listen": "str",
+    "topic_send": "str",
+    "dark_theme": "bool"
+  },
+  "ports": {
+    "8099/tcp": 8099
+  },
+  "ports_description": {
+    "8099/tcp": "Web interface (Not required for Ingress)"
+  }
+}
