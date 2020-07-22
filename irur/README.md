@@ -1,6 +1,6 @@
 # IRUR
  
-<img align="left" width="50" height="50" src="https://github.com/johanson/ha-addons/irur/blob/master/icon.png?raw=true" alt="irur icon"> Infrared Universal Remote webUI for Tasmota ESP8266 based devices over MQTT.  
+<img align="left" width="50" height="50" src="https://raw.githubusercontent.com/johanson/ha-addons/master/irur/icon.png" alt="irur icon"> Infrared Universal Remote webUI for Tasmota ESP8266 based devices over MQTT.  
 Provides a simple web UI to record and manage buttons, comes with a simple http api.
  
 ---
@@ -9,7 +9,7 @@ Provides a simple web UI to record and manage buttons, comes with a simple http 
 
 First, flash your ESP8266 board with Tasmota (tasmota-ir.bin) firmwire. All the builds support common IR protocols but use tasmota-ir.bin for all available protocols provided by library IRremoteESP8266). Install IR emitter and receiver.
 
-![Example Tasmota config](https://raw.githubusercontent.com/johanson/ha-addons/irur/master/screenshots/tasmota.png)
+![Example Tasmota config](https://github.com/johanson/ha-addons/blob/master/irur/screenshots/tasmota.png?raw=true)
 
 ### Home Assistant
 
@@ -31,9 +31,13 @@ dark_theme: false
 
 ### Screenshots
 
-![Irur dark UI screenshot](https://raw.githubusercontent.com/johanson/ha-addons/irur/master/screenshots/screenshot-ui-1-dark.png)
+![Irur dark UI screenshot](https://github.com/johanson/ha-addons/blob/master/irur/screenshots/screenshot-ui-1-dark.png?raw=true)
 
-![Irur dark UI screenshot](https://raw.githubusercontent.com/johanson/ha-addons/irur/master/screenshots/screenshot-ui-settings-1-dark.png)
+![Irur dark UI screenshot](https://github.com/johanson/ha-addons/blob/master/irur/screenshots/screenshot-ui-settings-1-dark.png?raw=true)
+
+![Irur dark UI screenshot](https://github.com/johanson/ha-addons/blob/master/irur/screenshots/screenshot-ui-1-light.png?raw=true)
+
+![Irur dark UI screenshot](https://github.com/johanson/ha-addons/blob/master/irur/screenshots/screenshot-ui-settings-1-light.png?raw=true)
 
 ## Development
 
