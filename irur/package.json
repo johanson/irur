@@ -1,6 +1,5 @@
 {
   "name": "irur",
-  "version": "0.2.0",
   "description": "Infrared Universal Remote webUI for Tasmota",
   "author": "Rasmus Johanson",
   "homepage": "https://github.com/johanson/ha-addons/irur",
@@ -10,7 +9,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "api": "node server.js --dev"
+    "api": "node server.js --dev",
+    "bump": "bash -c 'bump $1 config.json' --"
   },
   "dependencies": {
     "body-parser": "1.19.0",

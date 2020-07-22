@@ -36,7 +36,7 @@ const conf = { ...options(), ...{ mqttMatch: false } };
 const client = mqtt.connect(conf.mqtt);
 
 app.get('/', (req, res) => {
-  res.sendFile('dist/index.html');
+  res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
 app.get('/api/db/load/', (req, res) => {
