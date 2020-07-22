@@ -13,21 +13,42 @@ First, flash your ESP8266 board with Tasmota (tasmota-ir.bin) firmwire. All the 
 
 ### Home Assistant
 
-Install the addon, make sure you to configure correct mqtt server credentials and mqtt topics for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer](https://github.com/thomasnordquist/MQTT-Explorer) if you have problems figuring it out. Supports ingress and option to show in sidebar. Come with ~150 icons.
+Install the addon, make sure you to configure correct MQTT server credentials and topics for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer](https://github.com/thomasnordquist/MQTT-Explorer) if you have problems figuring it out. Supports ingress and option to show in sidebar. Come with ~150 icons.
 
 ### Configuration
 
 ```
 mqtt:
   host: 192.168.0.100
-  port: 
-  protocol: 
+  port: 1883
+  protocol: mqtt
   username: 
   password: 
 topic_listen: irur/tele/RESULT
 topic_send: irur/cmnd/IRsend
 dark_theme: false
 ```
+
+`host` (str)  
+IP address pointing to MQTT broker.
+
+`port` (int)  
+Port number the broker is listening on. TCP/IP port 1883 is default for MQTT.
+
+`username` (str)  
+The username required by your broker, if any.
+
+`password` (str)  
+The username required by your broker, if any.
+
+`topic_listen` (str)  
+MQTT topic for receiving IR codes
+
+`topic_send` (str)  
+MQTT topic for sending IR codes
+
+`dark_theme` (bool)  
+Whether you prefer a dark theme for default light.
 
 ### Screenshots
 
