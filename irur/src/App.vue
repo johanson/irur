@@ -386,9 +386,9 @@ export default {
       // running 'npm run serve',
       if (process.env.NODE_ENV === 'production') {
         // Ingress needs :8099
-        return `http://${window.location.hostname}:8099`;
+        return `//${window.location.hostname}:8099`;
       }
-      return 'http://localhost:8099';
+      return '//localhost:8099';
     },
   },
 };
