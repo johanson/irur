@@ -188,8 +188,11 @@ export default {
           }
           return resp.json();
         }).then((json) => {
-          console.log(`ok${json}`);
-          this.list = json;
+          if (json.status === 'error') {
+            this.loadDefaultDB();
+          } else {
+            this.list = json;
+          }
         }).catch((err) => {
           this.$toast.error(String(err));
         });
@@ -199,6 +202,23 @@ export default {
           const root = document.getElementsByTagName('html')[0];
           if (this.settings.dark_theme) root.setAttribute('data-theme', 'dark');
         });
+    },
+
+    loadDefaultDB() {
+      this.list = [
+        {
+          id: 'wn0gbd99',
+          name: 'Samsung Volume Up',
+          mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0E01F"}',
+          icon: 'up-arrow',
+        },
+        {
+          id: 'wt9u3yzj',
+          name: 'Samsung Volume Down',
+          mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0D02F"}',
+          icon: 'down-arrow',
+        },
+      ];
     },
 
     toggleManager() {
