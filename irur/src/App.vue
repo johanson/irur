@@ -139,14 +139,13 @@ export default {
         color: this.cssVar('--text'),
       },
       listeningMqtt: false,
-      hostname: this.getHostname(),
       api: {
-        prefix: `${this.getHostname()}/api`,
-        receive: '/ir/receive',
-        send: '/ir/send',
-        save: '/db/save',
-        load: '/db/load',
-        settings: '/settings',
+        prefix: `${this.getHostname()}api/`,
+        receive: 'ir/receive',
+        send: 'ir/send',
+        save: 'db/save',
+        load: 'db/load',
+        settings: 'settings',
       },
       settings: {},
     };
@@ -189,6 +188,7 @@ export default {
           }
           return resp.json();
         }).then((json) => {
+          console.log(`ok${json}`);
           this.list = json;
         }).catch((err) => {
           this.$toast.error(String(err));
@@ -213,7 +213,7 @@ export default {
     },
     loadSVG() {
       const self = this;
-      fetch(`${this.hostname}/icons/sprite.svg?`)
+      fetch('icons/sprite.svg')
         .then((resp) => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
@@ -382,13 +382,11 @@ export default {
     },
 
     getHostname() {
-      // Use hardcoded :6789 when in production mode
-      // running 'npm run serve',
-      if (process.env.NODE_ENV === 'production') {
-        // Ingress needs :8099
-        return `//${window.location.hostname}:8099`;
+      // Use hardcoded :6789 when developing
+      if (process.env.NODE_ENV !== 'production') {
+        return 'http://localhost:8099';
       }
-      return '//localhost:8099';
+      return '';
     },
   },
 };

@@ -32,15 +32,17 @@ function options() {
   console.log('Getting mqtt conf from Home Assistant');
   return require('/data/options.json');
 }
+
 const conf = { ...options(), ...{ mqttMatch: false } };
 const client = mqtt.connect(conf.mqtt);
+const db = path.join(__dirname, 'db.json');
 
 app.get('/', (req, res) => {
+  res.header('Authorization', `Bearer: ${process.env.SUPERVISOR_TOKEN}`);
   res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
 app.get('/api/db/load/', (req, res) => {
-  const db = path.join(__dirname, 'db.json');
   res.header('Content-Type', 'application/json');
   if (fs.existsSync(db)) {
     res.sendFile(db);
@@ -56,8 +58,15 @@ app.get('/api/settings', (req, res) => {
 });
 
 app.post('/api/db/save/', (req, res) => {
-  fs.writeFileSync('db.json', JSON.stringify(req.body, null, 1));
-  res.send();
+  let output;
+  try {
+    output = { status: 'success' };
+    fs.writeFileSync(db, JSON.stringify(req.body, null, 1));
+  } catch (err) {
+    output = { status: 'error', message: err.message };
+    console.log(err.message);
+  }
+  res.send(output);
 });
 
 app.get('/api/ir/receive', (req, res) => {
@@ -80,10 +89,10 @@ app.get('/api/ir/receive', (req, res) => {
 app.get('/api/ir/send/:id', (req, res) => {
   let status;
   const { id } = req.params;
-  const db = JSON.parse(fs.readFileSync(path.join(__dirname, 'db.json'), 'utf8'));
-  for (const key of Object.keys(db)) {
-    if (db[key].id === id) {
-      const message = db[key].mqtt;
+  const json = JSON.parse(fs.readFileSync(db, 'utf8'));
+  for (const key of Object.keys(json)) {
+    if (json[key].id === id) {
+      const message = json[key].mqtt;
       if (message) {
         status = { status: 'success' };
         client.publish(conf.topic_send, message);
