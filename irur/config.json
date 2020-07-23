@@ -43,7 +43,7 @@
     "dark_theme": "bool"
   },
   "ports": {
-    "8099/tcp": 8099
+    "8099/tcp": ""
   },
   "ports_description": {
     "8099/tcp": "Web interface (Not required for Ingress)"
