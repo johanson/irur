@@ -1,8 +1,7 @@
 # IRUR
  
 <img align="left" width="50" height="50" src="https://raw.githubusercontent.com/johanson/ha-addons/master/irur/icon.png" alt="irur icon"> Infrared Universal Remote webUI for Tasmota ESP8266 based devices over MQTT.  
-Provides a simple web UI to record and manage buttons, comes with a simple http api.
- 
+Provides a simple web UI to record and manage buttons.
 ---
 
 ## Installation
