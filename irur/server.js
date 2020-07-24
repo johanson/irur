@@ -13,8 +13,11 @@ const app = express();
 app.use(bodyParser.json(), cors(), express.static('dist'));
 
 function options() {
-  if (process.argv.slice(2)[0] === '--dev') {
-    console.log('Using dev mqtt conf');
+  const { env } = process;
+  const flag = process.argv.slice(2)[0];
+  const data = require('/data/options.json');
+  if (flag === '--dev') {
+    console.log('Using dev MQTT configuration');
     return {
       mqttMatch: false,
       mqtt: {
@@ -29,9 +32,24 @@ function options() {
       dark_theme: true,
     };
   }
-  console.log('Getting mqtt conf from Home Assistant');
-  return require('/data/options.json');
+  console.log('Getting MQTT configuration from HA');
+  return {
+    mqttMatch: false,
+    mqtt: {
+      host: env.MQTT_HOST,
+      port: env.MQTT_PORT,
+      protocol: 'mqtt',
+      username: env.MQTT_USER,
+      password: env.MQTT_PASSWORD,
+    },
+    topic_listen: data.topic_listen,
+    topic_send: data.topic_send,
+    dark_theme: true,
+  };
 }
+// const { execSync } = require('child_process');
+
+// execSync('bashio::log.info "test"');
 
 const conf = { ...options(), ...{ mqttMatch: false } };
 const client = mqtt.connect(conf.mqtt);
@@ -47,7 +65,7 @@ app.get('/api/db/load/', (req, res) => {
   if (fs.existsSync(db)) {
     res.sendFile(db);
   } else {
-    const message = `${db} does not exist`;
+    const message = `${db} does not exist, creating new database`;
     res.json({ status: 'error', message });
     console.error(message);
   }
@@ -64,7 +82,7 @@ app.post('/api/db/save/', (req, res) => {
     fs.writeFileSync(db, JSON.stringify(req.body, null, 1));
   } catch (err) {
     output = { status: 'error', message: err.message };
-    console.log(err.message);
+    console.error(err.message);
   }
   res.send(output);
 });
@@ -116,7 +134,7 @@ client.on('message', (topic, msg) => {
 
 client.on('connect', () => {
   client.subscribe(conf.topic_listen);
-  console.log('Connected to MQTT server');
+  console.info('Connected to MQTT server');
 });
 
 client.on('error', () => {
@@ -128,5 +146,5 @@ client.on('offline', () => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
+  console.info(`Listening on port ${PORT}`);
 });
