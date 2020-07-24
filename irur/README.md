@@ -17,28 +17,10 @@ Install the addon, make sure you to configure correct MQTT server credentials an
 ### Configuration
 
 ```
-mqtt:
-  host: 192.168.0.100
-  port: 1883
-  protocol: mqtt
-  username: 
-  password: 
 topic_listen: irur/tele/RESULT
 topic_send: irur/cmnd/IRsend
 dark_theme: false
 ```
-
-`host` (str)  
-IP address pointing to MQTT broker.
-
-`port` (int)  
-Port number the broker is listening on. TCP/IP port 1883 is default for MQTT.
-
-`username` (str)  
-The username required by your broker, if any.
-
-`password` (str)  
-The username required by your broker, if any.
 
 `topic_listen` (str)  
 MQTT topic for receiving IR codes
