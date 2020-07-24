@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "slug": "irur",
   "description": "Infrared Universal Remote webUI for Tasmota",
-  "url": "https://github.com/johanson/ha-addons/irur",
+  "url": "https://github.com/johanson/ha-addons/tree/master/irur",
   "arch": [
     "amd64",
     "armv7",

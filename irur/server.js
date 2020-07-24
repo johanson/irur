@@ -53,7 +53,7 @@ function options() {
 
 const conf = { ...options(), ...{ mqttMatch: false } };
 const client = mqtt.connect(conf.mqtt);
-const db = path.join(__dirname, '/data/db.json');
+const db = path.join('/data/db.json');
 
 app.get('/', (req, res) => {
   res.header('Authorization', `Bearer: ${process.env.SUPERVISOR_TOKEN}`);
