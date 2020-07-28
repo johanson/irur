@@ -20,6 +20,7 @@
     "mqtt": "4.1.0",
     "vue": "2.6.11",
     "vue-color": "2.7.1",
+    "vue-context": "5.2.0",
     "vue-toast-notification": "0.4.1",
     "vuedraggable": "2.23.2"
   },

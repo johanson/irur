@@ -1,14 +1,52 @@
 <template>
   <div id="app" tabindex="0"
             v-bind:class="mode"
-            @keydown.esc="mode = 'normal'">
+            @keydown.esc="mode = 'normal';
+                        loader = false;">
 
-    <div id="loader" v-show="loader" />
+    <vue-context ref="tabMenu">
+      <template slot-scope="child">
+      <li>
+        <a href="#" data-id="add"
+      @click.prevent="tabContextMenu($event, child.data)">Add</a>
+      </li>
+      <li>
+        <a href="#" data-id="rename"
+ @click.prevent="tabContextMenu($event, child.data)">Rename</a>
+      </li>
+
+      <li>
+        <a href="#" data-id="delete" :class="child.data"
+      @click.prevent="tabContextMenu($event, child.data)">Delete</a>
+      </li>
+      </template>
+    </vue-context>
+
+    <vue-context ref="knobMenu">
+      <template slot-scope="child">
+      <li>
+        <a href="#" data-id="add" @click.prevent="knobContextMenu($event, child.data)">Add</a>
+      </li>
+      <li>
+        <a href="#" data-id="edit" @click.prevent="knobContextMenu($event, child.data)">Edit</a>
+      </li>
+      <li>
+        <a href="#" data-id="sort" @click.prevent="knobContextMenu($event, child.data)">Sort</a>
+      </li>
+      <li>
+        <a href="#" data-id="remove" @click.prevent="knobContextMenu($event, child.data)">Remove</a>
+      </li>
+      </template>
+    </vue-context>
+
     <div id="svg-sprite" />
 
-    <div id="add-overlay"
-                v-on:click="closeModal"
-    @keydown.ctrl.shift.83="submitForm">
+    <div id="loader" v-show="loader">
+      <div class="icon" />
+    </div>
+
+    <div id="add-overlay" v-on:click="closeModal"
+              @keydown.ctrl.shift.83="submitForm">
 
       <form action="#" id="form1" autocomplete="off">
         <div id="close" v-on:click="closeModal" />
@@ -17,7 +55,7 @@
         <input type="text" id="knob_name" ref="name" required
             v-model="saveData.name">
 
-        <label for="knob_mqtt">Mqtt response
+        <label for="knob_mqtt">MQTT response
           <span>If no icon is selected, the name will be used</span>
         </label>
         <div id="mqtt">
@@ -25,6 +63,20 @@
               v-model="saveData.mqtt">
           <button :disabled="listeningMqtt"
          v-on:click.prevent="receiveIR">Listen</button>
+        </div>
+
+        <label for="knob_mqtt_topic">MQTT topic
+          <span>Add new topics from HA configuration</span>
+        </label>
+        <div id="knob_mqtt_topic">
+          <p v-for="(item, index) in settings.topic_send" v-bind:key="index" >
+            <input type="radio" required
+               :checked="settings.topic_send.length === 1"
+                    :id="'mqttTopic-' + index"
+                 :value="item"
+                 v-model="saveData.topic_send">
+            <label :for="'mqttTopic-' + index">{{ item }}</label>
+          </p>
         </div>
 
         <label for="knob_id">Unique id
@@ -64,22 +116,55 @@
 
         <button form="form1" v-on:click.prevent="submitForm">Save</button>
 
-        <p><strong>Control+Shift+S</strong> to save,
-            <strong>Esc</strong> to close</p>
+        <p class="keybinds">
+          <strong>Control+Shift+S</strong> to save,
+          <strong>Esc</strong> to close
+        </p>
       </form>
 
     </div>
 
+    <div id="tabs">
+      <div class="tab" v-for="(item, key) in data"
+          @contextmenu.prevent="$refs.tabMenu.open($event, key)"
+          :class="{ active: activeTab === key }"
+        :data-id="key"
+            :key="key"
+      v-on:click="activeTab = key">
+        <input type="text"
+               v-if="mode === 'tab-rename' && activeTab === key"
+       v-model.trim="item.name"
+                :id="'menu-item-' + key"
+   v-on:keyup.enter="saveTab();"
+              @blur="(item.name === '') ? item.name = 'New' : item.name = item.name;
+              saveTab();">
+        <span v-else>
+          {{item.name}}
+        </span>
+      </div>
+    </div>
+
     <draggable id="remote"
-          v-model="list"
+          v-model="filteredData"
         :disabled="(this.mode == 'sort') ? false : true"
+        draggable=".item"
           @change="save">
 
+          <div class="item-add" slot="footer" draggable="false"
+          v-on:click="mode = 'add';">
+            <div class="glyph">
+              <svg class="icon">
+                <use xlink:href="#add"></use>
+              </svg>
+            </div>
+          </div>
+
       <div class="item"
-           v-for="el in list"
-            :key="el.id"
-          :title="el.name"
-      v-on:click="knobAction(el.id)">
+      @contextmenu.prevent="$refs.knobMenu.open($event, el.id)"
+                      :key="el.id"
+                    :title="el.name"
+                v-on:click="sendIR(el.id);"
+                     v-for="el in filteredData">
 
         <div class="glyph"
         v-if="el.icon">
@@ -93,17 +178,8 @@
         </div>
 
       </div>
-    </draggable>
 
-    <div id="menu">
-      [<a href="#" v-on:click.prevent="toggleManager" class="manager">{{manager.text}}</a>]
-      <div class="container" v-show="manager.active">
-        [<a href="#" v-on:click.prevent="mode = 'add'" class="add">Add</a> |
-         <a href="#" v-on:click.prevent="mode = 'edit'" class="edit">Edit</a> |
-         <a href="#" v-on:click.prevent="mode = 'sort'" class="sort">Sort</a> |
-         <a href="#" v-on:click.prevent="mode = 'remove'" class="remove">Remove</a>]
-       </div>
-    </div>
+    </draggable>
 
   </div>
 </template>
@@ -111,6 +187,7 @@
 <script>
 import draggable from 'vuedraggable';
 import { Slider } from 'vue-color';
+import { VueContext } from 'vue-context';
 import './assets/app.scss';
 import 'vue-toast-notification/dist/theme-default.css';
 
@@ -118,23 +195,31 @@ export default {
   name: 'App',
   components: {
     draggable,
+    VueContext,
     'slider-picker': Slider,
   },
   data() {
     return {
       mode: 'normal',
-      loader: false,
+      loader: true,
+      glyphs: [],
       manager: {
         active: false,
         text: 'Manager',
       },
-      list: [],
-      glyphs: [],
+      activeTab: 'default',
+      data: {
+        default: {
+          name: 'Default',
+          knobs: [],
+        },
+      },
       colors: { hex: this.cssVar('--text') },
       saveData: {
         id: '',
         name: '',
         mqtt: '',
+        topic_send: '',
         icon: '',
         color: this.cssVar('--text'),
       },
@@ -147,7 +232,7 @@ export default {
         load: 'db/load',
         settings: 'settings',
       },
-      settings: {},
+      settings: { topic_send: '' },
     };
   },
 
@@ -157,6 +242,14 @@ export default {
       return this.glyphs.filter((x) => x.toLowerCase()
         .indexOf(this.saveData.icon.toLowerCase()) > -1);
     },
+    filteredData: {
+      get() {
+        return this.data[this.activeTab].knobs;
+      },
+      set(val) {
+        this.data[this.activeTab].knobs = val;
+      },
+    },
   },
 
   watch: {
@@ -165,7 +258,12 @@ export default {
         setTimeout(() => this.$refs.name.focus(), 500);
       } else if (e === 'add') {
         this.saveData = {
-          name: '', mqtt: '', id: this.generateUID(), icon: '',
+          name: '',
+          mqtt: '',
+          id: this.generateUID(),
+          icon: '',
+          color: this.cssVar('--text'),
+          topic_send: this.saveData.topic_send,
         };
         setTimeout(() => this.$refs.name.focus(), 500);
       }
@@ -174,51 +272,71 @@ export default {
       this.saveData.color = value.hex;
     },
   },
-
+  filters: {
+    defaultValue(value) {
+      return (value === '') ? 'New' : value;
+    },
+  },
   mounted() {
     this.load();
     this.loadSVG();
   },
   methods: {
     load() {
-      fetch(`${this.api.prefix}${this.api.load}`)
-        .then((resp) => {
-          if (!resp.ok) {
-            throw new Error(`API HTTP status ${resp.status}`);
-          }
-          return resp.json();
-        }).then((json) => {
-          if (json.status === 'error') {
-            this.loadDefaultDB();
-          } else {
-            this.list = json;
-          }
-        }).catch((err) => {
-          this.$toast.error(String(err));
-        });
-      fetch(`${this.api.prefix}${this.api.settings}`)
-        .then((resp) => resp.json()).then((json) => {
-          this.settings = json;
-          const root = document.getElementsByTagName('html')[0];
-          if (this.settings.dark_theme) root.setAttribute('data-theme', 'dark');
-        });
+      fetch(`${this.api.prefix}${this.api.load}`).then((resp) => {
+        if (!resp.ok) {
+          throw new Error(`API HTTP status ${resp.status}`);
+        }
+        return resp.json();
+      }).then((json) => {
+        if (json.status === 'error') {
+          this.loadDefaultDB();
+        } else {
+          this.data = json;
+        }
+      }).catch((err) => {
+        this.$toast.error(String(err));
+      });
+
+      fetch(`${this.api.prefix}${this.api.settings}`).then((resp) => {
+        if (!resp.ok) {
+          throw new Error(`API HTTP status ${resp.status}`);
+        }
+        return resp.json();
+      }).then((json) => {
+        this.settings = json;
+        [this.saveData.topic_send] = json.topic_send;
+        // this.saveData.topic_send = json.topic_send[0];
+        // Set a the  root attribute based on settings
+        const root = document.getElementsByTagName('html')[0];
+        if (this.settings.dark_theme) root.setAttribute('data-theme', 'dark');
+      }).catch((err) => {
+        this.$toast.error(String(err));
+      });
     },
 
     loadDefaultDB() {
-      this.list = [
-        {
-          id: 'wn0gbd99',
-          name: 'Samsung Volume Up',
-          mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0E01F"}',
-          icon: 'up-arrow',
+      this.data = {
+        default: {
+          name: 'Default',
+          knobs: [
+            {
+              id: 'wn0gbd99',
+              name: 'Samsung Volume Up',
+              mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0E01F"}',
+              icon: 'up-arrow',
+              topic_send: '',
+            },
+            {
+              id: 'wt9u3yzj',
+              name: 'Samsung Volume Down',
+              mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0D02F"}',
+              icon: 'down-arrow',
+              topic_send: '',
+            },
+          ],
         },
-        {
-          id: 'wt9u3yzj',
-          name: 'Samsung Volume Down',
-          mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0D02F"}',
-          icon: 'down-arrow',
-        },
-      ];
+      };
     },
 
     toggleManager() {
@@ -231,6 +349,74 @@ export default {
       }
       this.manager.active = !this.manager.active;
     },
+
+    knobContextMenu(e, id) {
+      const type = e.target.dataset.id;
+      if (type === 'add') {
+        this.mode = 'add';
+      }
+      if (type === 'edit') {
+        this.saveData = this.filteredData[this.findObjIndex(id)];
+        this.mode = 'editor';
+      }
+      if (type === 'sort') {
+        if (this.mode === 'sort') {
+          this.mode = 'normal';
+        } else {
+          this.mode = 'sort';
+        }
+      }
+      if (type === 'remove') {
+        this.filteredData = this.filteredData.filter((x) => x.id !== id);
+        this.save();
+      }
+    },
+    changeMqttTopic(topic) {
+      this.saveData.topic_send = topic;
+    },
+    tabContextMenu(e, id) {
+      const type = e.target.dataset.id;
+
+      if (type === 'rename') {
+        this.activeTab = id;
+        this.mode = 'tab-rename';
+        setTimeout(() => document.querySelector(`#menu-item-${id}`).focus(), 200);
+      }
+
+      if (type === 'add') {
+        const uid = this.generateUID();
+
+        this.data = {
+          ...this.data,
+          ...{
+            [uid]: {
+              name: 'New',
+              knobs: [],
+            },
+          },
+        };
+
+        this.activeTab = uid;
+        this.mode = 'tab-rename';
+        setTimeout(() => document.querySelector(`#menu-item-${uid}`).focus(), 200);
+        this.save();
+      }
+
+      if (type === 'delete' && id !== 'default') {
+        if (id === this.activeTab) {
+          // Go back to default tab if deleting the active tab
+          this.activeTab = 'default';
+        }
+        this.$delete(this.data, id);
+        this.save();
+      }
+    },
+
+    saveTab() {
+      this.mode = 'normal';
+      this.save();
+    },
+
     loadSVG() {
       const self = this;
       fetch('icons/sprite.svg')
@@ -249,6 +435,7 @@ export default {
           if (!symbols.length) {
             throw new Error('Cannot generate svg icons');
           }
+          this.loader = false;
           for (let i = 0; i < symbols.length; i += 1) {
             self.glyphs.push(symbols[i].getAttribute('id'));
           }
@@ -259,15 +446,16 @@ export default {
 
     save() {
       if (this.mode === 'editor') {
-        this.list[this.findObjIndex()] = ({
+        this.filteredData[this.findObjIndex()] = ({
           id: this.saveData.id,
           name: this.saveData.name,
           mqtt: this.saveData.mqtt,
+          topic_send: this.saveData.topic_send,
           icon: this.saveData.icon,
           color: this.saveData.color,
         });
       } else if (this.mode === 'add') {
-        this.list.push(this.saveData);
+        this.filteredData.push(this.saveData);
       }
 
       fetch(`${this.api.prefix}${this.api.save}`, {
@@ -276,30 +464,12 @@ export default {
           'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify(this.list),
+        body: JSON.stringify(this.data),
       }).then((resp) => {
         if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
-      }).then(() => {
-        this.$toast.success('Saved');
       }).catch((err) => {
         this.$toast.error(String(err));
       });
-    },
-
-    knobAction(id) {
-      switch (this.mode) {
-        case 'edit':
-          this.saveData = this.list[this.findObjIndex(id)];
-          this.mode = 'editor';
-          break;
-        case 'remove':
-          this.list = this.list.filter((x) => x.id !== id);
-          this.save();
-          this.mode = 'normal';
-          break;
-        default:
-          this.sendIR(id);
-      }
     },
 
     sendIR(id) {
@@ -316,7 +486,6 @@ export default {
 
     receiveIR() {
       const self = this;
-      this.listeningMqtt = true;
       this.loader = true;
       const mqttTimeout = 5;
       const controller = new AbortController();
@@ -340,7 +509,6 @@ export default {
         }).then((json) => {
           flip();
           self.saveData.mqtt = json.mqtt;
-          console.log(json.mqtt);
           this.$toast.info('Ir code received');
         }).catch((err) => {
           flip();
@@ -353,9 +521,10 @@ export default {
     },
 
     submitForm() {
-      const required = [this.saveData.name, this.saveData.mqtt, this.saveData.id];
-      if (required.some((x) => x.trim() === '')) {
-        this.$toast.error('Name, id and mqtt required');
+      const dat = this.saveData;
+      const required = [dat.name, dat.mqtt, dat.id, dat.topic_send];
+      if (required.some((x) => x === '' || x === undefined)) {
+        this.$toast.error('Name, id, mqtt and topic required');
       } else {
         this.save();
         // Leave the state in edit mode when making changes,
@@ -377,6 +546,7 @@ export default {
     closeModal(e) {
       if (['add-overlay', 'close'].includes(e.target.id)) {
         this.mode = 'normal';
+        this.loader = false;
       }
     },
 
@@ -385,8 +555,8 @@ export default {
     findObjIndex(id) {
       const idToCompareWith = (id) || this.saveData.id;
       let index;
-      for (let i = 0; i < this.list.length; i += 1) {
-        if (this.list[i].id === idToCompareWith) {
+      for (let i = 0; i < this.filteredData.length; i += 1) {
+        if (this.filteredData[i].id === idToCompareWith) {
           index = i;
         }
       }
@@ -404,7 +574,7 @@ export default {
     getHostname() {
       // Use hardcoded :6789 when developing
       if (process.env.NODE_ENV !== 'production') {
-        return 'http://localhost:8099';
+        return 'http://localhost:8099/';
       }
       return '';
     },

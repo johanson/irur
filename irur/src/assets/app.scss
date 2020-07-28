@@ -43,6 +43,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
   color: var(--text);
+  font-size: 16px;
 }
 
 .hidden {
@@ -70,17 +71,28 @@ a {
   position: fixed;
   top: 8px;
   right: 8px;
-  width: 20px;
-  height: 20px;
-  background: url(loading.svg) no-repeat;
-  background-size: 20px 20px;
-  will-change: scroll-position;
-  animation-name: spin;
-  animation-duration: 2000ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
   pointer-events: none;
   z-index: 101;
+  background: rgba(0 0 0 / 0.7);
+  width: 100vw;
+  height: 100vh;
+  margin: -10px -10px 0 0;
+
+  .icon {
+    top: calc(50% - 30px);
+    right: calc(50% - 30px);
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: url(loading.svg) no-repeat;
+    background-size: 60px 60px;
+    will-change: scroll-position;
+    animation-name: spin;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    backface-visibility: hidden;
+  }
 
   @keyframes spin {
     0% {
@@ -107,13 +119,50 @@ a {
   }
 }
 
+#tabs {
+  border-bottom: 1px solid var(--text);
+
+  .tab {
+    display: inline-block;
+    position: relative;
+    bottom: -4px;
+    padding: 0px 10px;
+    line-height: 44px;
+    height: 44px;
+    cursor: pointer;
+    opacity: 0.5;
+    min-width: 50px;
+    overflow: hidden;
+
+    &.active {
+      border-width: 1px;
+      border-style: solid;
+      border-color: var(--text);
+      border-bottom-color: var(--background);
+      cursor: default;
+      opacity: 1;
+    }
+
+    input {
+      background-color: var(--background);
+      color: var(--text);
+      font-size: 16px;
+      border: 0px;
+      height: 42px;
+      display: block;
+      width: 125px;
+    }
+  }
+}
+
+
 #remote {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
   margin: auto;
   overflow-y: auto;
-  margin-bottom: 10px;
+  min-height: 70px;
 
   .sortable-chosen {
     opacity: 0.2;
@@ -141,7 +190,8 @@ a {
     }
   }
 
-  .item {
+  .item,
+  .item-add {
     display: flex;
     padding: 16px;
     max-width: 25%;
@@ -188,6 +238,31 @@ a {
     }
   }
 
+  .item-add {
+    &:hover {
+      background: none;
+    }
+
+    .glyph svg {
+      fill: var(--text);
+      width: 50%;
+      height: 50%;
+      transform: translateX(0%) translateY(50%);
+      opacity: 0.1;
+      pointer-events: initial;
+      transition: opacity 0.5s ease-in-out;
+
+      &:hover {
+        opacity: 0.8;
+        transition: opacity 0.5s ease-in-out;
+      }
+
+      use {
+        pointer-events: none;
+      }
+    }
+  }
+
   .sort & .item {
     cursor: move;
   }
@@ -222,7 +297,9 @@ a {
     transition: background 0.3s ease 0s;
     background-color: #1976d2;
     padding: 1px 6px;
-    line-height: 38px;
+    line-height: 40px;
+    height: 40px;
+    overflow: hidden;
     border: none;
     font-size: 16px;
     font-family: Arial, Helvetica, sans-serif;
@@ -327,7 +404,7 @@ a {
   }
 
 
-  p {
+  .keybinds {
     text-align: left;
     margin: 0;
     padding: 10px 0px 0px 10px;
@@ -347,9 +424,7 @@ a {
     overflow: hidden;
     overflow-y: auto;
     text-align: center;
-
   }
-
 
   #mqtt {
     width: 100%;
@@ -360,6 +435,29 @@ a {
       border-right: none;
     }
 
+  }
+
+  #knob_mqtt_topic {
+    border-top: 1px solid #979797;
+    border-bottom: 1px solid #979797;
+    border-left: none;
+    border-right: none;
+    line-height: 1em;
+    padding-top: 10px;
+
+    p {
+      text-align: left;
+      margin: 0;
+      line-height: 1;
+      padding-left: 10px;
+    }
+
+    label {
+      display: inline-block;
+      padding: 0 10px;
+      line-height: 1em;
+      font-weight: normal;
+    }
   }
 
   #svg-sprite {
@@ -383,27 +481,81 @@ a {
   }
 }
 
-#menu {
-  display: block;
-  margin-bottom: 10px;
-  padding: 10px 0;
-  border-top: 1px solid #ccc;
-  line-height: 1.5em;
+.v-context {
+  $menu-bg: var(--background);
+  $menu-border: #777;
+  $item-color: var(--text);
+  $item-hover-bg: var(--background-shade);
 
-  .container {
-    display: inline-block;
+  &,
+  & ul {
+    background-color: $menu-bg;
+    background-clip: padding-box;
+    border-radius: .25rem;
+    border: 1px solid $menu-border;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    display: block;
+    margin: 0;
+    padding: 10px 0;
+    min-width: 10rem;
+    z-index: 1500;
+    position: fixed;
+    list-style: none;
+    box-sizing: border-box;
+    max-height: calc(100% - 50px);
+    overflow-y: auto;
+
+    .default[data-id="delete"] {
+      color: rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        background-color: $menu-bg;
+        cursor: default;
+      }
+    }
+
+    >li {
+      margin: 0;
+      position: relative;
+
+      >a {
+        display: block;
+        padding: .5rem 1.5rem;
+        font-weight: 400;
+        color: $item-color;
+        text-decoration: none;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+
+        &:hover,
+        &:focus {
+          text-decoration: none;
+          background-color: $item-hover-bg;
+        }
+
+        &:focus {
+          outline: 0;
+        }
+      }
+    }
+
+    &:focus {
+      outline: 0;
+    }
   }
 
-  .manager {
-    font-weight: 500;
-  }
-}
+  &__sub {
+    >a:after {
+      content: "\2bc8";
+      float: right;
+      padding-left: 1rem;
+    }
 
-#app.add a.add,
-#app.edit a.edit,
-#app.sort a.sort,
-#app.remove a.remove {
-  color: var(--text);
-  text-decoration: none;
-  cursor: default;
+    >ul {
+      display: none;
+    }
+  }
 }

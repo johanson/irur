@@ -1,5 +1,5 @@
-/* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-absolute-path */
+/* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -11,13 +11,15 @@ const mqtt = require('mqtt');
 const PORT = 8099;
 const app = express();
 app.use(bodyParser.json(), cors(), express.static('dist'));
+let db = path.join('/data/db.json');
 
 function options() {
   const { env } = process;
   const flag = process.argv.slice(2)[0];
-  const data = require('/data/options.json');
   if (flag === '--dev') {
     console.log('Using dev MQTT configuration');
+    db = path.join(__dirname, 'test_db.json');
+    console.log(`Using ${db} as database`);
     return {
       mqttMatch: false,
       mqtt: {
@@ -28,11 +30,16 @@ function options() {
         password: 'mosqi',
       },
       topic_listen: 'irur/tele/RESULT',
-      topic_send: 'irur/cmnd/IRsend',
+      topic_send: ['irur/cmnd/IRsend'],
       dark_theme: true,
     };
   }
   console.log('Getting MQTT configuration from HA');
+  if (!fs.existsSync(db)) {
+    fs.openSync(db, 'a');
+  }
+  const data = require('/data/options.json');
+  console.log(`Using ${db} as database`);
   return {
     mqttMatch: false,
     mqtt: {
@@ -47,13 +54,9 @@ function options() {
     dark_theme: true,
   };
 }
-// const { execSync } = require('child_process');
-
-// execSync('bashio::log.info "test"');
 
 const conf = { ...options(), ...{ mqttMatch: false } };
 const client = mqtt.connect(conf.mqtt);
-const db = path.join('/data/db.json');
 
 app.get('/', (req, res) => {
   res.header('Authorization', `Bearer: ${process.env.SUPERVISOR_TOKEN}`);
@@ -62,7 +65,8 @@ app.get('/', (req, res) => {
 
 app.get('/api/db/load/', (req, res) => {
   res.header('Content-Type', 'application/json');
-  if (fs.existsSync(db)) {
+  if (fs.existsSync(db)
+  && fs.readFileSync(db, 'utf8') !== '') {
     res.sendFile(db);
   } else {
     const message = `${db} does not exist, creating new database`;
@@ -108,14 +112,18 @@ app.get('/api/ir/send/:id', (req, res) => {
   let status;
   const { id } = req.params;
   const json = JSON.parse(fs.readFileSync(db, 'utf8'));
-  for (const key of Object.keys(json)) {
-    if (json[key].id === id) {
-      const message = json[key].mqtt;
-      if (message) {
-        status = { status: 'success' };
-        client.publish(conf.topic_send, message);
+  for (const tab of Object.keys(json)) {
+    for (const key of Object.keys(json[tab].knobs)) {
+      if (json[tab].knobs[key].id === id) {
+        const message = json[tab].knobs[key].mqtt;
+        const topic = json[tab].knobs[key].topic_send;
+        if (message && topic) {
+          status = { status: 'success' };
+          client.publish(topic, message);
+          console.log(`Sent ${message} to ${topic}`);
+        }
+        break;
       }
-      break;
     }
   }
   status = status || { status: 'error' };

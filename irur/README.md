@@ -18,15 +18,16 @@ Install the addon, make sure you to configure correct MQTT server credentials an
 
 ```
 topic_listen: irur/tele/RESULT
-topic_send: irur/cmnd/IRsend
+topic_send:
+- irur/cmnd/IRsend
 dark_theme: false
 ```
 
 `topic_listen` (str)  
 MQTT topic for receiving IR codes
 
-`topic_send` (str)  
-MQTT topic for sending IR codes
+`topic_send` (list)  
+MQTT topic for sending IR codes.
 
 `dark_theme` (bool)  
 Whether you prefer a dark theme for default light.
