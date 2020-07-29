@@ -87,7 +87,7 @@ function options() {
     },
     topic_listen: data.topic_listen,
     topic_send: data.topic_send,
-    dark_theme: true,
+    dark_theme: data.dark_theme,
   };
 }
 

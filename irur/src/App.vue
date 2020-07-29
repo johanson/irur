@@ -305,10 +305,11 @@ export default {
       }).then((json) => {
         this.settings = json;
         [this.saveData.topic_send] = json.topic_send;
-        // this.saveData.topic_send = json.topic_send[0];
-        // Set a the  root attribute based on settings
-        const root = document.getElementsByTagName('html')[0];
-        if (this.settings.dark_theme) root.setAttribute('data-theme', 'dark');
+        // Set a root attribute based on HA settings
+        if (json.dark_theme) {
+          const root = document.getElementsByTagName('html')[0];
+          root.setAttribute('data-theme', 'dark');
+        }
       }).catch((err) => {
         this.$toast.error(String(err));
       });
