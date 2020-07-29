@@ -189,7 +189,6 @@ import draggable from 'vuedraggable';
 import { Slider } from 'vue-color';
 import { VueContext } from 'vue-context';
 import './assets/app.scss';
-import 'vue-toast-notification/dist/theme-default.css';
 
 export default {
   name: 'App',
