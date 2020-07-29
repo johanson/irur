@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- Fix context menu on mobile
+
 ## 0.4.0
 
 - Add ability to add tabs

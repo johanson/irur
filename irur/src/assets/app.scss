@@ -121,6 +121,7 @@ a {
 
 #tabs {
   border-bottom: 1px solid var(--text);
+  user-select: none;
 
   .tab {
     display: inline-block;
@@ -163,6 +164,7 @@ a {
   margin: auto;
   overflow-y: auto;
   min-height: 70px;
+  user-select: none;
 
   .sortable-chosen {
     opacity: 0.2;
