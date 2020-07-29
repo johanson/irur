@@ -8,7 +8,7 @@ RUN apk add --update --no-cache nodejs npm dumb-init
 COPY package*.json ./
 RUN npm install --only=prod
 COPY . .
-RUN chmod +x /usr/src/app/start.sh
-ENTRYPOINT ["/usr/src/app/start.sh"]
+RUN chmod +x /usr/src/app/scripts/*
+ENTRYPOINT ["/usr/src/app/scripts/start.sh"]
 
 LABEL io.hass.version="VERSION" io.hass.type="addon" io.hass.arch="armhf|aarch64|i386|amd64"

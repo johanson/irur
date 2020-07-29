@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-absolute-path */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
@@ -7,19 +8,54 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const mqtt = require('mqtt');
+const { execSync } = require('child_process');
 
 const PORT = 8099;
+const flags = process.argv.slice(2)[0];
+let db = path.join('/data/db.json');
+const logger = path.join('scripts/logger.sh');
+
 const app = express();
 app.use(bodyParser.json(), cors(), express.static('dist'));
-let db = path.join('/data/db.json');
+
+// Just a logging wrapper around bashio
+// log.info(); error(); warn();
+const log = {
+  info(msg) {
+    if (flags === '--dev') {
+      console.log(msg);
+    } else {
+      try { execSync(`${logger} bashio::log.info "${msg}"`); } catch (e) {
+        console.log(e);
+      }
+    }
+  },
+  error(msg) {
+    if (flags === '--dev') {
+      console.error(msg);
+    } else {
+      try { execSync(`${logger} bashio::log.error "${msg}"`); } catch (e) {
+        console.log(e);
+      }
+    }
+  },
+  warn(msg) {
+    if (flags === '--dev') {
+      console.warn(msg);
+    } else {
+      try { execSync(`${logger} bashio::log.warning "${msg}"`); } catch (e) {
+        console.log(e);
+      }
+    }
+  },
+};
 
 function options() {
   const { env } = process;
-  const flag = process.argv.slice(2)[0];
-  if (flag === '--dev') {
-    console.log('Using dev MQTT configuration');
+  if (flags === '--dev') {
+    log.info('Using dev MQTT configuration');
     db = path.join(__dirname, 'test_db.json');
-    console.log(`Using ${db} as database`);
+    log.info(`Using ${db} as database`);
     return {
       mqttMatch: false,
       mqtt: {
@@ -34,12 +70,12 @@ function options() {
       dark_theme: true,
     };
   }
-  console.log('Getting MQTT configuration from HA');
+  log.info('Getting MQTT configuration from HA');
   if (!fs.existsSync(db)) {
     fs.openSync(db, 'a');
   }
   const data = require('/data/options.json');
-  console.log(`Using ${db} as database`);
+  log.info(`Using ${db} as database`);
   return {
     mqttMatch: false,
     mqtt: {
@@ -71,7 +107,7 @@ app.get('/api/db/load/', (req, res) => {
   } else {
     const message = `${db} does not exist, creating new database`;
     res.json({ status: 'error', message });
-    console.error(message);
+    log.error(message);
   }
 });
 
@@ -86,7 +122,7 @@ app.post('/api/db/save/', (req, res) => {
     fs.writeFileSync(db, JSON.stringify(req.body, null, 1));
   } catch (err) {
     output = { status: 'error', message: err.message };
-    console.error(err.message);
+    log.error(err.message);
   }
   res.send(output);
 });
@@ -120,7 +156,7 @@ app.get('/api/ir/send/:id', (req, res) => {
         if (message && topic) {
           status = { status: 'success' };
           client.publish(topic, message);
-          console.log(`Sent ${message} to ${topic}`);
+          log.info(`Sent ${message} to ${topic}`);
         }
         break;
       }
@@ -132,7 +168,7 @@ app.get('/api/ir/send/:id', (req, res) => {
 
 client.on('message', (topic, msg) => {
   const resp = JSON.parse(msg.toString()).IrReceived;
-  console.log(`Received ${JSON.stringify(resp)}`);
+  log.info(`Received ${JSON.stringify(resp)}`);
   conf.mqttMatch = JSON.stringify({
     Protocol: resp.Protocol,
     Bits: resp.Bits,
@@ -142,17 +178,17 @@ client.on('message', (topic, msg) => {
 
 client.on('connect', () => {
   client.subscribe(conf.topic_listen);
-  console.info('Connected to MQTT server');
+  log.info('Connected to MQTT server');
 });
 
 client.on('error', () => {
-  console.error('Cannot connect to MQTT server, check your server settings and credentials');
+  log.error('Cannot connect to MQTT server, check your server settings and credentials');
 });
 
 client.on('offline', () => {
-  console.error('MQTT server is offline');
+  log.error('MQTT server is offline');
 });
 
 app.listen(PORT, () => {
-  console.info(`Listening on port ${PORT}`);
+  log.info(`Listening on port ${PORT}`);
 });
