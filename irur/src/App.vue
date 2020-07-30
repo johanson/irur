@@ -374,7 +374,6 @@ export default {
     },
     tabContextMenu(e, id) {
       const type = e.target.dataset.id;
-
       if (type === 'rename') {
         this.activeTab = id;
         this.mode = 'tab-rename';

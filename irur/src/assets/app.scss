@@ -127,6 +127,8 @@ code {
 #tabs {
   border-bottom: 1px solid var(--text);
   user-select: none;
+  padding-left: 10px;
+  white-space: nowrap;
 
   .tab {
     display: inline-block;
@@ -139,6 +141,14 @@ code {
     opacity: 0.5;
     min-width: 50px;
     overflow: hidden;
+
+    span {
+      max-width: 125px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+    }
 
     &.active {
       border-width: 1px;
