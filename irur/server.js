@@ -53,9 +53,8 @@ const log = {
 function options() {
   const { env } = process;
   if (flags === '--dev') {
-    log.info('Using dev MQTT configuration');
     db = path.join(__dirname, 'test_db.json');
-    log.info(`Using ${db} as database`);
+    log.info(`Using dev configuration and ${db} as a database`);
     return {
       mqttMatch: false,
       mqtt: {
@@ -65,6 +64,7 @@ function options() {
         username: 'mosqi',
         password: 'mosqi',
       },
+      hostname: 'addon_local:8099/',
       topic_listen: 'irur/tele/RESULT',
       topic_send: ['irur/cmnd/IRsend'],
       dark_theme: true,
@@ -85,6 +85,7 @@ function options() {
       username: env.MQTT_USER,
       password: env.MQTT_PASSWORD,
     },
+    hostname: `${env.HOSTNAME}:8099/`,
     topic_listen: data.topic_listen,
     topic_send: data.topic_send,
     dark_theme: data.dark_theme,

@@ -58,6 +58,11 @@ a {
   color: var(--link);
 }
 
+.mono,
+code {
+  font-family: monospace;
+}
+
 #app {
   background: var(--background);
   color: va(--text);

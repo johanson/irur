@@ -80,10 +80,8 @@
         </div>
 
         <label for="knob_id">Unique id
-          <span>
-            <a v-bind:href="api.prefix + api.send + '/' +saveData.id" target="_blank">
-              {{api.prefix}}{{api.send}}/{{saveData.id}}
-            </a>
+          <span class="mono">
+            curl {{settings.hostname}}{{api.send}}/{{saveData.id}}
           </span>
         </label>
         <input type="text" id="knob_id" required readonly

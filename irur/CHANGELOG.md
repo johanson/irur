@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3
+
+- Fix rest api hostname
+
 ## 0.4.2
 
 - Fix context menu on mobile
