@@ -12,8 +12,8 @@
         <li><a href="#" data-id="rename"
                  @click.prevent="tabContextMenu($event, child.data)">Rename</a>
         </li>
-        <li><a href="#" data-id="delete" :class="child.data"
-                 @click.prevent="tabContextMenu($event, child.data)">Delete</a>
+        <li><a href="#" data-id="remove" :class="child.data"
+                 @click.prevent="tabContextMenu($event, child.data)">Remove</a>
         </li>
       </template>
     </vue-context>
@@ -118,6 +118,15 @@
 
     </div>
 
+    <a href="#" ref="undoButton" id="undo"
+     @keydown.ctrl.90="undo()"
+     @click.prevent="undo()">
+     <span>Undo</span>
+      <svg class="icon">
+          <use xlink:href="#fast-forward"></use>
+      </svg>
+    </a>
+
     <div id="tabs">
       <div class="tab" v-for="(item, key) in data"
           @contextmenu.prevent="$refs.tabMenu.open($event, key)"
@@ -207,6 +216,7 @@ export default {
           knobs: [],
         },
       },
+      dataHistory: {},
       colors: { hex: this.cssVar('--text') },
       saveData: {
         id: '',
@@ -217,6 +227,7 @@ export default {
         color: this.cssVar('--text'),
       },
       listeningMqtt: false,
+      settings: { topic_send: '' },
       api: {
         prefix: `${this.getHostname()}api/`,
         receive: 'ir/receive',
@@ -225,7 +236,6 @@ export default {
         load: 'db/load',
         settings: 'settings',
       },
-      settings: { topic_send: '' },
     };
   },
 
@@ -361,6 +371,7 @@ export default {
         }
       }
       if (type === 'remove') {
+        this.undo(true);
         this.filteredData = this.filteredData.filter((x) => x.id !== id);
         this.save();
       }
@@ -395,11 +406,12 @@ export default {
         this.save();
       }
 
-      if (type === 'delete' && id !== 'default') {
+      if (type === 'remove' && id !== 'default') {
         if (id === this.activeTab) {
           // Go back to default tab if deleting the active tab
           this.activeTab = 'default';
         }
+        this.undo(true);
         this.$delete(this.data, id);
         this.save();
       }
@@ -539,6 +551,23 @@ export default {
       if (['add-overlay', 'close'].includes(e.target.id)) {
         this.mode = 'normal';
         this.loader = false;
+      }
+    },
+
+    undo(set = false) {
+      const el = this.$refs.undoButton;
+      if (set) {
+        // get rid of references
+        this.dataHistory = JSON.parse(JSON.stringify(this.data));
+        el.classList = 'visible';
+        el.focus();
+        setTimeout(() => {
+          el.classList = '';
+        }, 5000);
+      } else {
+        el.classList = '';
+        this.data = { ...this.dataHistory };
+        this.save();
       }
     },
 

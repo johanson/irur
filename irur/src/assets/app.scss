@@ -498,6 +498,48 @@ code {
   }
 }
 
+#undo {
+  user-select: none;
+  z-index: 1053;
+  position: fixed;
+  text-transform: uppercase;
+  bottom: 10px;
+  right: 10px;
+  line-height: 20px;
+  padding: 10px;
+  border: 1px solid var(--text);
+  border-radius: 2px;
+  background-color: var(--background-overlay);
+  opacity: 0.5;
+  color: var(--text);
+  transition: opacity 0.5s ease-in-out;
+  display: none;
+
+  &.visible {
+    display: block;
+  }
+
+  &:hover {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  svg {
+    height: 15px;
+    width: 15px;
+    margin-top: 2px;
+    float: left;
+    fill: var(--text);
+  }
+
+  span {
+    line-height: 20px;
+    height: 20px;
+    float: left;
+    padding-right: 5px;
+  }
+}
+
 /*
 ####
 vue-context
