@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.5
+
+- Added undo function for deleting knobs or tabs (control + Z)
+
+## 0.4.5
+
+- Fix tab overflow
+
 ## 0.4.3
 
 - Fix rest api hostname
