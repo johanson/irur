@@ -6,36 +6,32 @@
 
     <vue-context ref="tabMenu">
       <template slot-scope="child">
-      <li>
-        <a href="#" data-id="add"
-      @click.prevent="tabContextMenu($event, child.data)">Add</a>
-      </li>
-      <li>
-        <a href="#" data-id="rename"
- @click.prevent="tabContextMenu($event, child.data)">Rename</a>
-      </li>
-
-      <li>
-        <a href="#" data-id="delete" :class="child.data"
-      @click.prevent="tabContextMenu($event, child.data)">Delete</a>
-      </li>
+        <li><a href="#" data-id="add"
+                 @click.prevent="tabContextMenu($event, child.data)">Add</a>
+        </li>
+        <li><a href="#" data-id="rename"
+                 @click.prevent="tabContextMenu($event, child.data)">Rename</a>
+        </li>
+        <li><a href="#" data-id="delete" :class="child.data"
+                 @click.prevent="tabContextMenu($event, child.data)">Delete</a>
+        </li>
       </template>
     </vue-context>
 
     <vue-context ref="knobMenu">
       <template slot-scope="child">
-      <li>
-        <a href="#" data-id="add" @click.prevent="knobContextMenu($event, child.data)">Add</a>
-      </li>
-      <li>
-        <a href="#" data-id="edit" @click.prevent="knobContextMenu($event, child.data)">Edit</a>
-      </li>
-      <li>
-        <a href="#" data-id="sort" @click.prevent="knobContextMenu($event, child.data)">Sort</a>
-      </li>
-      <li>
-        <a href="#" data-id="remove" @click.prevent="knobContextMenu($event, child.data)">Remove</a>
-      </li>
+        <li><a href="#" data-id="add"
+                @click.prevent="knobContextMenu($event, child.data)">Add</a>
+        </li>
+        <li><a href="#" data-id="edit"
+                @click.prevent="knobContextMenu($event, child.data)">Edit</a>
+        </li>
+        <li><a href="#" data-id="sort"
+                @click.prevent="knobContextMenu($event, child.data)">Sort</a>
+        </li>
+        <li><a href="#" data-id="remove"
+                @click.prevent="knobContextMenu($event, child.data)">Remove</a>
+        </li>
       </template>
     </vue-context>
 
@@ -426,7 +422,6 @@ export default {
         .then((data) => {
           const svg = document.getElementById('svg-sprite');
           svg.innerHTML = data;
-          document.body.insertBefore(svg, document.body.childNodes[0]);
           const parser = (new DOMParser()).parseFromString(data, 'text/xml');
           const symbols = parser.getElementsByTagName('symbol');
           if (!symbols.length) {
