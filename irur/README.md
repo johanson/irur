@@ -44,15 +44,13 @@ Whether you prefer a dark theme for default light.
 
 ## Development
 
-Clone the repo, install npm dependencies, `npm run build` to build with webpack (or `npm run serve` for development), `node server.js` (`--dev` for development, don't forget to fill correct mqtt credentials in server.js) to start the server.
+Clone the repo, install npm dependencies. Install fabric3 (pip3 install fabric3). `fab -list` in the project dir for all the availible tasks.
+Or if you prefer npm scripts: `npm run build` to build with webpack (or `npm run serve` for development), `node server.js --dev` to start the server.
 
 ### Dependencies
 
 * Node.js
 * Express
-
-For Development
-
 * Vue-cli
 * Npm
 * Fabric3
