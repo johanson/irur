@@ -51,9 +51,10 @@ Or if you prefer npm scripts: `npm run build` to build with webpack (or `npm run
 
 * Node.js
 * Express
-* Vue-cli
-* Npm
-* Fabric3
+* Vue-cli (dev)
+* Npm (dev)
+* Fabric3 (dev)
+* Rsync (dev)
 
 # Credits
 
