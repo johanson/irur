@@ -9,8 +9,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "api": "node server.js --dev",
-    "bump": "bash -c 'bump $1 config.json' --"
+    "api": "node server.js --dev"
   },
   "dependencies": {
     "body-parser": "1.19.0",
