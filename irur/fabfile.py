@@ -24,7 +24,7 @@ rsync_extra_opts = ('--archive --compress --progress '
 @task
 @hosts(rsync_remote)
 def deploy():
-
+    """Builds the project, uploads it to your HA server and builds the Docker image"""
     with open('config.json', 'r+') as f:
         conf = json.load(f)
 
@@ -69,19 +69,23 @@ def deploy():
 
 @task
 def serve():
+    """Compiles and hot-reloads for development"""
     local('node_modules/@vue/cli-service/bin/vue-cli-service.js serve')
 
 
 @task
 def build():
+    """Compiles and minifies for production"""
     local('node_modules/@vue/cli-service/bin/vue-cli-service.js build')
 
 
 @task
 def lint():
+    """Lints and fixes files"""
     local('node_modules/@vue/cli-service/bin/vue-cli-service.js lint')
 
 
 @task
 def api():
+    """Starts a node server for backend api"""
     local('node server.js --dev')
