@@ -12,7 +12,7 @@ First, flash your ESP8266 board with Tasmota (tasmota-ir.bin) firmwire. All the 
 
 ### Home Assistant
 
-Install the addon, make sure you to configure correct MQTT server credentials and topics for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer](https://github.com/thomasnordquist/MQTT-Explorer) if you have problems figuring it out. Supports ingress and option to show in sidebar. Come with ~150 icons.
+Install the addon, make sure you to configure correct topic(s) for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer](https://github.com/thomasnordquist/MQTT-Explorer) if you have problems figuring it out. HA provides MQTT broker's credentials automatically. Supports ingress and an option to show in sidebar. Come with ~150 icons.
 
 ### Configuration
 
@@ -53,8 +53,9 @@ Clone the repo, install npm dependencies, `npm run build` to build with webpack 
 
 For Development
 
-* Vue CLI
+* Vue-cli
 * Npm
+* Fabric3
 
 # Credits
 
