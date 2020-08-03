@@ -593,9 +593,8 @@ export default {
     },
 
     getHostname() {
-      // Use hardcoded :6789 when developing
       if (process.env.NODE_ENV !== 'production') {
-        return 'http://localhost:8099/';
+        return `http://localhost:${process.env.VUE_APP_SERVER_PORT}/`;
       }
       return '';
     },

@@ -10,7 +10,9 @@ const path = require('path');
 const mqtt = require('mqtt');
 const { execSync } = require('child_process');
 
-const PORT = 8099;
+const { env } = process;
+require('dotenv').config();
+
 const flags = process.argv.slice(2)[0];
 let db = path.join('/data/db.json');
 const logger = path.join('scripts/logger.sh');
@@ -51,31 +53,29 @@ const log = {
 };
 
 function options() {
-  const { env } = process;
   if (flags === '--dev') {
     db = path.join(__dirname, 'test_db.json');
     log.info(`Using dev configuration and ${db} as a database`);
     return {
       mqttMatch: false,
       mqtt: {
-        host: '192.168.0.100',
-        port: 1883,
+        host: env.MQTT_HOST,
+        port: env.MQTT_PORT,
         protocol: 'mqtt',
-        username: 'mosqi',
-        password: 'mosqi',
+        username: env.MQTT_USERNAME,
+        password: env.MQTT_PASSWORD,
       },
-      hostname: 'addon_local:8099/',
-      topic_listen: 'irur/tele/RESULT',
-      topic_send: ['irur/cmnd/IRsend'],
-      dark_theme: true,
+      hostname: `${env.HOSTNAME}:${env.SERVER_PORT}/`,
+      topic_listen: env.MQTT_TOPIC_LISTEN,
+      topic_send: env.MQTT_TOPIC_SEND.split(', '),
+      dark_theme: env.DARK_THEME,
     };
   }
-  log.info('Getting MQTT configuration from HA');
   if (!fs.existsSync(db)) {
     fs.openSync(db, 'a');
   }
   const data = require('/data/options.json');
-  log.info(`Using ${db} as database`);
+  log.info(`MQTT configuration from HA, using ${db} as database`);
   return {
     mqttMatch: false,
     mqtt: {
@@ -85,7 +85,7 @@ function options() {
       username: env.MQTT_USER,
       password: env.MQTT_PASSWORD,
     },
-    hostname: `${env.HOSTNAME}:8099/`,
+    hostname: `${env.HOSTNAME}:${env.SERVER_PORT}/`,
     topic_listen: data.topic_listen,
     topic_send: data.topic_send,
     dark_theme: data.dark_theme,
@@ -190,6 +190,6 @@ client.on('offline', () => {
   log.error('MQTT server is offline');
 });
 
-app.listen(PORT, () => {
-  log.info(`Listening on port ${PORT}`);
+app.listen(env.SERVER_PORT, () => {
+  log.info(`Listening on port ${env.SERVER_PORT}`);
 });
