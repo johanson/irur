@@ -1,21 +1,21 @@
 # IRUR
 
-![IRUR logo](https://github.com/johanson/ha-addons/blob/master/irur/logo.png?raw=true) 
+![IRUR logo](https://github.com/johanson/ha-addons/blob/master/irur/logo.png?raw=true)
 
-Infrared Universal Remote webUI for Tasmota ESP8266 based devices over MQTT.  
+Infrared Universal Remote webUI for Tasmota ESP8266 based devices over MQTT.
 Provides a simple web UI to record and manage buttons.
 
 ---
 
 ## Installation
 
-First, flash your ESP8266 board with Tasmota (tasmota-ir.bin) firmwire. All the builds support common IR protocols but use tasmota-ir.bin for all available protocols provided by library IRremoteESP8266). Install IR emitter and receiver.
+First, flash your ESP8266 board with Tasmota (tasmota-ir.bin) firmware. All the builds support common IR protocols but use tasmota-ir.bin for all available protocols provided by IRremoteESP8266 library). Install your IR emitter and receiver and configure the right pins from Tasmota configuration (`irrecv` and `irsend` respectively).
 
 ![Example Tasmota config](https://github.com/johanson/ha-addons/blob/master/irur/screenshots/tasmota.png?raw=true)
 
 ### Home Assistant
 
-Install the addon, make sure you to configure correct topic(s) for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer](https://github.com/thomasnordquist/MQTT-Explorer) if you have problems figuring it out. HA provides MQTT broker's credentials automatically. Supports ingress and an option to show in sidebar. Come with ~150 icons.
+Install the add-on, make sure you to configure correct topic(s) for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer](https://github.com/thomasnordquist/MQTT-Explorer) if you have problems figuring it out. HA provides MQTT broker's credentials automatically. Supports ingress and an option to show in sidebar. Comes with around 150 icons, but you can also use text or emojis.
 
 ### Configuration
 
@@ -26,13 +26,13 @@ topic_send:
 dark_theme: false
 ```
 
-`topic_listen` (str)  
+`topic_listen` (str)
 MQTT topic for receiving IR codes
 
-`topic_send` (list)  
+`topic_send` (list)
 MQTT topic for sending IR codes.
 
-`dark_theme` (bool)  
+`dark_theme` (bool)
 Whether you prefer a dark theme for default light.
 
 ### Screenshots
@@ -47,8 +47,8 @@ Whether you prefer a dark theme for default light.
 
 ## Development
 
-Clone the repo, install npm dependencies. Install fabric3 (pip3 install fabric3). `fab -list` in the project dir for all the availible tasks.
-Or if you prefer npm scripts: `npm run build` to build with webpack (or `npm run serve` for development), `node server.js --dev` to start the server.
+Clone the repo, install npm dependencies. Install fabric3 (pip3 install fabric3) , do `fab -list` from terminal in the project dir for all the available tasks.
+If you prefer npm scripts: `npm run build` to build with webpack (or `npm run serve` for development), `node server.js --dev` to start the server.
 
 ### Dependencies
 
