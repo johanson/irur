@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.6
+
+- Appearance changes
+
 ## 0.4.5
 
 - Added undo function for deleting knobs or tabs (control + Z)
