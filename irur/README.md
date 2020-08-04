@@ -29,14 +29,20 @@ topic_send:
 dark_theme: false
 ```
 
-`topic_listen` (str)
+```
+topic_listen (str)
+```
 MQTT topic for receiving IR codes
 
-`topic_send` (list)
+```
+topic_send   (list)
+```
 MQTT topic for sending IR codes.
 
-`dark_theme` (bool)
-Whether you prefer a dark theme for default light.
+```
+dark_theme   (bool)
+```
+Set tp true if you prefer a dark theme for default light.
 
 ### Screenshots
 
