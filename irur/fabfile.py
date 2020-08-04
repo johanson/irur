@@ -24,7 +24,7 @@ rsync_extra_opts = ('--archive --compress --progress '
 @task
 @hosts(rsync_remote)
 def deploy():
-    """Builds the project, uploads it to your HA server and builds the Docker image"""
+    """Compiles and uploads the project to your HA server for Docker"""
     with open('config.json', 'r+') as f:
         conf = json.load(f)
 
