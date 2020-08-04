@@ -79,6 +79,8 @@ If you prefer npm scripts: `npm run build` to build with webpack (or `npm run se
 
 Icons made by Roundicons, Freepik, Pixel perfect, hirschwolf, Kiranshastry, Good Ware, Becris, srip, dmitri13, surang, Nikita Golubev, Linector, Icongeek26, Smashicons, photo3idea_studio, bqlqn from [www.flaticon.com](https://www.flaticon.com/ "Flaticon")
 
+---
+This project is licensed under the terms of the [MIT license][mit].
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
@@ -90,3 +92,4 @@ Icons made by Roundicons, Freepik, Pixel perfect, hirschwolf, Kiranshastry, Good
 [mqttexplorer]: https://github.com/thomasnordquist/MQTT-Explorer
 [screenshot_dark]: https://github.com/johanson/ha-addons/blob/master/irur/screenshots/screenshot-dark.png?raw=true
 [screenshot_light]: https://github.com/johanson/ha-addons/blob/master/irur/screenshots/screenshot-light.png?raw=true
+[mit]: https://github.com/johanson/ha-addons/blob/master/irur/LICENSE
