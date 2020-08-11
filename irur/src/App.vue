@@ -4,6 +4,8 @@
             @keydown.esc="mode = 'normal';
                         loader = false;">
 
+    <svg-sprite v-on:loaded="loader = false; glyphs = $event" />
+
     <vue-context ref="tabMenu">
       <template slot-scope="child">
         <li><a href="#" data-id="add"
@@ -34,8 +36,6 @@
         </li>
       </template>
     </vue-context>
-
-    <div id="svg-sprite" />
 
     <div id="loader" v-show="loader">
       <div class="icon" />
@@ -191,6 +191,7 @@
 import draggable from 'vuedraggable';
 import { Slider } from 'vue-color';
 import { VueContext } from 'vue-context';
+import SvgSprite from './components/SvgSprite.vue';
 import './assets/app.scss';
 
 export default {
@@ -198,6 +199,7 @@ export default {
   components: {
     draggable,
     VueContext,
+    'svg-sprite': SvgSprite,
     'slider-picker': Slider,
   },
   data() {
@@ -284,7 +286,6 @@ export default {
   },
   mounted() {
     this.load();
-    this.loadSVG();
   },
   methods: {
     load() {
@@ -422,32 +423,6 @@ export default {
     saveTab() {
       this.mode = 'normal';
       this.save();
-    },
-
-    loadSVG() {
-      const self = this;
-      fetch('icons/sprite.svg')
-        .then((resp) => {
-          if (!resp.ok) {
-            throw new Error(`API HTTP status ${resp.status}`);
-          }
-          return resp.text();
-        })
-        .then((data) => {
-          const svg = document.getElementById('svg-sprite');
-          svg.innerHTML = data;
-          const parser = (new DOMParser()).parseFromString(data, 'text/xml');
-          const symbols = parser.getElementsByTagName('symbol');
-          if (!symbols.length) {
-            throw new Error('Cannot generate svg icons');
-          }
-          this.loader = false;
-          for (let i = 0; i < symbols.length; i += 1) {
-            self.glyphs.push(symbols[i].getAttribute('id'));
-          }
-        }).catch((err) => {
-          this.$toast.error(String(err));
-        });
     },
 
     save() {
