@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.7
+
+- Fix color pciker when editing items
+
 ## 0.4.6
 
 - Appearance changes

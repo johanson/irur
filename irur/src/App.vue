@@ -259,7 +259,9 @@ export default {
     mode(e) {
       if (e === 'editor') {
         setTimeout(() => this.$refs.name.focus(), 500);
+        this.colors = { hex: this.saveData.color };
       } else if (e === 'add') {
+        this.colors = { hex: this.cssVar('--text') };
         this.saveData = {
           name: '',
           mqtt: '',
