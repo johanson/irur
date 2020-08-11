@@ -2,7 +2,7 @@
 
 ## 0.4.7
 
-- Fix color pciker when editing items
+- Fix color picker when editing items
 
 ## 0.4.6
 
