@@ -31,10 +31,10 @@ export default {
       const svg = document.getElementById('svg-sprite');
       const parser = (new DOMParser()).parseFromString(data, 'text/xml');
       const symbols = parser.getElementsByTagName('symbol');
-      svg.innerHTML = data;
       if (!symbols.length) {
         throw new Error('Cannot generate svg icons');
       }
+      svg.innerHTML = data;
       for (let i = 0; i < symbols.length; i += 1) {
         this.glyphs.push(symbols[i].getAttribute('id'));
       }
