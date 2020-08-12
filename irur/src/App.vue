@@ -1,10 +1,15 @@
 <template>
   <div id="app" tabindex="0"
-            v-bind:class="mode"
-            @keydown.esc="mode = 'normal';
-                        loader = false;">
+            :class="mode"
+            @keydown.esc="mode = 'normal'; loader = false;">
 
-    <svg-sprite v-on:loaded="loader = false; glyphs = $event" />
+    <svg-sprite v-on:loaded="glyphs = $event; loader = false;" />
+
+    <undo :isVisible="showUndo"
+                  :db="data"
+            v-on:undo="data = $event; save(); showUndo = false;"
+          v-on:timer="showUndo = false;"
+                  ref="undo"/>
 
     <vue-context ref="tabMenu">
       <template slot-scope="child">
@@ -65,7 +70,7 @@
           <span>Add new topics from HA configuration</span>
         </label>
         <div id="knob_mqtt_topic">
-          <p v-for="(item, index) in settings.topic_send" v-bind:key="index" >
+          <p v-for="(item, index) in settings.topic_send" :key="index" >
             <input type="radio" required
                :checked="settings.topic_send.length === 1"
                     :id="'mqttTopic-' + index"
@@ -92,7 +97,7 @@
         <div id="glyphs">
           <div class="glyph"
                v-for="item in filteredGlyphs"
-          v-bind:key="item"
+          :key="item"
           :data-name="item"
              :title="item"
           v-on:click="saveData.icon = item;"
@@ -117,15 +122,6 @@
       </form>
 
     </div>
-
-    <a href="#" ref="undoButton" id="undo"
-     @keydown.ctrl.90="undo()"
-     @click.prevent="undo()">
-     <span>Undo</span>
-      <svg class="icon">
-          <use xlink:href="#fast-forward"></use>
-      </svg>
-    </a>
 
     <div id="tabs">
       <div class="tab" v-for="(item, key) in data"
@@ -192,6 +188,7 @@ import draggable from 'vuedraggable';
 import { Slider } from 'vue-color';
 import { VueContext } from 'vue-context';
 import SvgSprite from './components/SvgSprite.vue';
+import UndoButton from './components/UndoButton.vue';
 import './assets/app.scss';
 
 export default {
@@ -200,6 +197,7 @@ export default {
     draggable,
     VueContext,
     'svg-sprite': SvgSprite,
+    undo: UndoButton,
     'slider-picker': Slider,
   },
   data() {
@@ -219,6 +217,7 @@ export default {
         },
       },
       dataHistory: {},
+      showUndo: false,
       colors: { hex: this.cssVar('--text') },
       saveData: {
         id: '',
@@ -374,7 +373,8 @@ export default {
         }
       }
       if (type === 'remove') {
-        this.undo(true);
+        this.$refs.undo.record();
+        this.showUndo = true;
         this.filteredData = this.filteredData.filter((x) => x.id !== id);
         this.save();
       }
@@ -414,7 +414,8 @@ export default {
           // Go back to default tab if deleting the active tab
           this.activeTab = 'default';
         }
-        this.undo(true);
+        this.$refs.undo.record();
+        this.showUndo = true;
         this.$delete(this.data, id);
         this.save();
       }
@@ -528,23 +529,6 @@ export default {
       if (['add-overlay', 'close'].includes(e.target.id)) {
         this.mode = 'normal';
         this.loader = false;
-      }
-    },
-
-    undo(set = false) {
-      const el = this.$refs.undoButton;
-      if (set) {
-        // get rid of references
-        this.dataHistory = JSON.parse(JSON.stringify(this.data));
-        el.classList = 'visible';
-        el.focus();
-        setTimeout(() => {
-          el.classList = '';
-        }, 5000);
-      } else {
-        el.classList = '';
-        this.data = { ...this.dataHistory };
-        this.save();
       }
     },
 
