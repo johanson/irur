@@ -18,4 +18,4 @@ Whether you prefer a dark theme for default light.
 
 ## Support
 
-In case you've found a bug, please [open an issue on GitHub](https://github.com/johanson/ha-addons/issues).
+In case you've found a bug, please [open an issue on GitHub](https://github.com/johanson/irur/issues).
