@@ -124,6 +124,8 @@
     </div>
 
     <tabs />
+    <editor />
+    <remote />
 
     <div id="tabs">
       <div class="tab" v-for="(item, key) in data"
@@ -192,6 +194,8 @@ import { VueContext } from 'vue-context';
 import SvgSprite from './components/SvgSprite.vue';
 import UndoButton from './components/UndoButton.vue';
 import Tabs from './components/Tabs.vue';
+import Remote from './components/Remote.vue';
+import Editor from './components/Editor.vue';
 import './assets/app.scss';
 
 export default {
@@ -203,6 +207,8 @@ export default {
     'svg-sprite': SvgSprite,
     undo: UndoButton,
     tabs: Tabs,
+    remote: Remote,
+    editor: Editor
   },
   data() {
     return {
@@ -220,9 +226,6 @@ export default {
           knobs: [],
         },
       },
-      dataHistory: {},
-      showUndo: false,
-      colors: { hex: this.cssVar('--text') },
       saveData: {
         id: '',
         name: '',
@@ -231,6 +234,8 @@ export default {
         icon: '',
         color: this.cssVar('--text'),
       },
+      showUndo: false,
+      colors: { hex: this.cssVar('--text') },
       listeningMqtt: false,
       settings: { topic_send: '' },
       api: {
