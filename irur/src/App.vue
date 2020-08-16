@@ -123,6 +123,8 @@
 
     </div>
 
+    <tabs />
+
     <div id="tabs">
       <div class="tab" v-for="(item, key) in data"
           @contextmenu.prevent="$refs.tabMenu.open($event, key)"
@@ -189,6 +191,7 @@ import { Slider } from 'vue-color';
 import { VueContext } from 'vue-context';
 import SvgSprite from './components/SvgSprite.vue';
 import UndoButton from './components/UndoButton.vue';
+import Tabs from './components/Tabs.vue';
 import './assets/app.scss';
 
 export default {
@@ -196,9 +199,10 @@ export default {
   components: {
     draggable,
     VueContext,
+    'slider-picker': Slider,
     'svg-sprite': SvgSprite,
     undo: UndoButton,
-    'slider-picker': Slider,
+    tabs: Tabs,
   },
   data() {
     return {
