@@ -87,9 +87,9 @@ This project is licensed under the terms of the [MIT license][mit].
 [armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
-[logo]: https://github.com/johanson/ha-addons/blob/master/irur/logo.png?raw=true
-[tasmoconf]: https://github.com/johanson/ha-addons/blob/master/irur/screenshots/tasmota.png?raw=true
+[logo]: https://github.com/johanson/irur/blob/master/irur/logo.png?raw=true
+[tasmoconf]: https://github.com/johanson/irur/blob/master/irur/screenshots/tasmota.png?raw=true
 [mqttexplorer]: https://github.com/thomasnordquist/MQTT-Explorer
-[screenshot_dark]: https://github.com/johanson/ha-addons/blob/master/irur/screenshots/screenshot-dark.png?raw=true
-[screenshot_light]: https://github.com/johanson/ha-addons/blob/master/irur/screenshots/screenshot-light.png?raw=true
-[mit]: https://github.com/johanson/ha-addons/blob/master/irur/LICENSE
+[screenshot_dark]: https://github.com/johanson/irur/blob/master/irur/screenshots/screenshot-dark.png?raw=true
+[screenshot_light]: https://github.com/johanson/irur/blob/master/irur/screenshots/screenshot-light.png?raw=true
+[mit]: https://github.com/johanson/irur/blob/master/irur/LICENSE
