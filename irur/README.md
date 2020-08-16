@@ -17,6 +17,12 @@ Flash your ESP8266 board with Tasmota (tasmota-ir.bin) firmware. All the builds 
 
 ### Home Assistant
 
+Supervisor ⇒ Add-on store ⇒ Click on the right-top menu ⇒ Add Repositories ⇒ https://github.com/johanson/irur ⇒ Add
+
+The repository should appear underneath the official and community add-ons.
+
+### Home Assistant
+
 Install the add-on, make sure you to configure correct topic(s) for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer][mqttexplorer] if you have problems figuring it out. HA provides MQTT broker's credentials automatically. Supports ingress and an option to show in sidebar. Comes with around 150 icons, but you can also use text or emojis.
 
 ### Configuration
