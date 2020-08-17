@@ -5,11 +5,11 @@
 
     <svg-sprite v-on:loaded="glyphs = $event; loader = false;" />
 
-    <undo :isVisible="showUndo"
-                  :db="data"
-            v-on:undo="data = $event; save(); showUndo = false;"
-          v-on:timer="showUndo = false;"
-                  ref="undo"/>
+    <undo :is-visible="showUndo"
+                :db="data"
+         v-on:undo="data = $event; save(); showUndo = false;"
+        v-on:timer="showUndo = false;"
+               ref="undo"/>
 
     <vue-context ref="tabMenu">
       <template slot-scope="child">
@@ -123,29 +123,17 @@
 
     </div>
 
-    <tabs />
+    <tabs :active-tab="activeTab"
+       v-on:switchTab="activeTab = $event;"
+         v-on:saveTab="saveTab($event)"
+       v-on:removeTab="removeTab($event)"
+      v-on:changeMode="mode = $event;"
+                :mode="mode"
+                :data="data" />
+    <!--
     <editor />
     <remote />
-
-    <div id="tabs">
-      <div class="tab" v-for="(item, key) in data"
-          @contextmenu.prevent="$refs.tabMenu.open($event, key)"
-          :class="{ active: activeTab === key }"
-        :data-id="key"
-            :key="key"
-      v-on:click="activeTab = key">
-        <input type="text"
-               v-if="mode === 'tab-rename' && activeTab === key"
-       v-model.trim="item.name"
-                :id="'menu-item-' + key"
-   v-on:keyup.enter="saveTab();"
-              @blur="(item.name === '') ? item.name = 'New' : item.name = item.name;
-              saveTab();">
-        <span v-else>
-          {{item.name}}
-        </span>
-      </div>
-    </div>
+    -->
 
     <draggable id="remote"
           v-model="filteredData"
@@ -191,24 +179,26 @@
 import draggable from 'vuedraggable';
 import { Slider } from 'vue-color';
 import { VueContext } from 'vue-context';
+import Helpers from './mixins/helpers';
 import SvgSprite from './components/SvgSprite.vue';
 import UndoButton from './components/UndoButton.vue';
 import Tabs from './components/Tabs.vue';
-import Remote from './components/Remote.vue';
-import Editor from './components/Editor.vue';
+// import Remote from './components/Remote.vue';
+// import Editor from './components/Editor.vue';
 import './assets/app.scss';
 
 export default {
   name: 'App',
+  mixins: [Helpers],
   components: {
     draggable,
     VueContext,
     'slider-picker': Slider,
     'svg-sprite': SvgSprite,
     undo: UndoButton,
-    tabs: Tabs,
-    remote: Remote,
-    editor: Editor
+    Tabs,
+    // Remote,
+    // Editor,
   },
   data() {
     return {
@@ -268,19 +258,19 @@ export default {
   watch: {
     mode(e) {
       if (e === 'editor') {
-        setTimeout(() => this.$refs.name.focus(), 500);
+        setTimeout(() => this.$refs.name.focus(), 50);
         this.colors = { hex: this.saveData.color };
       } else if (e === 'add') {
         this.colors = { hex: this.cssVar('--text') };
         this.saveData = {
           name: '',
           mqtt: '',
-          id: this.generateUID(),
+          id: this.genUID(),
           icon: '',
           color: this.cssVar('--text'),
           topic_send: this.saveData.topic_send,
         };
-        setTimeout(() => this.$refs.name.focus(), 500);
+        setTimeout(() => this.$refs.name.focus(), 50);
       }
     },
     colors(value) {
@@ -388,51 +378,9 @@ export default {
         this.save();
       }
     },
+
     changeMqttTopic(topic) {
       this.saveData.topic_send = topic;
-    },
-    tabContextMenu(e, id) {
-      const type = e.target.dataset.id;
-      if (type === 'rename') {
-        this.activeTab = id;
-        this.mode = 'tab-rename';
-        setTimeout(() => document.querySelector(`#menu-item-${id}`).focus(), 200);
-      }
-
-      if (type === 'add') {
-        const uid = this.generateUID();
-
-        this.data = {
-          ...this.data,
-          ...{
-            [uid]: {
-              name: 'New',
-              knobs: [],
-            },
-          },
-        };
-
-        this.activeTab = uid;
-        this.mode = 'tab-rename';
-        setTimeout(() => document.querySelector(`#menu-item-${uid}`).focus(), 200);
-        this.save();
-      }
-
-      if (type === 'remove' && id !== 'default') {
-        if (id === this.activeTab) {
-          // Go back to default tab if deleting the active tab
-          this.activeTab = 'default';
-        }
-        this.$refs.undo.record();
-        this.showUndo = true;
-        this.$delete(this.data, id);
-        this.save();
-      }
-    },
-
-    saveTab() {
-      this.mode = 'normal';
-      this.save();
     },
 
     save() {
@@ -541,6 +489,47 @@ export default {
       }
     },
 
+    cssVar(prop) {
+      return getComputedStyle(document.documentElement).getPropertyValue(prop);
+    },
+
+    saveTab(tab) {
+      // console.log(tab.id, tab.name);
+
+      // if (tab.id && tab.name) {} check that BOTH exist before
+      // if (!tab.id && !tab.name) { return false; }
+
+      let exists;
+      for (const prop in this.data) {
+        if (prop === tab.id) {
+          this.data[prop].name = tab.name;
+          this.save();
+          exists = true;
+          break;
+        }
+      }
+      // No match, create a new tab group
+      if (!exists) {
+        this.data = {
+          ...this.data,
+          ...{
+            [tab.id]: {
+              name: tab.name,
+              knobs: [],
+            },
+          },
+        };
+        this.save();
+      }
+    },
+
+    removeTab(id) {
+      this.$refs.undo.record();
+      this.showUndo = true;
+      this.$delete(this.data, id);
+      this.save();
+    },
+
     // Finds the correct index of an object
     // in array we want to modify
     findObjIndex(id) {
@@ -554,19 +543,12 @@ export default {
       return index;
     },
 
-    generateUID() {
-      return Math.random().toString(36).slice(-8);
-    },
-
-    cssVar(prop) {
-      return getComputedStyle(document.documentElement).getPropertyValue(prop);
-    },
-
     getHostname() {
-      if (process.env.NODE_ENV !== 'production') {
-        return `http://localhost:${process.env.VUE_APP_SERVER_PORT}/`;
+      let hostname = '';
+      if (process.env.NODE_ENV === 'development') {
+        hostname = `http://localhost:${process.env.VUE_APP_SERVER_PORT}/`;
       }
-      return '';
+      return hostname;
     },
   },
 };

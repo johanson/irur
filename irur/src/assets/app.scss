@@ -526,15 +526,6 @@ vue-context
     max-height: calc(100% - 50px);
     overflow-y: auto;
 
-    .default[data-id="delete"] {
-      color: rgba(0, 0, 0, 0.2);
-
-      &:hover {
-        background-color: $menu-bg;
-        cursor: default;
-      }
-    }
-
     >li {
       margin: 0;
       position: relative;
