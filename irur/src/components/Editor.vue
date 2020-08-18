@@ -1,19 +1,17 @@
 <template>
   <div>
+    <!-- Editor -->
   </div>
 </template>
 
 <script>
-import { VueContext } from 'vue-context';
 
 export default {
-  components: {
-    VueContext,
-  },
+  components: {},
   props: {},
-  data() {},
-  watch: {},
+  data() { return {}; },
   mounted() {},
+  watch: {},
   methods: {},
 };
 </script>

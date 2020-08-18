@@ -1,46 +1,14 @@
 <template>
-  <div id="app" tabindex="0"
-            :class="mode"
+  <div id="app" tabindex="0" ref="app" :class="mode"
             @keydown.esc="mode = 'normal'; loader = false;">
 
     <svg-sprite v-on:loaded="glyphs = $event; loader = false;" />
 
     <undo :is-visible="showUndo"
                 :db="data"
-         v-on:undo="data = $event; save(); showUndo = false;"
+         v-on:undo="data = $event; showUndo = false; save();"
         v-on:timer="showUndo = false;"
                ref="undo"/>
-
-    <vue-context ref="tabMenu">
-      <template slot-scope="child">
-        <li><a href="#" data-id="add"
-                 @click.prevent="tabContextMenu($event, child.data)">Add</a>
-        </li>
-        <li><a href="#" data-id="rename"
-                 @click.prevent="tabContextMenu($event, child.data)">Rename</a>
-        </li>
-        <li><a href="#" data-id="remove" :class="child.data"
-                 @click.prevent="tabContextMenu($event, child.data)">Remove</a>
-        </li>
-      </template>
-    </vue-context>
-
-    <vue-context ref="knobMenu">
-      <template slot-scope="child">
-        <li><a href="#" data-id="add"
-                @click.prevent="knobContextMenu($event, child.data)">Add</a>
-        </li>
-        <li><a href="#" data-id="edit"
-                @click.prevent="knobContextMenu($event, child.data)">Edit</a>
-        </li>
-        <li><a href="#" data-id="sort"
-                @click.prevent="knobContextMenu($event, child.data)">Sort</a>
-        </li>
-        <li><a href="#" data-id="remove"
-                @click.prevent="knobContextMenu($event, child.data)">Remove</a>
-        </li>
-      </template>
-    </vue-context>
 
     <div id="loader" v-show="loader">
       <div class="icon" />
@@ -124,81 +92,41 @@
     </div>
 
     <tabs :active-tab="activeTab"
-       v-on:switchTab="activeTab = $event;"
-         v-on:saveTab="saveTab($event)"
-       v-on:removeTab="removeTab($event)"
-      v-on:changeMode="mode = $event;"
+      v-on:switch-tab="activeTab = $event;"
+        v-on:save-tab="saveTab($event)"
+      v-on:remove-tab="removeTab($event)"
+     v-on:change-mode="mode = $event;"
                 :mode="mode"
                 :data="data" />
-    <!--
+
     <editor />
-    <remote />
-    -->
 
-    <draggable id="remote"
-          v-model="filteredData"
-        :disabled="(this.mode == 'sort') ? false : true"
-        draggable=".item"
-          @change="save">
-
-          <div class="item-add" slot="footer" draggable="false"
-          v-on:click="mode = 'add';">
-            <div class="glyph">
-              <svg class="icon">
-                <use xlink:href="#add"></use>
-              </svg>
-            </div>
-          </div>
-
-      <div class="item"
-      @contextmenu.prevent="$refs.knobMenu.open($event, el.id)"
-                      :key="el.id"
-                    :title="el.name"
-                v-on:click="sendIR(el.id);"
-                     v-for="el in filteredData">
-
-        <div class="glyph"
-        v-if="el.icon">
-          <svg class="icon" :style="'fill:' + el.color">
-            <use :xlink:href="'#' + el.icon"></use>
-          </svg>
-        </div>
-
-        <div :class="['no-icon len-' + el.name.length]"  :style="'color:' + el.color" v-else>
-          {{ el.name }}
-        </div>
-
-      </div>
-
-    </draggable>
+    <remote :db="data" :mode="mode" :active-tab="activeTab"
+          v-on:change-mode="mode = $event;" v-on:save-order="save()" />
 
   </div>
 </template>
 
 <script>
-import draggable from 'vuedraggable';
 import { Slider } from 'vue-color';
-import { VueContext } from 'vue-context';
-import Helpers from './mixins/helpers';
 import SvgSprite from './components/SvgSprite.vue';
-import UndoButton from './components/UndoButton.vue';
+import Undo from './components/Undo.vue';
 import Tabs from './components/Tabs.vue';
-// import Remote from './components/Remote.vue';
-// import Editor from './components/Editor.vue';
+import Remote from './components/Remote.vue';
+import Editor from './components/Editor.vue';
+import Helpers from './mixins/helpers';
 import './assets/app.scss';
 
 export default {
   name: 'App',
   mixins: [Helpers],
   components: {
-    draggable,
-    VueContext,
     'slider-picker': Slider,
-    'svg-sprite': SvgSprite,
-    undo: UndoButton,
+    SvgSprite,
+    Undo,
     Tabs,
-    // Remote,
-    // Editor,
+    Remote,
+    Editor,
   },
   data() {
     return {
@@ -245,14 +173,6 @@ export default {
       return this.glyphs.filter((x) => x.toLowerCase()
         .indexOf(this.saveData.icon.toLowerCase()) > -1);
     },
-    filteredData: {
-      get() {
-        return this.data[this.activeTab].knobs;
-      },
-      set(val) {
-        this.data[this.activeTab].knobs = val;
-      },
-    },
   },
 
   watch: {
@@ -273,18 +193,17 @@ export default {
         setTimeout(() => this.$refs.name.focus(), 50);
       }
     },
+
     colors(value) {
       this.saveData.color = value.hex;
     },
+
   },
-  filters: {
-    defaultValue(value) {
-      return (value === '') ? 'New' : value;
-    },
-  },
+
   mounted() {
     this.load();
   },
+
   methods: {
     load() {
       fetch(`${this.api.prefix}${this.api.load}`).then((resp) => {
@@ -294,7 +213,7 @@ export default {
         return resp.json();
       }).then((json) => {
         if (json.status === 'error') {
-          this.loadDefaultDB();
+          this.data = this.scaffoldDB();
         } else {
           this.data = json;
         }
@@ -318,69 +237,6 @@ export default {
       }).catch((err) => {
         this.$toast.error(String(err));
       });
-    },
-
-    loadDefaultDB() {
-      this.data = {
-        default: {
-          name: 'Default',
-          knobs: [
-            {
-              id: 'wn0gbd99',
-              name: 'Samsung Volume Up',
-              mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0E01F"}',
-              icon: 'up-arrow',
-              topic_send: '',
-            },
-            {
-              id: 'wt9u3yzj',
-              name: 'Samsung Volume Down',
-              mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0D02F"}',
-              icon: 'down-arrow',
-              topic_send: '',
-            },
-          ],
-        },
-      };
-    },
-
-    toggleManager() {
-      if (this.manager.active) {
-        this.mode = 'normal';
-        this.manager.text = 'Manager';
-      } else {
-        this.manager.text = 'Normal';
-        this.mode = 'normal';
-      }
-      this.manager.active = !this.manager.active;
-    },
-
-    knobContextMenu(e, id) {
-      const type = e.target.dataset.id;
-      if (type === 'add') {
-        this.mode = 'add';
-      }
-      if (type === 'edit') {
-        this.saveData = this.filteredData[this.findObjIndex(id)];
-        this.mode = 'editor';
-      }
-      if (type === 'sort') {
-        if (this.mode === 'sort') {
-          this.mode = 'normal';
-        } else {
-          this.mode = 'sort';
-        }
-      }
-      if (type === 'remove') {
-        this.$refs.undo.record();
-        this.showUndo = true;
-        this.filteredData = this.filteredData.filter((x) => x.id !== id);
-        this.save();
-      }
-    },
-
-    changeMqttTopic(topic) {
-      this.saveData.topic_send = topic;
     },
 
     save() {
@@ -494,32 +350,29 @@ export default {
     },
 
     saveTab(tab) {
-      // console.log(tab.id, tab.name);
-
-      // if (tab.id && tab.name) {} check that BOTH exist before
-      // if (!tab.id && !tab.name) { return false; }
-
-      let exists;
-      for (const prop in this.data) {
-        if (prop === tab.id) {
-          this.data[prop].name = tab.name;
-          this.save();
-          exists = true;
-          break;
+      if (tab.id && tab.name) {
+        let exists;
+        for (const prop in this.data) {
+          if (prop === tab.id) {
+            this.data[prop].name = tab.name;
+            this.save();
+            exists = true;
+            break;
+          }
         }
-      }
-      // No match, create a new tab group
-      if (!exists) {
-        this.data = {
-          ...this.data,
-          ...{
-            [tab.id]: {
-              name: tab.name,
-              knobs: [],
+        // No match, create a new tab group
+        if (!exists) {
+          this.data = {
+            ...this.data,
+            ...{
+              [tab.id]: {
+                name: tab.name,
+                knobs: [],
+              },
             },
-          },
-        };
-        this.save();
+          };
+          this.save();
+        }
       }
     },
 
@@ -528,27 +381,6 @@ export default {
       this.showUndo = true;
       this.$delete(this.data, id);
       this.save();
-    },
-
-    // Finds the correct index of an object
-    // in array we want to modify
-    findObjIndex(id) {
-      const idToCompareWith = (id) || this.saveData.id;
-      let index;
-      for (let i = 0; i < this.filteredData.length; i += 1) {
-        if (this.filteredData[i].id === idToCompareWith) {
-          index = i;
-        }
-      }
-      return index;
-    },
-
-    getHostname() {
-      let hostname = '';
-      if (process.env.NODE_ENV === 'development') {
-        hostname = `http://localhost:${process.env.VUE_APP_SERVER_PORT}/`;
-      }
-      return hostname;
     },
   },
 };
