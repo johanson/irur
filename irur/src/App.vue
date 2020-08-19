@@ -106,7 +106,6 @@ export default {
         this.settings = json;
         // Set a root attribute based on HA settings
         // Beaware of type conversions!
-        console.log(json.dark_theme);
         if (json.dark_theme.toLowerCase() === 'true') {
           const root = document.getElementsByTagName('html')[0];
           root.setAttribute('data-theme', 'dark');

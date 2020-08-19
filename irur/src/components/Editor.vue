@@ -4,11 +4,11 @@
     <form action="#" id="form1" autocomplete="off">
       <div id="close" @click="closeModal" />
 
-      <label for="knob_name">Name <span>Name for your knob</span></label>
+      <label for="knob_name">Name <span>Name for the knob</span></label>
       <input type="text" id="knob_name" ref="editorNameField" required v-model="saveData.name">
 
       <label for="knob_mqtt">MQTT response
-        <span>If no icon is selected, the name will be used</span>
+        <span>Tap listen and press a remote button towards IR receiver</span>
       </label>
       <div id="mqtt">
         <input type="text" id="knob_mqtt" required
@@ -42,13 +42,8 @@
       <input type="text" id="knob_icon" v-model="saveData.icon">
 
       <div id="glyphs">
-        <div class="glyph"
-              v-for="item in filteredIcons"
-               :key="item"
-         :data-name="item"
-             :title="item"
-         @click="saveData.icon = item;"
-             v-html="renderGlyph(item)" />
+        <div class="glyph" v-for="item in filteredIcons" v-html="renderGlyph(item)" :key="item"
+            :title="item" @click="saveData.icon = item;" />
       </div>
 
       <label for="knob_color">Color
@@ -64,6 +59,7 @@
         <strong>Esc</strong> to close
       </p>
     </form>
+
   </div>
 </template>
 
@@ -123,25 +119,25 @@ export default {
           setTimeout(() => this.$refs.editorNameField.focus(), 50);
           break;
         case 'editor':
-          // Check the radio button for the first MQTT topic if there's only one
-          if (this.settings.topic_send.length === 1) {
-            [this.saveData.topic_send] = this.settings.topic_send;
-          }
           this.colors = { hex: this.saveData.color };
           setTimeout(() => this.$refs.editorNameField.focus(), 50);
           break;
       }
     },
+    colors(value) {
+      this.saveData.color = value.hex;
+    },
   },
+
   computed: {
     filteredIcons() {
       return this.icons.filter((x) => x.toLowerCase()
         .indexOf(this.saveData.icon.toLowerCase()) > -1);
     },
   },
-  mounted() {
 
-  },
+  mounted() {},
+
   methods: {
     receiveIr() {
       const self = this;
@@ -197,7 +193,7 @@ export default {
     },
 
     renderGlyph(icon) {
-      return `<svg class="icon" style="fill: ${this.cssVar('--text')}">
+      return `<svg class="icon" style="fill: ${this.saveData.color}">
                 <use xlink:href="#${icon}"></use>
               </svg>`;
     },
@@ -207,6 +203,7 @@ export default {
         this.$emit('switch-mode', 'normal');
       }
     },
+
   },
 };
 </script>
