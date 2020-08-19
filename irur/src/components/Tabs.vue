@@ -11,15 +11,15 @@
 
     <div class="tab" v-for="(i, key) in data"
       @contextmenu.prevent="$refs.menu.open($event, key)"
-                v-on:click="switchTab(key)"
+                    @click="switchTab(key)"
                   :data-id="key"
                       :key="key"
                     :class="{ active: activeTab === key }">
       <input type="text" v-if="mode === 'tab-rename' && activeTab === key"
-              v-on:keyup.enter="$event.target.blur();"
+                 @keyup.enter="$event.target.blur();"
                       v-model="tabRename.name"
-                          :ref="(`input-${key}`)"
-                        @focus="tabRename.name = i.name"
+                         :ref="(`input-${key}`)"
+                       @focus="tabRename.name = i.name"
                         @blur="save-tab()">
       <span v-else>
         {{i.name}}
@@ -54,10 +54,12 @@ export default {
     switchTab(id) {
       this.$emit('switch-tab', id);
     },
+
     saveTab() {
       this.$emit('save-tab', this.tabRename);
-      this.$emit('change-mode', 'normal');
+      this.$emit('switch-mode', 'normal');
     },
+
     menu(e, id) {
       switch (e.target.dataset.name) {
         case 'add': {
@@ -68,13 +70,13 @@ export default {
           };
           this.$emit('save-tab', this.tabRename);
           this.$emit('switch-tab', uid);
-          this.$emit('change-mode', 'tab-rename');
+          this.$emit('switch-mode', 'tab-rename');
           setTimeout(() => this.$refs[`input-${uid}`][0].focus(), 50);
           break;
         }
         case 'rename':
           this.$emit('switch-tab', id);
-          this.$emit('change-mode', 'tab-rename');
+          this.$emit('switch-mode', 'tab-rename');
           this.tabRename.id = id;
           setTimeout(() => this.$refs[`input-${id}`][0].focus(), 50);
           break;

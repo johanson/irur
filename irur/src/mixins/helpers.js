@@ -12,6 +12,10 @@ export default {
       return hostname;
     },
 
+    cssVar(prop) {
+      return getComputedStyle(document.documentElement).getPropertyValue(prop);
+    },
+
     // Finds the correct index of an object
     // in array we want to modify
     findObjIndex(id) {

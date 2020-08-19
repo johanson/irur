@@ -13,14 +13,8 @@
 <script>
 export default {
   props: {
-    db: {
-      type: Object,
-      required: true,
-    },
-    isVisible: {
-      type: Boolean,
-      required: true,
-    },
+    db: { type: Object, required: true },
+    isVisible: { type: Boolean, required: true },
   },
   data() {
     return {

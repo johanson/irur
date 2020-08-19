@@ -16,5 +16,6 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'guard-for-in': 'off',
     'default-case': 'off',
+    'no-duplicate-case': 'off'
   },
 };
