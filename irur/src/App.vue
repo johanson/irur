@@ -93,6 +93,7 @@ export default {
       }).then((json) => {
         if (json.status === 'error') {
           this.db = this.scaffoldDB();
+          this.sync();
         } else {
           this.db = json;
         }
@@ -111,8 +112,9 @@ export default {
       }).then((json) => {
         this.options.settings = json;
         // Set a root attribute based on HA settings
-        // Beaware of type conversions!
-        if (json.dark_theme.toLowerCase() === 'true') {
+        // Beaware of type conversions,
+        // convert to string for dotenv value while developing locally
+        if (String(json.dark_theme).toLowerCase() === 'true') {
           const root = document.getElementsByTagName('html')[0];
           root.setAttribute('data-theme', 'dark');
         }
