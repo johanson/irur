@@ -9,9 +9,11 @@ export default {
       glyphs: [],
     };
   },
+
   mounted() {
     this.load();
   },
+
   methods: {
     load() {
       fetch('icons/sprite.svg')
@@ -27,6 +29,7 @@ export default {
           this.$toast.error(String(err));
         });
     },
+
     parse(data) {
       const svg = document.getElementById('svg-sprite');
       const parser = (new DOMParser()).parseFromString(data, 'text/xml');
@@ -45,7 +48,7 @@ export default {
 </script>
 
 <style>
-  #svg-sprite {
-    display: none;
-  }
+#svg-sprite {
+  display: none;
+}
 </style>

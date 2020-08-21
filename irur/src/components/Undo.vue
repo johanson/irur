@@ -1,5 +1,5 @@
 <template>
-  <a href="#" v-show="is_visible"
+  <a href="#"
     @keydown.ctrl.90="undo"
       @click.prevent="undo"
                 ref="undoButton">
@@ -14,31 +14,30 @@
 export default {
   props: {
     db: { type: Object, required: true },
-    isVisible: { type: Boolean, required: true },
   },
+
   data() {
     return {
-      is_visible: this.isVisible,
       db_history: {},
     };
   },
-  watch: {
-    isVisible() {
-      this.is_visible = this.isVisible;
-      this.timer();
-    },
-  },
+
   mounted() {
     this.$refs.undoButton.focus();
   },
+
   methods: {
     undo() {
       this.$emit('undo', this.db_history);
     },
+
     record() {
       // get rid of references
       this.db_history = JSON.parse(JSON.stringify(this.db));
+      this.timer();
+      this.$emit('show');
     },
+
     timer() {
       setTimeout(() => {
         this.$emit('timer');

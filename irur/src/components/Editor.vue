@@ -1,62 +1,62 @@
 <template>
-  <div id="add-overlay" @click="closeModal" @keydown.ctrl.shift.83="submitForm">
+  <div id="add-overlay" @click="closeModal($event)">
 
-    <form action="#" id="form1" autocomplete="off">
-      <div id="close" @click="closeModal" />
+    <form action="#" id="form1" autocomplete="off" @submit="validate()"
+          @keydown.esc="closeModal($event, true)">
+      <div id="close" @click="closeModal($event)" />
 
       <label for="knob_name">Name <span>Name for the knob</span></label>
-      <input type="text" id="knob_name" ref="editorNameField" required v-model="saveData.name">
+      <input type="text" id="knob_name" ref="editorNameField" required v-model="knobSaveData.name">
 
       <label for="knob_mqtt">MQTT response
         <span>Tap listen and press a remote button towards IR receiver</span>
       </label>
       <div id="mqtt">
         <input type="text" id="knob_mqtt" required
-            v-model="saveData.mqtt">
-        <button :disabled="listeningMqtt"
-        @click.prevent="receiveIR">Listen</button>
+            v-model="knobSaveData.mqtt">
+        <button type="button" @click.prevent="recordIR()">Listen</button>
       </div>
 
       <label for="knob_mqtt_topic">MQTT topic
         <span>Add new topics from HA configuration</span>
       </label>
       <div id="knob_mqtt_topic">
-        <p v-for="(item, index) in settings.topic_send" :key="index">
+        <p v-for="(item, index) in options.settings.topic_send" :key="index">
           <input type="radio" required
                  :ref="(`mqtt-checkbox-${index}`)"
                   :id="(`mqtt-label-${index}`)"
                :value="item"
-              v-model="saveData.topic_send">
+              v-model="knobSaveData.topic_send">
           <label :for="(`mqtt-label-${index}`)">{{ item }}</label>
         </p>
       </div>
 
       <label for="knob_id">Unique id
-        <span class="mono">$ curl {{settings.hostname}}{{api.send}}/{{saveData.id}}</span>
+        <span class="mono">
+          $ curl {{options.settings.hostname}}{{options.api.send}}/{{knobSaveData.id}}
+        </span>
       </label>
-      <input type="text" id="knob_id" required readonly v-model="saveData.id">
+      <input type="text" id="knob_id" required readonly v-model="knobSaveData.id">
 
       <label for="knob_icon">Icon
         <span>If no icon is selected, the name is being used</span>
       </label>
-      <input type="text" id="knob_icon" v-model="saveData.icon">
-
+      <input type="text" id="knob_icon" ref="icon" v-model="knobSaveData.icon">
       <div id="glyphs">
-        <div class="glyph" v-for="item in filteredIcons" v-html="renderGlyph(item)" :key="item"
-            :title="item" @click="saveData.icon = item;" />
+        <div class="glyph" v-for="item in filteredIcons" v-html="renderIcon(item)" :key="item"
+             :title="item" @click="knobSaveData.icon = item; $refs.icon.focus()" />
       </div>
 
       <label for="knob_color">Color
         <span>Color for the icon. Leave blank for default that depends on the parent theme.</span>
       </label>
-      <input type="text" id="knob_color" v-model="saveData.color">
+      <input type="text" id="knob_color" v-model="knobSaveData.color">
       <slider-picker v-model="colors"></slider-picker>
 
-      <button form="form1" @click.prevent="submitForm">Save</button>
+      <button form="form1" @click.prevent="validate()">Save</button>
 
       <p class="keybinds">
-        <strong>Control+Shift+S</strong> to save,
-        <strong>Esc</strong> to close
+        <strong>Enter</strong> to save, <strong>Esc</strong> to close
       </p>
     </form>
 
@@ -73,15 +73,54 @@ export default {
     'slider-picker': Slider,
   },
   props: {
-    iconList: { type: Array, required: true },
-    settings: { type: Object, required: true },
-    api: { type: Object, required: true },
-    mode: { type: String, required: true },
+    db: { type: Object, required: true },
+    layout: { type: Object, required: true },
+    options: { type: Object, required: true },
+  },
+
+  watch: {
+    layout: {
+      deep: true,
+      handler(old, value) {
+        if (value.mode === 'add') {
+          this.colors = { hex: this.cssVar('--text') };
+          this.knobSaveData = {
+            name: '',
+            mqtt: '',
+            id: this.genUID(),
+            icon: '',
+            color: this.cssVar('--text'),
+            topic_send: this.options.settings.topic_send,
+          };
+          // Check the radio button for the first MQTT topic if there's only one
+          if (this.options.settings.topic_send.length === 1) {
+            [this.knobSaveData.topic_send] = this.options.settings.topic_send;
+          }
+          setTimeout(() => this.$refs.editorNameField.focus(), 50);
+        }
+
+        if (value.mode === 'edit') {
+          // get rid of references
+          const dat = JSON.parse(JSON.stringify(this.db[this.layout.activeTab]
+            .knobs[this.layout.activeEdit.index]));
+          this.knobSaveData = dat;
+          if (this.knobSaveData.color === undefined) {
+            this.knobSaveData.color = this.cssVar('--text');
+          }
+          this.colors = { hex: this.knobSaveData.color };
+          setTimeout(() => this.$refs.editorNameField.focus(), 50);
+        }
+      },
+    },
+
+    colors(value) {
+      this.knobSaveData.color = value.hex;
+    },
   },
 
   data() {
     return {
-      saveData: {
+      knobSaveData: {
         id: '',
         name: '',
         mqtt: '',
@@ -90,58 +129,26 @@ export default {
         color: this.cssVar('--text'),
       },
       colors: { hex: this.cssVar('--text') },
-      listeningMqtt: false,
       icons: [],
     };
   },
 
-  watch: {
-    iconList() {
-      this.icons = this.iconList;
-    },
-
-    mode(e) {
-      switch (e) {
-        case 'add':
-          this.colors = { hex: this.cssVar('--text') };
-          this.saveData = {
-            name: '',
-            mqtt: '',
-            id: this.genUID(),
-            icon: '',
-            color: this.cssVar('--text'),
-            topic_send: this.saveData.topic_send,
-          };
-          // Check the radio button for the first MQTT topic if there's only one
-          if (this.settings.topic_send.length === 1) {
-            [this.saveData.topic_send] = this.settings.topic_send;
-          }
-          setTimeout(() => this.$refs.editorNameField.focus(), 50);
-          break;
-        case 'editor':
-          this.colors = { hex: this.saveData.color };
-          setTimeout(() => this.$refs.editorNameField.focus(), 50);
-          break;
-      }
-    },
-    colors(value) {
-      this.saveData.color = value.hex;
-    },
-  },
-
   computed: {
     filteredIcons() {
-      return this.icons.filter((x) => x.toLowerCase()
-        .indexOf(this.saveData.icon.toLowerCase()) > -1);
+      return this.layout.icons.filter((x) => x.toLowerCase()
+        .indexOf(this.knobSaveData.icon.toLowerCase()) > -1);
     },
   },
 
-  mounted() {},
-
   methods: {
-    receiveIr() {
+    save() {
+      this.$emit('edit', this.knobSaveData);
+      this.$emit('switch-mode', { mode: 'normal' });
+    },
+
+    recordIR() {
       const self = this;
-      this.loader = true;
+      this.$emit('loading', true);
       const mqttTimeout = 5;
       const controller = new AbortController();
 
@@ -150,12 +157,12 @@ export default {
       }, (mqttTimeout * 1000));
 
       function flip() {
-        self.listeningMqtt = false;
-        self.loader = false;
+        self.$emit('loading', false);
         clearTimeout(mqttListeningTimeout);
       }
 
-      fetch(`${this.api.prefix}${this.api.receive}`, { signal: controller.signal })
+      fetch(`${this.options.api.prefix}${this.options.api.receive}`,
+        { signal: controller.signal })
         .then((resp) => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
@@ -163,7 +170,7 @@ export default {
           return resp.json();
         }).then((json) => {
           flip();
-          self.saveData.mqtt = json.mqtt;
+          self.knobSaveData.mqtt = json.mqtt;
           this.$toast.info('Ir code received');
         }).catch((err) => {
           flip();
@@ -175,35 +182,28 @@ export default {
         });
     },
 
-    submitForm() {
-      const dat = this.saveData;
+    validate() {
+      const dat = this.knobSaveData;
       const required = [dat.name, dat.mqtt, dat.id, dat.topic_send];
       if (required.some((x) => x === '' || x === undefined)) {
         this.$toast.error('Name, id, mqtt and topic required');
       } else {
         this.save();
-        // Leave the state in edit mode when making changes,
-        // not adding new knobs
-        if (this.mode === 'editor') {
-          this.mode = 'edit';
-        } else {
-          this.mode = 'normal';
-        }
+        this.mode = 'normal';
       }
     },
 
-    renderGlyph(icon) {
-      return `<svg class="icon" style="fill: ${this.saveData.color}">
+    renderIcon(icon) {
+      return `<svg class="icon" style="fill: ${this.knobSaveData.color}">
                 <use xlink:href="#${icon}"></use>
               </svg>`;
     },
 
-    closeModal(e) {
-      if (['add-overlay', 'close'].includes(e.target.id)) {
-        this.$emit('switch-mode', 'normal');
+    closeModal(e, force) {
+      if (['add-overlay', 'close'].includes(e.target.id) || force) {
+        this.$emit('switch-mode', { mode: 'normal' });
       }
     },
-
   },
 };
 </script>
@@ -222,7 +222,7 @@ export default {
   align-items: flex-start;
 
   .add &,
-  .editor & {
+  .edit & {
     display: flex;
   }
 

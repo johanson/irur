@@ -2,27 +2,21 @@
   <div id="tabs">
     <vue-context ref="menu">
       <template slot-scope="child">
-        <li><a href="#" data-name="add" @click.prevent="menu($event, child.data)">Add</a></li>
-        <li><a href="#" data-name="rename" @click.prevent="menu($event, child.data)">Rename</a></li>
-        <li><a href="#" data-name="remove" @click.prevent="menu($event, child.data)"
+        <li><a data-name="add" @click.prevent="menu($event, child.data)">Add</a></li>
+        <li><a data-name="rename" @click.prevent="menu($event, child.data)">Rename</a></li>
+        <li><a data-name="remove" @click.prevent="menu($event, child.data)"
                v-if="child.data !== 'default'" >Remove</a></li>
       </template>
     </vue-context>
 
-    <div class="tab" v-for="(i, key) in data"
-      @contextmenu.prevent="$refs.menu.open($event, key)"
-                    @click="switchTab(key)"
-                  :data-id="key"
-                      :key="key"
-                    :class="{ active: activeTab === key }">
-      <input type="text" v-if="mode === 'tab-rename' && activeTab === key"
-                 @keyup.enter="$event.target.blur();"
-                      v-model="tabRename.name"
-                         :ref="(`input-${key}`)"
-                       @focus="tabRename.name = i.name"
-                        @blur="save-tab()">
+    <div class="tab" v-for="(item, key) in db" @contextmenu.prevent="$refs.menu.open($event, key)"
+        :key="key" :data-id="key" @click="switchTab(key)"
+        :class="{ active: layout.activeTab === key }" >
+      <input type="text" v-if="layout.mode === 'tab-rename' && layout.activeTab === key"
+             v-model="tabSaveData.name" :ref="(`tab-${key}`)" @blur="saveTab()"
+             @focus="tabSaveData.name = item.name" @keyup.enter="$event.target.blur()">
       <span v-else>
-        {{i.name}}
+        {{item.name}}
       </span>
     </div>
   </div>
@@ -38,62 +32,62 @@ export default {
     VueContext,
   },
   props: {
-    activeTab: { type: String, required: true },
-    data: { type: Object, required: true },
-    mode: { type: String, required: true },
+    db: { type: Object, required: true },
+    layout: { type: Object, required: true },
   },
+
   data() {
     return {
-      tabRename: {
+      tabSaveData: {
         id: '',
         name: '',
       },
     };
   },
+
   methods: {
     switchTab(id) {
       this.$emit('switch-tab', id);
     },
 
     saveTab() {
-      this.$emit('save-tab', this.tabRename);
-      this.$emit('switch-mode', 'normal');
+      this.$emit('save', this.tabSaveData);
+      this.$emit('switch-mode', { mode: 'normal' });
     },
 
     menu(e, id) {
       switch (e.target.dataset.name) {
         case 'add': {
           const uid = this.genUID();
-          this.tabRename = {
+          this.tabSaveData = {
             name: 'New',
             id: uid,
           };
-          this.$emit('save-tab', this.tabRename);
+          this.$emit('save', this.tabSaveData);
           this.$emit('switch-tab', uid);
-          this.$emit('switch-mode', 'tab-rename');
-          setTimeout(() => this.$refs[`input-${uid}`][0].focus(), 50);
+          this.$emit('switch-mode', { mode: 'tab-rename' });
+          setTimeout(() => { this.$refs[`tab-${uid}`][0].focus(); }, 50);
           break;
         }
         case 'rename':
+          this.tabSaveData.id = id;
           this.$emit('switch-tab', id);
-          this.$emit('switch-mode', 'tab-rename');
-          this.tabRename.id = id;
-          setTimeout(() => this.$refs[`input-${id}`][0].focus(), 50);
+          this.$emit('switch-mode', { mode: 'tab-rename' });
+          setTimeout(() => this.$refs[`tab-${id}`][0].focus(), 50);
           break;
         case 'remove':
-          if (id === this.activeTab) {
+          if (id === this.layout.activeTab) {
             // Go back to default tab if deleting the active tab
             this.$emit('switch-tab', 'default');
           }
-          this.$emit('remove-tab', id);
+          this.$emit('remove', id);
       }
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss">
 #tabs {
   border-bottom: 1px solid var(--text);
   user-select: none;

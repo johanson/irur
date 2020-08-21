@@ -1,32 +1,26 @@
 <template>
-  <div id="app" tabindex="0" ref="app" :class="mode"
-            @keydown.esc="mode = 'normal'; loader = false;">
+  <div id="app" tabindex="0" ref="app" :class="layout.mode">
 
-    <svg-sprite @loaded="icons = $event; loader = false;" />
+    <svg-sprite @loaded="layout.icons = $event; layout.showLoader = false" />
 
-    <undo :is-visible="showUndo"
-                  :db="data"
-                @undo="data = $event; showUndo = false; save();"
-               @timer="showUndo = false;"
-                  ref="undo"/>
+    <undo ref="undo" :db="db" v-show="layout.showUndo"
+          @undo="db = $event; sync()" @show="layout.showUndo = true"
+          @timer="layout.showUndo = false" @click.native="layout.showUndo = false"/>
 
-    <div id="loader" v-show="loader">
+    <div id="loader" v-show="layout.showLoader">
       <div class="icon" />
     </div>
 
-    <editor :settings="settings" :api="api" :icon-list="icons" :mode="mode"
-                  :if="mode === 'add' || mode === 'editor'" @switch-mode="mode = $event;" />
+    <editor :db="db" :layout="layout" :options="options"
+            @switch-mode="switchMode($event)" @edit="editKnob($event)"
+            @loading="layout.showLoader = $event" />
 
-    <tabs :active-tab="activeTab"
-          @switch-tab="activeTab = $event;"
-            @save-tab="saveTab($event)"
-          @remove-tab="removeTab($event)"
-         @switch-mode="mode = $event;"
-                :mode="mode"
-                :data="data" />
+    <tabs :db="db" :layout="layout"
+          @switch-tab="layout.activeTab = $event" @switch-mode="switchMode($event)"
+          @save="saveTab($event)" @remove="removeTab($event)"/>
 
-    <remote :db="data" :mode="mode" :active-tab="activeTab"
-          @switch-mode="mode = $event; loader = false;" @save-order="save()" />
+    <remote :db="db" :layout="layout" :options="options" @sort="sync()"
+            @remove="removeKnob()" @switch-mode="switchMode($event)" />
 
   </div>
 </template>
@@ -53,57 +47,69 @@ export default {
 
   data() {
     return {
-      mode: 'normal',
-      loader: true,
-      activeTab: 'default',
-      data: {
+      layout: {
+        mode: 'normal',
+        showLoader: true,
+        showUndo: false,
+        activeTab: 'default',
+        activeEdit: {},
+        icons: [],
+      },
+      options: {
+        api: {
+          prefix: `${this.getHostname()}api/`,
+          receive: 'ir/receive',
+          send: 'ir/send',
+          save: 'db/save',
+          load: 'db/load',
+          settings: 'settings',
+        },
+        settings: {
+          topic_send: '',
+        },
+      },
+      db: {
         default: {
           name: 'Default',
           knobs: [],
         },
       },
-      icons: [],
-      showUndo: false,
-      settings: { topic_send: '' },
-      api: {
-        prefix: `${this.getHostname()}api/`,
-        receive: 'ir/receive',
-        send: 'ir/send',
-        save: 'db/save',
-        load: 'db/load',
-        settings: 'settings',
-      },
     };
   },
 
   mounted() {
-    this.load();
+    this.loadDatabase();
+    this.loadSettings();
   },
 
   methods: {
-    load() {
-      fetch(`${this.api.prefix}${this.api.load}`).then((resp) => {
+    loadDatabase() {
+      const api = this.options.api.prefix;
+      fetch(`${api}${this.options.api.load}`).then((resp) => {
         if (!resp.ok) {
           throw new Error(`API HTTP status ${resp.status}`);
         }
         return resp.json();
       }).then((json) => {
         if (json.status === 'error') {
-          this.data = this.scaffoldDB();
+          this.db = this.scaffoldDB();
         } else {
-          this.data = json;
+          this.db = json;
         }
       }).catch((err) => {
         this.$toast.error(String(err));
       });
+    },
 
-      fetch(`${this.api.prefix}${this.api.settings}`).then((resp) => {
+    loadSettings() {
+      const api = this.options.api.prefix;
+      fetch(`${api}${this.options.api.settings}`).then((resp) => {
         if (!resp.ok) {
           throw new Error(`API HTTP status ${resp.status}`);
         }
         return resp.json();
       }).then((json) => {
-        this.settings = json;
+        this.options.settings = json;
         // Set a root attribute based on HA settings
         // Beaware of type conversions!
         if (json.dark_theme.toLowerCase() === 'true') {
@@ -115,51 +121,61 @@ export default {
       });
     },
 
-    // saveKnob, saveTab, saveOrder?
+    switchMode(o) {
+      const { mode, id, index } = o;
+      this.layout.mode = mode;
+      this.layout.activeEdit = { id, index };
+      if (this.layout.mode === 'normal') this.loader = false;
+    },
 
-    save() {
-      if (this.mode === 'editor') {
-        this.filteredData[this.findObjIndex()] = ({
-          id: this.saveData.id,
-          name: this.saveData.name,
-          mqtt: this.saveData.mqtt,
-          topic_send: this.saveData.topic_send,
-          icon: this.saveData.icon,
-          color: this.saveData.color,
-        });
-      } else if (this.mode === 'add') {
-        this.filteredData.push(this.saveData);
-      }
-
-      fetch(`${this.api.prefix}${this.api.save}`, {
+    sync() {
+      const api = this.options.api.prefix;
+      fetch(`${api}${this.options.api.save}`, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify(this.data),
+        body: JSON.stringify(this.db),
       }).then((resp) => {
+        this.layout.mode = 'normal';
         if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
       }).catch((err) => {
         this.$toast.error(String(err));
       });
     },
 
+    editKnob(data) {
+      if (this.layout.mode === 'edit') {
+        this.db[this.layout.activeTab].knobs[this.layout.activeEdit.index] = data;
+      } else if (this.layout.mode === 'add') {
+        this.db[this.layout.activeTab].knobs.push(data);
+      }
+      this.sync();
+    },
+
+    removeKnob() {
+      this.$refs.undo.record();
+      const { index } = this.layout.activeEdit;
+      this.$delete(this.db[this.layout.activeTab].knobs, index);
+      this.layout.mode = 'normal';
+      this.sync();
+    },
+
     saveTab(tab) {
       if (tab.id && tab.name) {
         let exists;
-        for (const prop in this.data) {
+        for (const prop in this.db) {
           if (prop === tab.id) {
-            this.data[prop].name = tab.name;
-            this.save();
+            this.db[prop].name = tab.name;
             exists = true;
             break;
           }
         }
         // No match, create a new tab group
         if (!exists) {
-          this.data = {
-            ...this.data,
+          this.db = {
+            ...this.db,
             ...{
               [tab.id]: {
                 name: tab.name,
@@ -167,16 +183,16 @@ export default {
               },
             },
           };
-          this.save();
         }
       }
+      this.sync();
     },
 
     removeTab(id) {
       this.$refs.undo.record();
-      this.showUndo = true;
-      this.$delete(this.data, id);
-      this.save();
+      this.$delete(this.db, id);
+      this.layout.mode = 'normal';
+      this.sync();
     },
   },
 };

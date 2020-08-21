@@ -16,19 +16,6 @@ export default {
       return getComputedStyle(document.documentElement).getPropertyValue(prop);
     },
 
-    // Finds the correct index of an object
-    // in array we want to modify
-    findObjIndex(id) {
-      const idToCompareWith = (id) || this.saveData.id;
-      let index;
-      for (let i = 0; i < this.filteredData.length; i += 1) {
-        if (this.filteredData[i].id === idToCompareWith) {
-          index = i;
-        }
-      }
-      return index;
-    },
-
     scaffoldDB() {
       return {
         default: {

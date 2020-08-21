@@ -9,11 +9,11 @@
       </template>
     </vue-context>
 
-  <draggable id="remote" v-model="filteredData"
-      draggable=".item" @change="$emit('save-order');"
-      :disabled="(this.mode == 'sort') ? false : true">
+  <draggable id="remote" v-model="filteredDB" draggable=".item" @change="$emit('sort')"
+             :disabled="(this.layout.mode == 'sort') ? false : true">
 
-      <div class="add" slot="footer" draggable="false" @click="$emit('switch-mode', 'add');">
+      <div class="add" slot="footer" draggable="false"
+          @click="$emit('switch-mode', { mode: 'add' })">
         <div class="glyph">
           <svg class="icon">
             <use xlink:href="#add"></use>
@@ -21,8 +21,8 @@
         </div>
       </div>
 
-      <div class="item" v-for="el in filteredData" @click="sendIr(el.id);" :key="el.id"
-         @contextmenu.prevent="$refs.menu.open($event, el.id)" :title="el.name">
+      <div class="item" v-for="(el, index) in filteredDB" @click="sendIr(el.id);" :key="el.id"
+      @contextmenu.prevent="$refs.menu.open($event, {id: el.id, index})" :title="el.name">
 
       <div v-if="el.icon" class="glyph">
         <svg class="icon" :style="(`fill: ${el.color};`)">
@@ -36,7 +36,6 @@
 
     </div>
   </draggable>
-
   </div>
 </template>
 
@@ -49,11 +48,16 @@ export default {
     draggable,
     VueContext,
   },
-
   props: {
     db: { type: Object, required: true },
-    activeTab: { type: String, required: true },
-    mode: { type: String, required: true },
+    layout: { type: Object, required: true },
+    options: { type: Object, required: true },
+  },
+
+  watch: {
+    db() {
+      this.data = this.db;
+    },
   },
 
   data() {
@@ -68,53 +72,28 @@ export default {
   },
 
   computed: {
-    filteredData: {
+    filteredDB: {
       get() {
-        return this.data[this.activeTab].knobs;
+        return this.data[this.layout.activeTab].knobs;
       },
       set(val) {
-        this.data[this.activeTab].knobs = val;
+        this.data[this.layout.activeTab].knobs = val;
       },
-    },
-  },
-
-  mounted() {
-  },
-
-  watch: {
-    db() {
-      this.data = this.db;
     },
   },
 
   methods: {
-    menu(e, id) {
-      switch (e.target.dataset.id) {
-        case 'add':
-          this.$emit('switch-mode', 'add');
-          break;
-        case 'edit':
-          this.$emit('switch-mode', 'editor');
-          break;
-        case 'sort':
-          this.$emit('switch-mode', 'sort');
-          break;
-        case 'remove':
-          console.log(id);
-          // this.$refs.undo.record();
-          // this.showUndo = true;
-          // this.filteredData = this.filteredData.filter((x) => x.id !== id);
-          // this.save();
-          break;
+    menu(e, knob) {
+      const mode = e.target.dataset.id;
+      this.$emit('switch-mode', { mode, id: knob.id, index: knob.index });
+      if (mode === 'remove') {
+        this.$emit('remove');
       }
     },
 
-    save() {
-      console.log('save!');
-    },
-
     sendIr(id) {
-      fetch(`${this.api.prefix}${this.api.send}/${id}`)
+      const api = this.options.api.prefix;
+      fetch(`${api}${this.options.api.send}/${id}`)
         .then((resp) => {
           if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
         }).then(() => {
@@ -128,7 +107,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #remote {
   display: flex;
   flex-wrap: wrap;
