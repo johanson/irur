@@ -11,10 +11,10 @@ dark_theme: false
 MQTT topic for receiving IR codes
 
 `topic_send` (list)  
-MQTT topic for sending IR codes.
+MQTT topic(s) for sending IR codes
 
 `dark_theme` (bool)  
-Whether you prefer a dark theme for default light.
+True for dark theme for default light
 
 ## Support
 
