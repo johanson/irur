@@ -14,7 +14,6 @@ const { env } = process;
 require('dotenv').config();
 
 const flags = process.argv.slice(2)[0];
-let db = path.join('/data/db.json');
 const logger = path.join('scripts/logger.sh');
 
 const app = express();
@@ -52,31 +51,28 @@ const log = {
   },
 };
 
-function options() {
+const init = () => {
+  const testDatabase = path.join(__dirname, 'test_db.json');
+  const homeAssistantDatabase = path.join('/data/db.json');
+
+  let db; let topicListen; let topicSend; let darkTheme;
   if (flags === '--dev') {
-    db = path.join(__dirname, 'test_db.json');
-    log.info(`Using dev configuration and ${db} as a database`);
-    return {
-      mqttMatch: false,
-      mqtt: {
-        host: env.MQTT_HOST,
-        port: env.MQTT_PORT,
-        protocol: 'mqtt',
-        username: env.MQTT_USERNAME,
-        password: env.MQTT_PASSWORD,
-      },
-      hostname: `${env.HOSTNAME}:${env.SERVER_PORT}/`,
-      topic_listen: env.MQTT_TOPIC_LISTEN,
-      topic_send: env.MQTT_TOPIC_SEND.split(', '),
-      dark_theme: env.DARK_THEME,
-    };
+    topicListen = env.MQTT_TOPIC_LISTEN;
+    topicSend = env.MQTT_TOPIC_SEND.split(', ');
+    darkTheme = env.DARK_THEME;
+    db = testDatabase;
+  } else {
+    db = homeAssistantDatabase;
+    const homeAssistantOptions = require('/data/options.json');
+    topicListen = homeAssistantOptions.topic_listen;
+    topicSend = homeAssistantOptions.topic_send;
+    darkTheme = homeAssistantOptions.dark_theme;
   }
-  if (!fs.existsSync(db)) {
-    fs.openSync(db, 'a');
-  }
-  const data = require('/data/options.json');
-  log.info(`MQTT configuration from HA, using ${db} as database`);
-  return {
+
+  // Create empty file if it doesn't exist
+  if (!fs.existsSync(db)) fs.openSync(db, 'a');
+
+  const options = {
     mqttMatch: false,
     mqtt: {
       host: env.MQTT_HOST,
@@ -86,13 +82,17 @@ function options() {
       password: env.MQTT_PASSWORD,
     },
     hostname: `${env.HOSTNAME}:${env.SERVER_PORT}/`,
-    topic_listen: data.topic_listen,
-    topic_send: data.topic_send,
-    dark_theme: data.dark_theme,
+    topic_listen: topicListen,
+    topic_send: topicSend,
+    dark_theme: darkTheme,
   };
-}
+  return { db, options };
+};
 
-const conf = { ...options(), ...{ mqttMatch: false } };
+const { db, options } = init();
+log.info(`Database: ${db} \nConfiguration: ${JSON.stringify(options, null, 2)}`);
+const conf = { ...options, ...{ mqttMatch: false } };
+
 const client = mqtt.connect(conf.mqtt);
 
 app.get('/', (req, res) => {
@@ -102,6 +102,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/db/load/', (req, res) => {
   res.header('Content-Type', 'application/json');
+
   if (fs.existsSync(db)
   && fs.readFileSync(db, 'utf8') !== '') {
     res.sendFile(db);
