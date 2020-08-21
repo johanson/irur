@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.1
+- Fixed minor issues when starting with an empty database
+
 ## 0.5.0
 
 - Break the Vue app into modules
