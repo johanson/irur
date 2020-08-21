@@ -51,7 +51,7 @@ export default {
     },
 
     saveTab() {
-      this.$emit('save', this.tabSaveData);
+      this.$emit('save', { data: this.tabSaveData });
       this.$emit('switch-mode', { mode: 'normal' });
     },
 
@@ -63,9 +63,8 @@ export default {
             name: 'New',
             id: uid,
           };
-          this.$emit('save', this.tabSaveData);
+          this.$emit('save', { data: this.tabSaveData, mode: 'tab-rename' });
           this.$emit('switch-tab', uid);
-          this.$emit('switch-mode', { mode: 'tab-rename' });
           setTimeout(() => { this.$refs[`tab-${uid}`][0].focus(); }, 50);
           break;
         }
@@ -93,7 +92,6 @@ export default {
   user-select: none;
   padding-left: 10px;
   white-space: nowrap;
-
   .tab {
     display: inline-block;
     position: relative;

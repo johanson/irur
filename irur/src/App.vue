@@ -128,7 +128,7 @@ export default {
       if (this.layout.mode === 'normal') this.loader = false;
     },
 
-    sync() {
+    sync(mode = 'normal') {
       const api = this.options.api.prefix;
       fetch(`${api}${this.options.api.save}`, {
         headers: {
@@ -138,7 +138,7 @@ export default {
         method: 'POST',
         body: JSON.stringify(this.db),
       }).then((resp) => {
-        this.layout.mode = 'normal';
+        this.layout.mode = mode;
         if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
       }).catch((err) => {
         this.$toast.error(String(err));
@@ -158,40 +158,31 @@ export default {
       this.$refs.undo.record();
       const { index } = this.layout.activeEdit;
       this.$delete(this.db[this.layout.activeTab].knobs, index);
-      this.layout.mode = 'normal';
       this.sync();
     },
 
-    saveTab(tab) {
-      if (tab.id && tab.name) {
-        let exists;
-        for (const prop in this.db) {
-          if (prop === tab.id) {
-            this.db[prop].name = tab.name;
-            exists = true;
-            break;
-          }
-        }
-        // No match, create a new tab group
-        if (!exists) {
-          this.db = {
-            ...this.db,
-            ...{
-              [tab.id]: {
-                name: tab.name,
-                knobs: [],
-              },
+    saveTab(o) {
+      const { id, name } = o.data;
+      if ({}.hasOwnProperty.call(this.db, id)) {
+        this.db[id].name = name;
+      } else {
+        this.db = {
+          // No match, create a new tab
+          ...this.db,
+          ...{
+            [id]: {
+              name,
+              knobs: [],
             },
-          };
-        }
+          },
+        };
       }
-      this.sync();
+      this.sync(o.mode);
     },
 
     removeTab(id) {
       this.$refs.undo.record();
       this.$delete(this.db, id);
-      this.layout.mode = 'normal';
       this.sync();
     },
   },
