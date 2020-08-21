@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+- Break the Vue app into modules
+- Fix renaming a tab after creating one
+
 ## 0.4.7
 
 - Fix color picker when editing items
