@@ -1,7 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/no-absolute-path */
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -14,39 +10,43 @@ const { env } = process;
 require('dotenv').config();
 
 const flags = process.argv.slice(2)[0];
-const logger = path.join('scripts/logger.sh');
 
 const app = express();
 app.use(bodyParser.json(), cors(), express.static('dist'));
 
 // Just a logging wrapper around bashio
-// log.info(); error(); warn();
 const log = {
+  bashioPath: path.join('scripts/logger.sh'),
+  bashio(msg = '', level = 'info') {
+    try {
+      if (fs.existsSync(this.bashioPath)) {
+        execSync(`${this.bashioPath} bashio::log.${level} "${msg}"`);
+      } else {
+        throw Error(`Bashio doesn't exist [${this.bashioPath}]`);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  },
   info(msg) {
     if (flags === '--dev') {
       console.log(msg);
     } else {
-      try { execSync(`${logger} bashio::log.info "${msg}"`); } catch (e) {
-        console.log(e);
-      }
+      this.bashio(msg, 'info');
     }
   },
   error(msg) {
     if (flags === '--dev') {
       console.error(msg);
     } else {
-      try { execSync(`${logger} bashio::log.error "${msg}"`); } catch (e) {
-        console.log(e);
-      }
+      this.bashio(msg, 'error');
     }
   },
   warn(msg) {
     if (flags === '--dev') {
       console.warn(msg);
     } else {
-      try { execSync(`${logger} bashio::log.warning "${msg}"`); } catch (e) {
-        console.log(e);
-      }
+      this.bashio(msg, 'warn');
     }
   },
 };
@@ -63,13 +63,13 @@ const init = () => {
     db = testDatabase;
   } else {
     db = homeAssistantDatabase;
-    const homeAssistantOptions = require('/data/options.json');
+    const homeAssistantOptions = JSON.parse(fs.readFileSync('/data/options.json', 'utf8'));
     topicListen = homeAssistantOptions.topic_listen;
     topicSend = homeAssistantOptions.topic_send;
     darkTheme = homeAssistantOptions.dark_theme;
   }
 
-  // Create empty file if it doesn't exist
+  // Create empty db if it doesn't exist
   if (!fs.existsSync(db)) fs.openSync(db, 'a');
 
   const options = {
@@ -90,8 +90,8 @@ const init = () => {
 };
 
 const { db, options } = init();
-log.info(`Database: ${db} \nConfiguration: ${JSON.stringify(options, null, 2)}`);
 const conf = { ...options, ...{ mqttMatch: false } };
+log.info(`Database: ${db} \nConfiguration: ${JSON.stringify(options, null, 2)}`);
 
 const client = mqtt.connect(conf.mqtt);
 
@@ -150,6 +150,7 @@ app.get('/api/ir/send/:id', (req, res) => {
   let status;
   const { id } = req.params;
   const json = JSON.parse(fs.readFileSync(db, 'utf8'));
+
   for (const tab of Object.keys(json)) {
     for (const key of Object.keys(json[tab].knobs)) {
       if (json[tab].knobs[key].id === id) {
