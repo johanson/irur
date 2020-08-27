@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2 
+
+- Improved drag-and-drop sorting 
+
 ## 0.5.1
 - Fixed minor issues when starting with an empty database
 
@@ -10,7 +14,7 @@
 
 ## 0.4.7
 
-- Fix color picker when editing items
+- Fix colour picker when editing items
 
 ## 0.4.6
 
