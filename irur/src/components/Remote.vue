@@ -93,7 +93,7 @@ export default {
 
     sendIr(id) {
       const api = this.options.api.prefix;
-      fetch(`${api}${this.options.api.send}/${id}`)
+      fetch(`${api}${this.options.api.send}${id}/`)
         .then((resp) => {
           if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
         }).then(() => {

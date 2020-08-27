@@ -14,6 +14,14 @@ const flags = process.argv.slice(2)[0];
 const app = express();
 app.use(bodyParser.json(), cors(), express.static('dist'));
 
+// Redirect non trailing slash to trailing slash
+app.use((req, res, next) => {
+  if (!req.url.endsWith('/')) {
+    res.redirect(301, `${req.url}/`);
+  }
+  next();
+});
+
 // Just a logging wrapper around bashio
 const log = {
   bashioPath: path.join('scripts/logger.sh'),
@@ -113,7 +121,7 @@ app.get('/api/db/load/', (req, res) => {
   }
 });
 
-app.get('/api/settings', (req, res) => {
+app.get('/api/settings/', (req, res) => {
   res.json(conf);
 });
 
@@ -129,7 +137,7 @@ app.post('/api/db/save/', (req, res) => {
   res.send(output);
 });
 
-app.get('/api/ir/receive', (req, res) => {
+app.get('/api/ir/receive/', (req, res) => {
   conf.mqttMatch = false;
   let counter = 0;
   (function wait() {
@@ -165,7 +173,7 @@ app.get('/api/ir/send/:id', (req, res) => {
       }
     }
   }
-  status = status || { status: 'error' };
+  status = status || { status: 'error', message: 'IR Code not in database' };
   res.json(status);
 });
 

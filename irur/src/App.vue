@@ -19,7 +19,7 @@
           @switch-tab="layout.activeTab = $event" @switch-mode="switchMode($event)"
           @save="saveTab($event)" @remove="removeTab($event)"/>
 
-    <remote :db="db" :layout="layout" :options="options" @sort="sync()"
+    <remote :db="db" :layout="layout" :options="options" @sort="sync('sort')"
             @remove="removeKnob()" @switch-mode="switchMode($event)" />
 
   </div>
@@ -58,11 +58,11 @@ export default {
       options: {
         api: {
           prefix: `${this.getHostname()}api/`,
-          receive: 'ir/receive',
-          send: 'ir/send',
-          save: 'db/save',
-          load: 'db/load',
-          settings: 'settings',
+          receive: 'ir/receive/',
+          send: 'ir/send/',
+          save: 'db/save/',
+          load: 'db/load/',
+          settings: 'settings/',
         },
         settings: {
           topic_send: '',
