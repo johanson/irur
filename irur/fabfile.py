@@ -6,6 +6,7 @@ import fabric.contrib.project as project
 from fabric.api import hosts, local, run
 from fabric.decorators import task
 from fabric.colors import green, red
+from dotenv import load_dotenv
 import json
 
 ha = {
@@ -31,7 +32,7 @@ def deploy():
         addon_name = conf['name']
         addon_temp_name = '{}_LOCAL'.format(addon_name)
         addon_version = conf['version']
-        split = conf['version'].split('.')
+        split = addon_version.split('.')
         patch = str(int(split[2]) + 1)
         addon_version_new = "{}.{}.{}".format(split[0], split[1], patch)
 
@@ -88,4 +89,9 @@ def lint():
 @task
 def api():
     """Starts a node server for backend api"""
+    load_dotenv()
+
+    print(green('Starting API webserver at http://localhost:{0}'
+                .format(os.getenv('VUE_APP_SERVER_PORT')))),
     local('node server.js --dev')
+    os.getenv("EMAIL")
