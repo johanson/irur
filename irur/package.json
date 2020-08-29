@@ -17,24 +17,24 @@
     "cors": "2.8.5",
     "dotenv": "8.2.0",
     "express": "4.17.1",
-    "mqtt": "4.1.0",
-    "vue": "2.6.11",
+    "mqtt": "4.2.1",
+    "vue": "2.6.12",
     "vue-color": "2.7.1",
-    "vue-context": "5.2.0",
-    "vue-toast-notification": "0.4.1",
-    "vuedraggable": "2.23.2"
+    "vue-context": "6.0.0",
+    "vue-toast-notification": "0.5.0",
+    "vuedraggable": "2.24.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.4.0",
-    "@vue/cli-plugin-eslint": "~4.4.0",
-    "@vue/cli-service": "~4.4.0",
-    "@vue/eslint-config-airbnb": "^5.0.2",
+    "@vue/cli-plugin-babel": "~4.5.4",
+    "@vue/cli-plugin-eslint": "~4.5.4",
+    "@vue/cli-service": "^4.5.4",
+    "@vue/eslint-config-airbnb": "^5.1.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.20.2",
+    "eslint": "^7.7.0",
+    "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-vue": "^6.2.2",
-    "sass": "^1.26.5",
-    "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11"
+    "sass": "^1.26.10",
+    "sass-loader": "^10.0.1",
+    "vue-template-compiler": "^2.6.12"
   }
 }
