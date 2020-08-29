@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueToast from 'vue-toast-notification';
-import App from './App.vue';
+import App from './Irur.vue';
 
 Vue.config.productionTip = false;
 
