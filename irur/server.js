@@ -60,7 +60,7 @@ const log = {
 };
 
 const init = () => {
-  const testDatabase = path.join(__dirname, 'test_db.json');
+  const testDatabase = path.join(__dirname, 'dev_db.json');
   const homeAssistantDatabase = path.join('/data/db.json');
 
   let db; let topicListen; let topicSend; let darkTheme;
