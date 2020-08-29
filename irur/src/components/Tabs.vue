@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { VueContext } from 'vue-context';
+import VueContext from 'vue-context';
 import Helpers from '../mixins/helpers';
 
 export default {
