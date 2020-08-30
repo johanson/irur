@@ -22,24 +22,32 @@ rsync_extra_opts = ('--archive --compress --progress '
                     '--exclude \'node_modules\' --quiet')
 
 
-@task
 @hosts(rsync_remote)
-def deploy():
-    """Compiles and uploads the project to your HA server for Docker"""
+@task
+def deploy(bump=True):
+    """
+    Compiles and uploads the project to your HA server for Docker
+    :param bump: Bump version number before pushing to remote server, defaults to `True`
+    :type  bump: bool, optional
+    """
     with open('config.json', 'r+') as f:
+
         conf = json.load(f)
 
         addon_name = conf['name']
         addon_temp_name = '{}_LOCAL'.format(addon_name)
         addon_version = conf['version']
-        split = addon_version.split('.')
-        patch = str(int(split[2]) + 1)
-        addon_version_new = "{}.{}.{}".format(split[0], split[1], patch)
+
+        if bump:
+            split = addon_version.split('.')
+            patch = str(int(split[2]) + 1)
+            addon_version_new = "{}.{}.{}".format(split[0], split[1], patch)
+
+            print(green('Bump project version'))
+            conf['version'] = addon_version_new
 
         print(green('Temporarely change the name to {}').format(addon_temp_name))
         conf['name'] = addon_temp_name
-        print(green('Bump project version'))
-        conf['version'] = addon_version_new
 
         f.seek(0)
         json.dump(conf, f, indent=2)
@@ -94,4 +102,3 @@ def api():
     print(green('Starting API webserver at http://localhost:{0}'
                 .format(os.getenv('VUE_APP_SERVER_PORT')))),
     local('node server.js --dev')
-    os.getenv("EMAIL")
