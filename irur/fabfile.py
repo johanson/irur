@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-import time
 import os
 import json
 import fabric.contrib.project as project
 from fabric.api import hosts, local, run
 from fabric.decorators import task
-from fabric.colors import green, red
+from fabric.colors import green
 from dotenv import load_dotenv
-import json
 
 ha = {
     'user': 'root',
@@ -27,27 +25,28 @@ rsync_extra_opts = ('--archive --compress --progress '
 def deploy(bump=True):
     """
     Compiles and uploads the project to your HA server for Docker
-    :param bump: Bump version number before pushing to remote server, defaults to `True`
+    :param bump: Bump addons version number before
+                 pushing to remote server, defaults to `True`
     :type  bump: bool, optional
     """
     with open('config.json', 'r+') as f:
 
         conf = json.load(f)
 
-        addon_name = conf['name']
-        addon_temp_name = '{}_LOCAL'.format(addon_name)
-        addon_version = conf['version']
+        proj_name = conf['name']
+        proj_tmp_name = '{}_LOCAL'.format(proj_name)
+        proj_version = conf['version']
 
         if bump:
-            split = addon_version.split('.')
+            split = proj_version.split('.')
             patch = str(int(split[2]) + 1)
             addon_version_new = "{}.{}.{}".format(split[0], split[1], patch)
 
             print(green('Bump project version'))
             conf['version'] = addon_version_new
 
-        print(green('Temporarely change the name to {}').format(addon_temp_name))
-        conf['name'] = addon_temp_name
+        print(green('Temporarily change the name to {}').format(proj_tmp_name))
+        conf['name'] = proj_name
 
         f.seek(0)
         json.dump(conf, f, indent=2)
@@ -62,8 +61,8 @@ def deploy(bump=True):
                               local_dir=rsync_local_dir,
                               delete=False)
 
-        print(green('Change project name back to {0}').format(addon_name))
-        conf['name'] = addon_name
+        print(green('Change project name back to {0}').format(proj_name))
+        conf['name'] = proj_name
         f.seek(0)
         json.dump(conf, f, indent=2)
         f.truncate()
