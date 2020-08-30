@@ -61,9 +61,12 @@ Clone the repo, install npm dependencies. Install fabric3 (pip3 install fabric3)
 $ fab -l
 Available commands:
 
-api     Starts a node server for backend api
-build   Compiles and minifies for production
-deploy  Compiles and uploads the project to your HA server for Docker
+api      Starts a node server for backend api
+build    Compiles and minifies for production
+deploy:  Compiles and uploads the project to your HA server for Docker
+         :param bump: Bump addons version number before 
+                      pushing to remote server, defaults to `True`
+         :type  bump: bool, optional
 lint    Lints and fixes files
 serve   Compiles and hot-reloads for development
 ```
@@ -74,10 +77,8 @@ If you prefer npm scripts: `npm run build` to build with webpack (or `npm run se
 
 * Node.js
 * Express
-* Vue-cli (dev)
-* Npm (dev)
-* Fabric3 (dev)
-* Rsync (dev)
+
+For developing: Vue CLI, npm, fabric3 (fork from 2), `pip python-dotenv`, rsync
 
 # Credits
 

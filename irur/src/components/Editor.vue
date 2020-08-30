@@ -33,7 +33,7 @@
 
       <label for="knob_id">Unique id
         <span class="mono">
-          $ curl {{options.settings.hostname}}{{options.api.send}}/{{knobSaveData.id}}
+          $ curl {{options.settings.hostname}}{{options.api.send}}{{knobSaveData.id}}/
         </span>
       </label>
       <input type="text" id="knob_id" required readonly v-model="knobSaveData.id">

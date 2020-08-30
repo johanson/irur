@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-import time
 import os
 import json
 import fabric.contrib.project as project
 from fabric.api import hosts, local, run
 from fabric.decorators import task
-from fabric.colors import green, red
-import json
+from fabric.colors import green
+from dotenv import load_dotenv
 
 ha = {
     'user': 'root',
@@ -21,24 +20,33 @@ rsync_extra_opts = ('--archive --compress --progress '
                     '--exclude \'node_modules\' --quiet')
 
 
-@task
 @hosts(rsync_remote)
-def deploy():
-    """Compiles and uploads the project to your HA server for Docker"""
+@task
+def deploy(bump=True):
+    """
+    Compiles and uploads the project to your HA server for Docker
+    :param bump: Bump addons version number before
+                 pushing to remote server, defaults to `True`
+    :type  bump: bool, optional
+    """
     with open('config.json', 'r+') as f:
+
         conf = json.load(f)
 
-        addon_name = conf['name']
-        addon_temp_name = '{}_LOCAL'.format(addon_name)
-        addon_version = conf['version']
-        split = conf['version'].split('.')
-        patch = str(int(split[2]) + 1)
-        addon_version_new = "{}.{}.{}".format(split[0], split[1], patch)
+        proj_name = conf['name']
+        proj_tmp_name = '{}_LOCAL'.format(proj_name)
+        proj_version = conf['version']
 
-        print(green('Temporarely change the name to {}').format(addon_temp_name))
-        conf['name'] = addon_temp_name
-        print(green('Bump project version'))
-        conf['version'] = addon_version_new
+        if bump:
+            split = proj_version.split('.')
+            patch = str(int(split[2]) + 1)
+            addon_version_new = "{}.{}.{}".format(split[0], split[1], patch)
+
+            print(green('Bump project version'))
+            conf['version'] = addon_version_new
+
+        print(green('Temporarily change the name to {}').format(proj_tmp_name))
+        conf['name'] = proj_name
 
         f.seek(0)
         json.dump(conf, f, indent=2)
@@ -53,8 +61,8 @@ def deploy():
                               local_dir=rsync_local_dir,
                               delete=False)
 
-        print(green('Change project name back to {0}').format(addon_name))
-        conf['name'] = addon_name
+        print(green('Change project name back to {0}').format(proj_name))
+        conf['name'] = proj_name
         f.seek(0)
         json.dump(conf, f, indent=2)
         f.truncate()
@@ -88,4 +96,8 @@ def lint():
 @task
 def api():
     """Starts a node server for backend api"""
+    load_dotenv()
+
+    print(green('Starting API webserver at http://localhost:{0}'
+                .format(os.getenv('VUE_APP_SERVER_PORT')))),
     local('node server.js --dev')
