@@ -61,14 +61,20 @@ Clone the repo, install npm dependencies. Install fabric3 (pip3 install fabric3)
 $ fab -l
 Available commands:
 
-api      Starts a node server for backend api
-build    Compiles and minifies for production
-deploy:  Compiles and uploads the project to your HA server for Docker
-         :param bump: Bump addons version number before 
-                      pushing to remote server, defaults to `True`
-         :type  bump: bool, optional
-lint    Lints and fixes files
-serve   Compiles and hot-reloads for development
+api      Start a node server for the backend api
+build    Compile and minify for production
+deploy:  Compile and upload the project to the HA server for Docker
+         :param bump_version: Bump addon version number before
+                              pushing to remote server, defaults to `True`
+         :type  bump_version: bool, optional
+         :param sync:         Synchronize working directy to remote server
+         :type  sync:         bool, optional
+         :param reload:       Reload and update addon over SSH
+         :type  reload:       bool, optional
+    
+         Arguments: bump_version=True, sync=True, reload=True
+lint     Lint and fix files
+serve    Compile with hot-reload for development
 ```
 
 If you prefer npm scripts: `npm run build` to build with webpack (or `npm run serve` for development), `node server.js --dev` to start the server.

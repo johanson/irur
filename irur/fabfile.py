@@ -7,11 +7,33 @@ from fabric.decorators import task
 from fabric.colors import green
 from dotenv import load_dotenv
 
+
+class Config:
+    def __init__(self):
+        self.file = {}
+        self.location = 'config.json'
+        self.open()
+
+    def open(self):
+        with open(self.location) as f:
+            self.file = json.load(f)
+            f.close()
+
+    def save(self):
+        with open(self.location, 'r+') as f:
+            f.seek(0)
+            json.dump(self.file, f, indent=2)
+            f.truncate()
+
+
+load_dotenv()
+config = Config()
+
 ha = {
-    'user': 'root',
-    'host': '192.168.0.100',
-    'port': 2222,
-    'dir': '/root/addons/irur/'
+    'user': os.getenv('DEV_USER'),
+    'host': os.getenv('DEV_HOST'),
+    'port': os.getenv('DEV_PORT'),
+    'dir': os.getenv('DEV_DIR')
 }
 
 rsync_remote = '{}@{}:{}'.format(ha['user'], ha['host'], ha['port'])
@@ -22,82 +44,87 @@ rsync_extra_opts = ('--archive --compress --progress '
 
 @hosts(rsync_remote)
 @task
-def deploy(bump=True):
+def deploy(bump_version=True, sync=True, reload=True):
     """
-    Compiles and uploads the project to your HA server for Docker
-    :param bump: Bump addons version number before
-                 pushing to remote server, defaults to `True`
-    :type  bump: bool, optional
+    Compile and upload the project to the HA server for Docker
+    :param bump_version: Bump addon version number before
+                         pushing to remote server, defaults to `True`
+    :type  bump_version: bool, optional
+    :param sync:         Synchronize working directy to remote server
+    :type  sync:         bool, optional
+    :param reload:       Reload and update addon over SSH
+    :type  reload:       bool, optional
     """
-    with open('config.json', 'r+') as f:
 
-        conf = json.load(f)
+    if bump_version:
+        bump()
 
-        proj_name = conf['name']
-        proj_tmp_name = '{}_LOCAL'.format(proj_name)
-        proj_version = conf['version']
+    conf = config.file
 
-        if bump:
-            split = proj_version.split('.')
-            patch = str(int(split[2]) + 1)
-            addon_version_new = "{}.{}.{}".format(split[0], split[1], patch)
+    proj_name = conf['name']
+    proj_prefix = 'dev-{}'.format(proj_name)
 
-            print(green('Bump project version'))
-            conf['version'] = addon_version_new
+    print(green('Temporarily change the name to {}').format(proj_prefix))
+    conf['name'] = proj_prefix
 
-        print(green('Temporarily change the name to {}').format(proj_tmp_name))
-        conf['name'] = proj_name
+    config.save()
 
-        f.seek(0)
-        json.dump(conf, f, indent=2)
-        f.truncate()
+    print(green('Build the project with vue-cli'))
+    build()
 
-        print(green('Build the project with vue-cli'))
-        build()
-
+    if sync:
         print(green('Synchronizing remote directory'))
         project.rsync_project(remote_dir=ha['dir'],
                               extra_opts=rsync_extra_opts,
                               local_dir=rsync_local_dir,
                               delete=False)
 
-        print(green('Change project name back to {0}').format(proj_name))
-        conf['name'] = proj_name
-        f.seek(0)
-        json.dump(conf, f, indent=2)
-        f.truncate()
+    print(green('Change project name back to {0}').format(proj_name))
+    conf['name'] = proj_name
+    config.save()
 
+    if reload:
         print(green('Updating add-on remotely'))
         run('source /etc/profile.d/homeassistant.sh;'
             'ha addons reload;'
             'ha addons update local_irur')
 
-        f.close()
-
 
 @task
 def serve():
-    """Compiles and hot-reloads for development"""
+    """Compile with hot-reload for development"""
     local('node_modules/@vue/cli-service/bin/vue-cli-service.js serve')
 
 
 @task
 def build():
-    """Compiles and minifies for production"""
+    """Compile and minify for production"""
     local('node_modules/@vue/cli-service/bin/vue-cli-service.js build')
 
 
 @task
 def lint():
-    """Lints and fixes files"""
+    """Lint and fix files"""
     local('node_modules/@vue/cli-service/bin/vue-cli-service.js lint')
 
 
 @task
 def api():
-    """Starts a node server for backend api"""
-    load_dotenv()
-
+    """Start a node server for the backend api"""
     print(green('Starting API webserver at http://localhost:{0}'
                 .format(os.getenv('VUE_APP_SERVER_PORT')))),
     local('node server.js --dev')
+
+
+@task
+def bump():
+    """Bump addon version number"""
+    conf = config.file
+    version = conf['version']
+    split = version.split('.')
+    patch = str(int(split[2]) + 1)
+    new_version = "{}.{}.{}".format(split[0], split[1], patch)
+    print(green('Bump project version from {0} to {1}'
+                .format(version, new_version)))
+    conf['version'] = new_version
+    config.save()
