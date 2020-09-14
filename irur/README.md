@@ -29,7 +29,6 @@ Flash your ESP8266 board with Tasmota (tasmota-ir.bin) firmware. All the builds 
 topic_listen: irur/tele/RESULT
 topic_send:
 - irur/cmnd/IRsend
-dark_theme: false
 ```
 
 ```
@@ -41,11 +40,6 @@ MQTT topic for receiving IR codes
 topic_send   (list)
 ```
 MQTT topic for sending IR codes.
-
-```
-dark_theme   (bool)
-```
-Set to true if you prefer a dark theme for default light.
 
 ### Screenshots
 
