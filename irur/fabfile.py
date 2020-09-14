@@ -52,7 +52,8 @@ rsync_extra_opts = "--archive --compress {0} --stats".format(exclude)
 
 @hosts(rsync_remote)
 @task
-def deploy(bump_version=True, sync=True, reload=True):
+# All the arguments end up as strings with Fabric
+def deploy(bump_version="True", sync="True", reload="True"):
     """Compile and upload the project to the HA server for Docker.
 
     :param bump_version: Bump addon version number before
@@ -63,7 +64,7 @@ def deploy(bump_version=True, sync=True, reload=True):
     :param reload:       Reload and update addon over SSH
     :type  reload:       bool, optional
     """
-    if bump_version:
+    if bump_version == "True":
         bump()
 
     conf = config.file
@@ -81,7 +82,7 @@ def deploy(bump_version=True, sync=True, reload=True):
     print(green("Build the project with vue-cli"))
     build()
 
-    if sync:
+    if sync == "True":
         print(green("Synchronizing remote directory"))
         project.rsync_project(
             remote_dir=ha["dir"],
@@ -94,7 +95,7 @@ def deploy(bump_version=True, sync=True, reload=True):
     conf["name"] = proj_name
     config.save()
 
-    if reload:
+    if reload == "True":
         print(green("Updating add-on remotely"))
         run(
             "source /etc/profile.d/homeassistant.sh;"
@@ -110,9 +111,10 @@ def serve():
 
 
 @task
-def build(bump_version=False):
+def build(bump_version="False"):
     """Compile and minify for production."""
-    if bump_version:
+    print(bump_version)
+    if bump_version == "True":
         bump()
     local("node_modules/@vue/cli-service/bin/vue-cli-service.js build")
 
