@@ -25,8 +25,7 @@
     "topic_listen": "irur/tele/RESULT",
     "topic_send": [
       "irur/cmnd/IRsend"
-    ],
-    "dark_theme": false
+    ]
   },
   "schema": {
     "topic_listen": "str",
