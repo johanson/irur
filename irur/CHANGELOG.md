@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.2
+## 0.5.3
 
 - Get theme from Home Assistant instead of relying on hard coded light/dark
 - Remove dark_theme from the configuration

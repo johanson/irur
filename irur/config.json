@@ -1,6 +1,6 @@
 {
   "name": "Irur",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "slug": "irur",
   "description": "Infrared Universal Remote webUI for Tasmota",
   "url": "https://github.com/johanson/irur",
@@ -32,8 +32,7 @@
     "topic_listen": "str",
     "topic_send": [
       "str"
-    ],
-    "dark_theme": "bool"
+    ]
   },
   "ports": {
     "8099/tcp": null
