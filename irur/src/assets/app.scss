@@ -1,19 +1,7 @@
 html {
   --background: #f2f2f2;
   --background-shade: #f5f5f5;
-  --background-overlay: rgba(0, 0, 0, 0.75);
-  --text: #333;
-  --input-background: #f1f1f1;
-  --link: #1976d2;
-}
-
-html[data-theme="dark"] {
-  --background: #434952;
-  --background-shade: #3b4049;
-  --background-overlay: rgba(80, 84, 97, 0.8);
-  --text: #f2f2f2;
-  --input-background: #3b4049;
-  --link: #70a0cf;
+  --accent: #333;
 }
 
 html {
@@ -40,9 +28,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
-  color: var(--text);
+  color: var(--accent);
   font-size: 16px;
 }
+
 
 .hidden {
   display: none;
@@ -53,7 +42,7 @@ p {
 }
 
 a {
-  color: var(--link);
+  color: #1976d2;
 }
 
 .mono,
@@ -63,7 +52,7 @@ code {
 
 #app {
   background: var(--background);
-  color: var(--text);
+  color: var(--accent);
   padding: 0 20px;
   max-width: 700px;
   min-width: 320px;
@@ -75,7 +64,7 @@ code {
   top: 8px;
   right: 8px;
   z-index: 101;
-  background: rgba(0 0 0 / 0.7);
+  background: rgba(0 0 0 / 0.5);
   width: 100vw;
   height: 100vh;
   margin: -10px -10px 0 0;
@@ -130,10 +119,11 @@ vue-context
 .v-context {
   $menu-bg: var(--background);
   $menu-border: #777;
-  $item-color: var(--text);
-  $item-hover-bg: var(--background-shade);
+  $item-color: var(--accent);
+  $item-hover-bg: rgba(0, 0, 0, 0.1);
 
   &,
+
   & ul {
     background-color: $menu-bg;
     background-clip: padding-box;

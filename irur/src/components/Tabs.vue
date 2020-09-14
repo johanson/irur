@@ -88,7 +88,7 @@ export default {
 
 <style lang="scss">
 #tabs {
-  border-bottom: 1px solid var(--text);
+  border-bottom: 1px solid var(--accent);
   user-select: none;
   padding-left: 10px;
   white-space: nowrap;
@@ -115,7 +115,7 @@ export default {
     &.active {
       border-width: 1px;
       border-style: solid;
-      border-color: var(--text);
+      border-color: var(--accent);
       border-bottom-color: var(--background);
       cursor: default;
       opacity: 1;
@@ -123,7 +123,7 @@ export default {
 
     input {
       background-color: var(--background);
-      color: var(--text);
+      color: var(--accent);
       font-size: 16px;
       border: 0px;
       height: 42px;

@@ -139,7 +139,7 @@ export default {
       width: 100%;
       height: 100%;
       pointer-events: none;
-      fill: var(--text);
+      fill: var(--accent);
     }
   }
 
@@ -162,7 +162,7 @@ export default {
 
     &:hover,
     &:focus {
-      background-color: var(--background-shade);
+      background-color: rgba(0, 0, 0, 0.02);
       transition: background-color 0.5s;
     }
 
@@ -196,7 +196,7 @@ export default {
     }
 
     .glyph svg {
-      fill: var(--text);
+      fill: var(--accent);
       width: 50%;
       height: 50%;
       transform: translateX(0%) translateY(50%);

@@ -78,11 +78,37 @@ export default {
   },
 
   mounted() {
+    this.loadTheme();
     this.loadDatabase();
     this.loadSettings();
   },
 
   methods: {
+    loadTheme() {
+      const getHomeAssistantCSSvar = (prop) => {
+        const top = window.top.document.documentElement;
+        return getComputedStyle(top).getPropertyValue(`--${prop}`);
+      };
+
+      const getCSSvar = (arr) => {
+        let match = '';
+        for (let i = 0; i < arr.length; i += 1) {
+          if (getHomeAssistantCSSvar(arr[i]) !== '') {
+            match = getHomeAssistantCSSvar(arr[i]);
+            break;
+          }
+        }
+        return match;
+      };
+
+      // Because HA is renaming it's css variables with breaking changes, getCssVar() loops
+      // throught the array and returns the first match
+      const root = document.documentElement;
+      root.style.setProperty('--accent', getCSSvar(['primary-text-color', 'text-color']));
+      root.style.setProperty('--background', getCSSvar(['primary-background-color', 'background-color']));
+      root.style.setProperty('--background-shade', getCSSvar(['card-background-color']));
+    },
+
     loadDatabase() {
       const api = this.options.api.prefix;
       fetch(`${api}${this.options.api.load}`).then((resp) => {
@@ -111,13 +137,6 @@ export default {
         return resp.json();
       }).then((json) => {
         this.options.settings = json;
-        // Set a root attribute based on HA settings
-        // Beaware of type conversions,
-        // convert to string for dotenv value while developing locally
-        if (String(json.dark_theme).toLowerCase() === 'true') {
-          const root = document.getElementsByTagName('html')[0];
-          root.setAttribute('data-theme', 'dark');
-        }
       }).catch((err) => {
         this.$toast.error(String(err));
       });

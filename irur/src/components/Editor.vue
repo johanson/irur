@@ -83,13 +83,13 @@ export default {
       deep: true,
       handler(old, value) {
         if (value.mode === 'add') {
-          this.colors = { hex: this.cssVar('--text') };
+          this.colors = { hex: this.cssVar('--accent') };
           this.knobSaveData = {
             name: '',
             mqtt: '',
             id: this.genUID(),
             icon: '',
-            color: this.cssVar('--text'),
+            color: this.cssVar('--accent'),
             topic_send: this.options.settings.topic_send,
           };
           // Check the radio button for the first MQTT topic if there's only one
@@ -105,7 +105,7 @@ export default {
             .knobs[this.layout.activeEdit.index]));
           this.knobSaveData = dat;
           if (this.knobSaveData.color === undefined) {
-            this.knobSaveData.color = this.cssVar('--text');
+            this.knobSaveData.color = this.cssVar('--accent');
           }
           this.colors = { hex: this.knobSaveData.color };
           setTimeout(() => this.$refs.editorNameField.focus(), 50);
@@ -126,9 +126,9 @@ export default {
         mqtt: '',
         topic_send: '',
         icon: '',
-        color: this.cssVar('--text'),
+        color: this.cssVar('--accent'),
       },
-      colors: { hex: this.cssVar('--text') },
+      colors: { hex: this.cssVar('--accent') },
       icons: [],
     };
   },
@@ -211,7 +211,7 @@ export default {
 <style lang="scss">
 #add-overlay {
   position: absolute;
-  background-color: var(--background-overlay);
+  background-color: rgba(0, 0, 0, 0.15);
   top: 0;
   left: 0;
   min-height: 100vh;
@@ -267,8 +267,8 @@ export default {
     border: solid #979797;
     border-width: 1px 0;
     background: #222;
-    color: var(--text);
-    background-color: var(--input-background);
+    color: var(--accent);
+    background-color: var(--background-shade);
 
     &:focus {
       border-color: #1976d2;
@@ -291,7 +291,7 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     font-weight: 500;
-    color: var(--text);
+    color: var(--accent);
 
     span {
       display: block;
@@ -408,7 +408,7 @@ export default {
     svg.icon {
       width: 100%;
       height: 100%;
-      fill: var(--text);
+      fill: var(--accent);
     }
   }
 }

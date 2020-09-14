@@ -57,11 +57,11 @@ a {
   right: 10px;
   line-height: 20px;
   padding: 10px;
-  border: 1px solid var(--text);
+  border: 1px solid var(--accent);
   border-radius: 2px;
-  background-color: var(--background-overlay);
+  background-color: var(--background-shade);
   opacity: 0.5;
-  color: var(--text);
+  color: var(--accent);
   transition: opacity 0.5s ease-in-out;
 
   &.visible {
@@ -78,7 +78,7 @@ a {
     width: 15px;
     margin-top: 2px;
     float: left;
-    fill: var(--text);
+    fill: var(--accent);
   }
 
   span {
