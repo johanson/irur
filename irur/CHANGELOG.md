@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.4
+
+- Fix notifications presentation
+
 ## 0.5.3
 
 - Get theme from Home Assistant instead of relying on hard coded light/dark
