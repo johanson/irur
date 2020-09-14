@@ -57,6 +57,10 @@ Available commands:
 
 api      Start a node server for the backend api
 build    Compile and minify for production
+         :param bump_version: Bump addon version number before
+                              building, defaults to `True`
+         :type  bump_version: bool, optional
+         Arguments: bump_version=False
 deploy:  Compile and upload the project to the HA server for Docker
          :param bump_version: Bump addon version number before
                               pushing to remote server, defaults to `True`

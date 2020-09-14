@@ -68,6 +68,8 @@ def deploy(bump_version=True, sync=True, reload=True):
 
     conf = config.file
 
+    # When build fails or process is killed
+    # it can leave the 'dev-' prefix in front.
     proj_name = conf["name"].replace("dev-", "")
     proj_prefix = "dev-{}".format(proj_name)
 
@@ -108,8 +110,10 @@ def serve():
 
 
 @task
-def build():
+def build(bump_version=False):
     """Compile and minify for production."""
+    if bump_version:
+        bump()
     local("node_modules/@vue/cli-service/bin/vue-cli-service.js build")
 
 
