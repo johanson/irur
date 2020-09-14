@@ -249,7 +249,7 @@ vue-toast-notification
   opacity: 0
 }
 
-.notices {
+.v-notices {
   position: fixed;
   display: flex;
   top: 0;
@@ -262,7 +262,7 @@ vue-toast-notification
   pointer-events: none
 }
 
-.notices .toast {
+.v-notices .v-toast {
   display: inline-flex;
   align-items: center;
   animation-duration: 150ms;
@@ -276,65 +276,65 @@ vue-toast-notification
   cursor: pointer
 }
 
-.notices .toast .toast-text {
+.v-notices .v-toast .v-toast-text {
   margin: 0;
   padding: .5em 1em;
   word-break: break-word
 }
 
-.notices .toast .toast-icon {
+.v-notices .v-toast .v-toast-icon {
   display: none
 }
 
-.notices .toast-success {
+.v-notices .v-toast-success {
   background-color: #28a745
 }
 
-.notices .toast-info {
+.v-notices .v-toast-info {
   background-color: #17a2b8
 }
 
-.notices .toast-warning {
+.v-notices .v-toast-warning {
   background-color: #ffc107
 }
 
-.notices .toast-error {
+.v-notices .v-toast-error {
   background-color: #dc3545
 }
 
-.notices .toast-default {
+.v-notices .v-toast-default {
   background-color: #343a40
 }
 
-.notices .toast.is-top,
-.notices .toast.is-bottom {
+.v-notices .v-toast.is-top,
+.v-notices .v-toast.is-bottom {
   align-self: center
 }
 
-.notices .toast.is-top-right,
-.notices .toast.is-bottom-right {
+.v-notices .v-toast.is-top-right,
+.v-notices .v-toast.is-bottom-right {
   align-self: flex-end
 }
 
-.notices .toast.is-top-left,
-.notices .toast.is-bottom-left {
+.v-notices .v-toast.is-top-left,
+.v-notices .v-toast.is-bottom-left {
   align-self: flex-start
 }
 
-.notices.is-top {
+.v-notices.is-top {
   flex-direction: column
 }
 
-.notices.is-bottom {
+.v-notices.is-bottom {
   flex-direction: column-reverse
 }
 
-.notices.is-custom-parent {
+.v-notices.is-custom-parent {
   position: absolute
 }
 
 @media screen and (max-width: 768px) {
-  .notices {
+  .v-notices {
     padding: 0;
     position: fixed !important
   }
