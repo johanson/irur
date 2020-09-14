@@ -63,16 +63,18 @@ const init = () => {
   const testDatabase = path.join(__dirname, 'dev_db.json');
   const homeAssistantDatabase = path.join('/data/db.json');
 
-  let db; let topicListen; let topicSend;
+  let db; let topicListen; let topicSend; let port;
   if (flags === '--dev') {
     topicListen = env.MQTT_TOPIC_LISTEN;
     topicSend = env.MQTT_TOPIC_SEND.split(', ');
     db = testDatabase;
+    port = `:${env.SERVER_PORT}`;
   } else {
     db = homeAssistantDatabase;
     const homeAssistantOptions = JSON.parse(fs.readFileSync('/data/options.json', 'utf8'));
     topicListen = homeAssistantOptions.topic_listen;
     topicSend = homeAssistantOptions.topic_send;
+    port = '';
   }
 
   // Create empty db if it doesn't exist
@@ -87,7 +89,7 @@ const init = () => {
       username: env.MQTT_USER,
       password: env.MQTT_PASSWORD,
     },
-    hostname: `${env.HOSTNAME}:${env.SERVER_PORT}/`,
+    hostname: `${env.HOSTNAME}${port}/`,
     topic_listen: topicListen,
     topic_send: topicSend,
   };
@@ -197,6 +199,6 @@ client.on('offline', () => {
   log.error('MQTT server is offline');
 });
 
-app.listen(env.SERVER_PORT, () => {
-  log.info(`Listening on port ${env.SERVER_PORT}`);
+app.listen(8099, () => {
+  log.info('Listening on port 8099');
 });
