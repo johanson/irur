@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.5.2 
+## 0.5.2
+
+- Get theme from Home Assistant instead of relying on hard coded light/dark
+- Remove dark_theme from the configuration
+
+## 0.5.2
 
 - Improved drag-and-drop sorting 
 
