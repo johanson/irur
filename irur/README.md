@@ -84,7 +84,7 @@ If you prefer npm scripts: `npm run build` to build with webpack (or `npm run se
 * Node.js
 * Express
 
-For developing: Vue CLI, npm, fabric3 (fork from 2), `pip python-dotenv`, rsync
+For developing: Vue cli, npm
 
 # Credits
 
