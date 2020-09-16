@@ -21,21 +21,23 @@
         </div>
       </div>
 
-      <div class="item" v-for="(el, index) in filteredDB" @click="sendIr(el.id);" :key="el.id"
-      @contextmenu.prevent="$refs.menu.open($event, {id: el.id, index})" :title="el.name">
+      <div v-for="(el, index) in filteredDB" :key="el.id"
+           :title="!el.isPlaceholder ? el.name : false"
+          @click="sendIr(el.id);" @contextmenu.prevent="$refs.menu.open($event, {id: el.id, index})"
+           class="item" :data-placeholder="el.isPlaceholder || false">
 
-      <div v-if="el.icon" class="glyph">
-        <svg class="icon" :style="(`fill: ${el.color};`)">
-          <use :xlink:href="(`#${el.icon}`)"></use>
-        </svg>
+        <div v-if="el.icon" class="glyph">
+          <svg class="icon" :style="(`fill: ${el.color};`)">
+            <use :xlink:href="(`#${el.icon}`)"></use>
+          </svg>
+        </div>
+
+        <div v-else :class="(`no-icon len-${el.name.length}`)" :style="(`style: ${el.color};`)">
+          {{ el.name }}
+        </div>
       </div>
-
-      <div v-else :class="(`no-icon len-${el.name.length}`)" :style="(`style: ${el.color};`)">
-        {{ el.name }}
-      </div>
-
-    </div>
   </draggable>
+
   </div>
 </template>
 
@@ -119,6 +121,7 @@ export default {
 
   .sortable-chosen {
     opacity: 0.2;
+    background: rgba(0, 0, 0, 0.5);
   }
 
   .glyph {
@@ -143,8 +146,7 @@ export default {
     }
   }
 
-  .item,
-  .add {
+  .item, .add {
     display: flex;
     padding: 16px;
     max-width: 25%;
@@ -165,7 +167,15 @@ export default {
       background-color: rgba(0, 0, 0, 0.02);
       transition: background-color 0.5s;
     }
-
+    &[data-placeholder="true"] {
+      &:hover {
+        background-color: initial;
+        cursor: default;
+      }
+      * {
+        display: none;
+      }
+    }
     .no-icon {
       font-size: 7vw;
       white-space: nowrap;
@@ -216,11 +226,8 @@ export default {
   }
 
   .sort & .item {
-    cursor: move;
+    cursor: move!important;
   }
 
-  .remove & .item {
-    cursor: not-allowed;
-  }
 }
 </style>

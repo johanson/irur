@@ -26,12 +26,14 @@ export default {
             mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0E01F"}',
             icon: 'up-arrow',
             topic_send: 'irur/cmnd/IRsend',
+            isPlaceholder: false,
           }, {
             id: 'wt9u3yzj',
             name: 'Samsung Volume Down',
             mqtt: '{"Protocol":"SAMSUNG","Bits":32,"Data":"0xE0E0D02F"}',
             icon: 'down-arrow',
             topic_send: 'irur/cmnd/IRsend',
+            isPlaceholder: false,
           }],
         },
 

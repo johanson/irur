@@ -14,3 +14,4 @@ public
 .editorconfig
 .eslintrc.js
 assets
+.env

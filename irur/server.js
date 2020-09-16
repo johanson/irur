@@ -68,12 +68,18 @@ const init = () => {
     topicListen = env.MQTT_TOPIC_LISTEN;
     topicSend = env.MQTT_TOPIC_SEND.split(', ');
     db = testDatabase;
-    port = `:${env.SERVER_PORT}`;
   } else {
     db = homeAssistantDatabase;
     const homeAssistantOptions = JSON.parse(fs.readFileSync('/data/options.json', 'utf8'));
     topicListen = homeAssistantOptions.topic_listen;
     topicSend = homeAssistantOptions.topic_send;
+  }
+
+  if (env.HOSTNAME === undefined) {
+    env.HOSTNAME = 'localhost';
+    port = env.SERVER_PORT;
+  } else {
+    // Port is not neccessary for Ingress.
     port = '';
   }
 

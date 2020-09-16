@@ -55,31 +55,43 @@ export default {
       this.$emit('switch-mode', { mode: 'normal' });
     },
 
+    addTab() {
+      const uid = this.genUID();
+      this.tabSaveData = {
+        name: 'New',
+        id: uid,
+      };
+      this.$emit('save', { data: this.tabSaveData, mode: 'tab-rename' });
+      this.$emit('switch-tab', uid);
+      setTimeout(() => { this.$refs[`tab-${uid}`][0].focus(); }, 50);
+    },
+
+    renameTab(id) {
+      this.tabSaveData.id = id;
+      this.$emit('switch-tab', id);
+      this.$emit('switch-mode', { mode: 'tab-rename' });
+      setTimeout(() => this.$refs[`tab-${id}`][0].focus(), 50);
+    },
+
+    removeTab(id) {
+      if (id === this.layout.activeTab) {
+        // Go back to default tab if deleting the active tab
+        this.$emit('switch-tab', 'default');
+      }
+      this.$emit('remove', id);
+    },
+
     menu(e, id) {
       switch (e.target.dataset.name) {
-        case 'add': {
-          const uid = this.genUID();
-          this.tabSaveData = {
-            name: 'New',
-            id: uid,
-          };
-          this.$emit('save', { data: this.tabSaveData, mode: 'tab-rename' });
-          this.$emit('switch-tab', uid);
-          setTimeout(() => { this.$refs[`tab-${uid}`][0].focus(); }, 50);
+        case 'add':
+          this.addTab();
           break;
-        }
         case 'rename':
-          this.tabSaveData.id = id;
-          this.$emit('switch-tab', id);
-          this.$emit('switch-mode', { mode: 'tab-rename' });
-          setTimeout(() => this.$refs[`tab-${id}`][0].focus(), 50);
+          this.renameTab(id);
           break;
         case 'remove':
-          if (id === this.layout.activeTab) {
-            // Go back to default tab if deleting the active tab
-            this.$emit('switch-tab', 'default');
-          }
-          this.$emit('remove', id);
+          this.removeTab(id);
+          break;
       }
     },
   },

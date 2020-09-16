@@ -101,8 +101,8 @@ export default {
         return match;
       };
 
-      // Because HA is renaming it's css variables with breaking changes, getCssVar() loops
-      // throught the array and returns the first match
+      // Because HA is renaming it's css variables with breaking changes,
+      // getCssVar() loops throught the array and returns the first match.
       const root = document.documentElement;
       root.style.setProperty('--accent', getCSSvar(['primary-text-color', 'text-color']));
       root.style.setProperty('--background', getCSSvar(['primary-background-color', 'background-color']));

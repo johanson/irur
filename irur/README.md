@@ -47,6 +47,8 @@ MQTT topic for sending IR codes.
 
 ![Irur light UI screenshot][screenshot_light]
 
+Changelog is [here][changelog].
+
 ## Development
 
 Clone the repo, install npm dependencies. Install fabric3 (pip3 install fabric3) , do `fab -list` from terminal in the project dir for all the available tasks.
@@ -102,3 +104,4 @@ This project is licensed under the terms of the [MIT license][mit].
 [screenshot_dark]: https://github.com/johanson/irur/blob/master/irur/screenshots/screenshot-dark.png?raw=true
 [screenshot_light]: https://github.com/johanson/irur/blob/master/irur/screenshots/screenshot-light.png?raw=true
 [mit]: https://github.com/johanson/irur/blob/master/irur/LICENSE
+[changelog]: https://github.com/johanson/irur/blob/master/irur/CHANGELOG.md

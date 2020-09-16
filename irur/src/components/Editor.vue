@@ -2,11 +2,12 @@
   <div id="add-overlay" @click="closeModal($event)">
 
     <form action="#" id="form1" autocomplete="off" @submit="validate()"
-          @keydown.esc="closeModal($event, true)">
+          @keydown.esc="closeModal($event, true)" :class="{disabled: knobSaveData.isPlaceholder}">
       <div id="close" @click="closeModal($event)" />
 
       <label for="knob_name">Name <span>Name for the knob</span></label>
-      <input type="text" id="knob_name" ref="editorNameField" required v-model="knobSaveData.name">
+      <input type="text" id="knob_name" ref="editorNameField" required
+          v-model="knobSaveData.name">
 
       <label for="knob_mqtt">MQTT response
         <span>Tap listen and press a remote button towards IR receiver</span>
@@ -53,6 +54,11 @@
       <input type="text" id="knob_color" v-model="knobSaveData.color">
       <slider-picker v-model="colors"></slider-picker>
 
+      <div class="placeholder">
+        <input type="checkbox" id="knob-type" ref="knobType" v-model="knobSaveData.isPlaceholder">
+        <label for="knob-type">Use as an empty placeholder</label>
+      </div>
+
       <button form="form1" @click.prevent="validate()">Save</button>
 
       <p class="keybinds">
@@ -85,9 +91,10 @@ export default {
         if (value.mode === 'add') {
           this.colors = { hex: this.cssVar('--accent') };
           this.knobSaveData = {
+            isPlaceholder: false,
+            id: this.genUID(),
             name: '',
             mqtt: '',
-            id: this.genUID(),
             icon: '',
             color: this.cssVar('--accent'),
             topic_send: this.options.settings.topic_send,
@@ -121,6 +128,7 @@ export default {
   data() {
     return {
       knobSaveData: {
+        isPlaceholder: '',
         id: '',
         name: '',
         mqtt: '',
@@ -185,7 +193,7 @@ export default {
     validate() {
       const dat = this.knobSaveData;
       const required = [dat.name, dat.mqtt, dat.id, dat.topic_send];
-      if (required.some((x) => x === '' || x === undefined)) {
+      if (!dat.isPlaceholder && required.some((x) => x === '' || x === undefined)) {
         this.$toast.error('Name, id, mqtt and topic required');
       } else {
         this.save();
@@ -319,6 +327,13 @@ export default {
     }
   }
 
+  & .disabled {
+    input[type=text], #knob_mqtt_topic, #glyphs, .vc-slider, #mqtt button {
+      opacity: 0.1;
+      pointer-events: none;
+    }
+  }
+
   #close {
     font-size: 20px;
     line-height: 35px;
@@ -393,6 +408,25 @@ export default {
       padding: 0 10px;
       line-height: 1em;
       font-weight: normal;
+    }
+  }
+
+  .placeholder {
+    display: block;
+    text-align: left;
+    border-top: 1px solid #979797;
+    border-bottom: 1px solid #979797;
+    border-left: none;
+    border-right: none;
+    line-height: 1em;
+    padding-top: 10px;
+    padding-left: 10px;
+    margin-bottom: 10px;
+    label {
+     font-weight: normal;
+     font-size: 1em;
+     display: inline;
+     padding-right: 5px;
     }
   }
 
