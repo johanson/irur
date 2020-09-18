@@ -10,8 +10,8 @@
     </vue-context>
 
     <div class="tab" v-for="(item, key) in db" @contextmenu.prevent="$refs.menu.open($event, key)"
-        :key="key" :data-id="key" @click="switchTab(key)"
-        :class="{ active: layout.activeTab === key }" >
+         :key="key" :data-id="key" @click="switchTab(key)"
+         :class="{ active: layout.activeTab === key }" >
       <input type="text" v-if="layout.mode === 'tab-rename' && layout.activeTab === key"
              v-model="tabSaveData.name" :ref="(`tab-${key}`)" @blur="saveTab()"
              @focus="tabSaveData.name = item.name" @keyup.enter="$event.target.blur()">
@@ -62,15 +62,16 @@ export default {
         id: uid,
       };
       this.$emit('save', { data: this.tabSaveData, mode: 'tab-rename' });
-      this.$emit('switch-tab', uid);
-      setTimeout(() => { this.$refs[`tab-${uid}`][0].focus(); }, 50);
+      this.renameTab(uid);
     },
 
     renameTab(id) {
       this.tabSaveData.id = id;
       this.$emit('switch-tab', id);
       this.$emit('switch-mode', { mode: 'tab-rename' });
-      setTimeout(() => this.$refs[`tab-${id}`][0].focus(), 50);
+      this.$nextTick().then(() => {
+        this.$refs[`tab-${id}`][0].focus();
+      });
     },
 
     removeTab(id) {

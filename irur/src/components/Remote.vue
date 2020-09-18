@@ -22,8 +22,8 @@
       </div>
 
       <div v-for="(el, index) in filteredDB" :key="el.id"
-           :title="!el.isPlaceholder ? el.name : false"
-          @click="sendIr(el.id);" @contextmenu.prevent="$refs.menu.open($event, {id: el.id, index})"
+           :title="!el.isPlaceholder ? el.name : false" @click="sendIr(el.id, el.isPlaceholder);"
+           @contextmenu.prevent="$refs.menu.open($event, {id: el.id, index})"
            class="item" :data-placeholder="el.isPlaceholder || false">
 
         <div v-if="el.icon" class="glyph">
@@ -93,17 +93,19 @@ export default {
       }
     },
 
-    sendIr(id) {
-      const api = this.options.api.prefix;
-      fetch(`${api}${this.options.api.send}${id}/`)
-        .then((resp) => {
-          if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
-        }).then(() => {
-          this.loader = false;
-        }).catch((err) => {
-          this.$toast.error(String(err));
-          this.loader = false;
-        });
+    sendIr(id, confirm) {
+      if (!confirm || confirm === undefined) {
+        const api = this.options.api.prefix;
+        fetch(`${api}${this.options.api.send}${id}/`)
+          .then((resp) => {
+            if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
+          }).then(() => {
+            this.loader = false;
+          }).catch((err) => {
+            this.$toast.error(String(err));
+            this.loader = false;
+          });
+      }
     },
   },
 };
