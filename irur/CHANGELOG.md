@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1
+
+- Add confirmation prompt
+
 ## 0.6.0
 
 - Add the ability to add empty placeholders
