@@ -3,7 +3,7 @@
 
     <form action="#" id="form1" autocomplete="off" @submit="validate()"
           @keydown.esc="closeModal($event, true)" :class="{disabled: knobSaveData.isPlaceholder}">
-      <div class="close" @click="closeModal($event)" />
+      <div class="close" id="close" @click="closeModal($event)" />
 
       <label for="knob_name">Name <span>Name for the knob</span></label>
       <input type="text" id="knob_name" ref="editorNameField" v-model="knobSaveData.name" required>

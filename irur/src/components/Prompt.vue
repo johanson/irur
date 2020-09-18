@@ -71,7 +71,7 @@ export default {
   top: 100px;
   background: var(--background);
   color: var(--accent);
-  width: 200px;
+  width: 250px;
   padding: 15px;
   .message {
     margin-top: 25px;

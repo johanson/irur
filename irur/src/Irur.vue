@@ -17,15 +17,16 @@
             @switch-mode="switchMode($event)" @edit="editKnob($event)"
             @loading="layout.showLoader = $event" />
 
-    <tabs :db="db" :layout="layout"
+    <tabs :db="db" :layout="layout" @save="saveTab($event)"
           @switch-tab="layout.activeTab = $event" @switch-mode="switchMode($event)"
-          @save="saveTab($event)"
-          @remove="prompt = { message: `Are you sure you want to delete tab? ${layout}`,
+          @remove="prompt = { message: `Are you sure you want to delete
+                                        tab named “${db[$event].name}”?`,
                               callback: 'removeTab',
                               data: $event };" />
 
     <remote :db="db" :layout="layout" :options="options" @switch-mode="switchMode($event)"
-            @sort="sync('sort')" @remove="prompt = { message: 'Are you sure?',
+            @sort="sync('sort')" @remove="prompt = { message: `Are you sure you want to delete
+                                                               knob named “${$event}”?`,
                                                      callback: 'removeKnob' };" />
 
   </div>

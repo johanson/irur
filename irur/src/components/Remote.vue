@@ -89,7 +89,10 @@ export default {
       const mode = e.target.dataset.id;
       this.$emit('switch-mode', { mode, id: knob.id, index: knob.index });
       if (mode === 'remove') {
-        this.$emit('remove');
+        const { name, isPlaceholder } = this.data[this.layout.activeTab].knobs[knob.index];
+        let removeName = name;
+        if (isPlaceholder) removeName = 'placeholder';
+        this.$emit('remove', removeName);
       }
     },
 
