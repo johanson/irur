@@ -64,7 +64,7 @@ button {
   color: #f8f8f8;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.3s ease 0s;
+  transition: background .3s ease-out, opacity .3s ease-out;
   background-color: #1976d2;
   padding: 1px 6px;
   line-height: 40px;
@@ -79,12 +79,39 @@ button {
 button:hover,
 button:active {
   background: #1565c0;
+  transition: background .3s ease-out, opacity .3s ease-out;
 }
 
 button:disabled,
 button.disabled {
   cursor: not-allowed;
   opacity: 0.75;
+}
+
+.close {
+  font-size: 20px;
+  line-height: 35px;
+  height: 35px;
+  width: 35px;
+  font-weight: bold;
+  z-index: 101;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  color: #fff;
+  background-color: #ff7c7c;
+  text-align: center;
+  cursor: pointer;
+  transition: background .3s ease-out;
+
+  &:hover {
+    background-color: #ff3d3d;
+    transition: background .3s ease-out;
+  }
+
+  &:before {
+    content: '❌';
+  }
 }
 
 #loader {

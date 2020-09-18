@@ -20,13 +20,13 @@
     <tabs :db="db" :layout="layout"
           @switch-tab="layout.activeTab = $event" @switch-mode="switchMode($event)"
           @save="saveTab($event)"
-          @remove="prompt = { message: 'Are you sure?',
+          @remove="prompt = { message: `Are you sure you want to delete tab? ${layout}`,
                               callback: 'removeTab',
                               data: $event };" />
 
-    <remote :db="db" :layout="layout" :options="options" @sort="sync('sort')"
-            @switch-mode="switchMode($event)" @remove="prompt = { message: 'Are you sure?',
-                                                                  callback: 'removeKnob' };" />
+    <remote :db="db" :layout="layout" :options="options" @switch-mode="switchMode($event)"
+            @sort="sync('sort')" @remove="prompt = { message: 'Are you sure?',
+                                                     callback: 'removeKnob' };" />
 
   </div>
 </template>
@@ -83,7 +83,7 @@ export default {
         },
       },
       prompt: {
-        message: 'Are you sure?',
+        message: null,
         data: null,
         callback: null,
       },
@@ -120,16 +120,6 @@ export default {
       root.style.setProperty('--accent', getCSSvar(['primary-text-color', 'text-color']));
       root.style.setProperty('--background', getCSSvar(['primary-background-color', 'background-color']));
       root.style.setProperty('--background-shade', getCSSvar(['card-background-color']));
-    },
-
-    promptCallback(answer) {
-      const { callback, data } = this.prompt;
-      if (answer && callback) this[callback](data);
-      this.prompt = {
-        message: '',
-        data: null,
-        callback: null,
-      };
     },
 
     loadDatabase() {
@@ -228,6 +218,12 @@ export default {
       this.$refs.undo.record();
       this.$delete(this.db, id);
       this.sync();
+    },
+
+    promptCallback(answer) {
+      const { callback, data } = this.prompt;
+      if (answer && callback) this[callback](data);
+      Object.keys(this.prompt).forEach((key) => { this.prompt[key] = undefined; });
     },
   },
 };

@@ -2,6 +2,7 @@
   <div class="overlay" v-if="isActive" tabindex=-1 ref="window"
        @keydown.esc="cancel()" @keydown.enter="yes()">
     <div id="prompt">
+      <div class="close" @click="cancel()" />
       <div class="message">
         {{ propData.message }}
       </div>
@@ -70,12 +71,11 @@ export default {
   top: 100px;
   background: var(--background);
   color: var(--accent);
-  min-width: 200px;
+  width: 200px;
   padding: 15px;
   .message {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 15px;
+    margin-top: 25px;
+    margin-bottom: 20px;
   }
   button {
     padding: 0 15px;

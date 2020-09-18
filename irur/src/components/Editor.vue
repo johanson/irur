@@ -3,7 +3,7 @@
 
     <form action="#" id="form1" autocomplete="off" @submit="validate()"
           @keydown.esc="closeModal($event, true)" :class="{disabled: knobSaveData.isPlaceholder}">
-      <div id="close" @click="closeModal($event)" />
+      <div class="close" @click="closeModal($event)" />
 
       <label for="knob_name">Name <span>Name for the knob</span></label>
       <input type="text" id="knob_name" ref="editorNameField" v-model="knobSaveData.name" required>
@@ -301,27 +301,6 @@ export default {
     input[type=text], #knob_mqtt_topic, #glyphs, .vc-slider, #mqtt button {
       opacity: 0.1;
       pointer-events: none;
-    }
-  }
-
-  #close {
-    font-size: 20px;
-    line-height: 35px;
-    height: 35px;
-    width: 35px;
-    text-indent: 2px;
-    font-weight: bold;
-    z-index: 101;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    color: #fff;
-    background-color: #ff7c7c;
-    text-align: center;
-    cursor: pointer;
-
-    &:before {
-      content: '❌';
     }
   }
 
