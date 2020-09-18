@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 // Just a logging wrapper around bashio
 const log = {
   bashioPath: path.join('scripts/logger.sh'),
+
   bashio(msg = '', level = 'info') {
     try {
       if (fs.existsSync(this.bashioPath)) {
@@ -36,6 +37,7 @@ const log = {
       console.log(err.message);
     }
   },
+
   info(msg) {
     if (flags === '--dev') {
       console.log(msg);
@@ -43,6 +45,7 @@ const log = {
       this.bashio(msg, 'info');
     }
   },
+
   error(msg) {
     if (flags === '--dev') {
       console.error(msg);
@@ -50,6 +53,7 @@ const log = {
       this.bashio(msg, 'error');
     }
   },
+
   warn(msg) {
     if (flags === '--dev') {
       console.warn(msg);

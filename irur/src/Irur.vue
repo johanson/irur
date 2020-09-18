@@ -3,6 +3,8 @@
 
     <svg-sprite @loaded="layout.icons = $event; layout.showLoader = false" />
 
+    <prompt :data="prompt" @callback="promptCallback($event)" />
+
     <undo ref="undo" :db="db" v-show="layout.showUndo"
           @undo="db = $event; sync()" @show="layout.showUndo = true"
           @timer="layout.showUndo = false" @click.native="layout.showUndo = false"/>
@@ -17,10 +19,14 @@
 
     <tabs :db="db" :layout="layout"
           @switch-tab="layout.activeTab = $event" @switch-mode="switchMode($event)"
-          @save="saveTab($event)" @remove="removeTab($event)"/>
+          @save="saveTab($event)"
+          @remove="prompt = { message: 'Are you sure?',
+                              callback: 'removeTab',
+                              data: $event };" />
 
     <remote :db="db" :layout="layout" :options="options" @sort="sync('sort')"
-            @remove="removeKnob()" @switch-mode="switchMode($event)" />
+            @switch-mode="switchMode($event)" @remove="prompt = { message: 'Are you sure?',
+                                                                  callback: 'removeKnob' };" />
 
   </div>
 </template>
@@ -31,6 +37,7 @@ import Undo from './components/Undo.vue';
 import Editor from './components/Editor.vue';
 import Tabs from './components/Tabs.vue';
 import Remote from './components/Remote.vue';
+import Prompt from './components/Prompt.vue';
 import Helpers from './mixins/helpers';
 import './assets/app.scss';
 
@@ -43,6 +50,7 @@ export default {
     Editor,
     Tabs,
     Remote,
+    Prompt,
   },
 
   data() {
@@ -73,6 +81,11 @@ export default {
           name: 'Default',
           knobs: [],
         },
+      },
+      prompt: {
+        message: 'Are you sure?',
+        data: null,
+        callback: null,
       },
     };
   },
@@ -107,6 +120,16 @@ export default {
       root.style.setProperty('--accent', getCSSvar(['primary-text-color', 'text-color']));
       root.style.setProperty('--background', getCSSvar(['primary-background-color', 'background-color']));
       root.style.setProperty('--background-shade', getCSSvar(['card-background-color']));
+    },
+
+    promptCallback(answer) {
+      const { callback, data } = this.prompt;
+      if (answer && callback) this[callback](data);
+      this.prompt = {
+        message: '',
+        data: null,
+        callback: null,
+      };
     },
 
     loadDatabase() {

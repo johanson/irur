@@ -6,15 +6,13 @@
       <div id="close" @click="closeModal($event)" />
 
       <label for="knob_name">Name <span>Name for the knob</span></label>
-      <input type="text" id="knob_name" ref="editorNameField" required
-          v-model="knobSaveData.name">
+      <input type="text" id="knob_name" ref="editorNameField" v-model="knobSaveData.name" required>
 
       <label for="knob_mqtt">MQTT response
         <span>Tap listen and press a remote button towards IR receiver</span>
       </label>
       <div id="mqtt">
-        <input type="text" id="knob_mqtt" required
-            v-model="knobSaveData.mqtt">
+        <input type="text" id="knob_mqtt" v-model="knobSaveData.mqtt" required>
         <button type="button" @click.prevent="recordIR()">Listen</button>
       </div>
 
@@ -25,9 +23,9 @@
         <p v-for="(item, index) in options.settings.topic_send" :key="index">
           <input type="radio" required
                  :ref="(`mqtt-checkbox-${index}`)"
-                  :id="(`mqtt-label-${index}`)"
-               :value="item"
-              v-model="knobSaveData.topic_send">
+                 :id="(`mqtt-label-${index}`)"
+                 :value="item"
+                 v-model="knobSaveData.topic_send">
           <label :for="(`mqtt-label-${index}`)">{{ item }}</label>
         </p>
       </div>
@@ -37,7 +35,7 @@
           $ curl {{options.settings.hostname}}{{options.api.send}}{{knobSaveData.id}}/
         </span>
       </label>
-      <input type="text" id="knob_id" required readonly v-model="knobSaveData.id">
+      <input type="text" id="knob_id" v-model="knobSaveData.id" required readonly>
 
       <label for="knob_icon">Icon
         <span>If no icon is selected, the name is being used</span>
@@ -103,7 +101,7 @@ export default {
           if (this.options.settings.topic_send.length === 1) {
             [this.knobSaveData.topic_send] = this.options.settings.topic_send;
           }
-          setTimeout(() => this.$refs.editorNameField.focus(), 50);
+          this.$nextTick().then(() => { this.$refs.editorNameField.focus(); });
         }
 
         if (value.mode === 'edit') {
@@ -115,7 +113,7 @@ export default {
             this.knobSaveData.color = this.cssVar('--accent');
           }
           this.colors = { hex: this.knobSaveData.color };
-          setTimeout(() => this.$refs.editorNameField.focus(), 50);
+          this.$nextTick().then(() => { this.$refs.editorNameField.focus(); });
         }
       },
     },
@@ -232,34 +230,6 @@ export default {
   .add &,
   .edit & {
     display: flex;
-  }
-
-  button {
-    display: inline-block;
-    color: #f8f8f8;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.3s ease 0s;
-    background-color: #1976d2;
-    padding: 1px 6px;
-    line-height: 40px;
-    height: 40px;
-    overflow: hidden;
-    border: none;
-    font-size: 16px;
-    font-family: Arial, Helvetica, sans-serif;
-    text-shadow: 0px 0px 1px #000;
-  }
-
-  button:hover,
-  button:active {
-    background: #1565c0;
-  }
-
-  button:disabled,
-  button.disabled {
-    cursor: not-allowed;
-    opacity: 0.75;
   }
 
   input[type="text"] {
