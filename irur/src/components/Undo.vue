@@ -1,8 +1,6 @@
 <template>
-  <a href="#"
-    @keydown.ctrl.90="undo"
-      @click.prevent="undo"
-                ref="undoButton">
+  <a href="#" @keydown.ctrl.90="undo"
+     @click.prevent="undo" ref="undoButton">
     <span>Undo</span>
     <svg>
       <use xlink:href="#fast-forward"></use>
