@@ -57,6 +57,7 @@ code {
   max-width: 700px;
   min-width: 320px;
   margin: 10px auto;
+  min-height: calc(100vh - 20px);
 }
 
 button {
@@ -89,28 +90,31 @@ button.disabled {
 }
 
 .close {
-  font-size: 20px;
-  line-height: 35px;
-  height: 35px;
-  width: 35px;
-  font-weight: bold;
-  z-index: 101;
   position: absolute;
-  top: 0px;
-  right: 0px;
-  color: #fff;
-  background-color: #ff7c7c;
-  text-align: center;
+  z-index: 101;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+  width: 35px;
+  height: 35px;
   cursor: pointer;
   transition: background .3s ease-out;
+  background-color: #ff7c7c;
 
-  &:hover {
-    background-color: #ff3d3d;
-    transition: background .3s ease-out;
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    margin: 25%;
+    pointer-events: none;
+    fill: #fff;
   }
 
-  &:before {
-    content: '❌';
+  &:hover {
+    transition: background .3s ease-out;
+    background-color: #ff3d3d;
   }
 }
 
@@ -119,13 +123,13 @@ button.disabled {
   top: 8px;
   right: 8px;
   z-index: 101;
-  background: rgba(0 0 0 / 0.5);
+  background: rgba(0 0 0 / 0.8);
   width: 100vw;
   height: 100vh;
   margin: -10px -10px 0 0;
 
   .icon {
-    top: calc(50% - 30px);
+    top: 200px;
     right: calc(50% - 30px);
     position: absolute;
     width: 60px;
@@ -134,33 +138,26 @@ button.disabled {
     background-size: 60px 60px;
     will-change: scroll-position;
     animation-name: spin;
-    animation-duration: 2000ms;
+    animation-duration: 1800ms;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     backface-visibility: hidden;
+    transform: transale3d(0, 0, 0);
   }
 
   @keyframes spin {
     0% {
       transform: rotate(0deg);
-      opacity: 0.1;
+      opacity: 0.4;
     }
 
-    10% {
-      opacity: 0.2;
-    }
-
-    30% {
-      opacity: 0.6;
-    }
-
-    90% {
+    75% {
       opacity: 0.8;
     }
 
     100% {
       transform: rotate(360deg);
-      opacity: 0.1;
+      opacity: 0.4;
     }
   }
 }

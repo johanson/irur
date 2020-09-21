@@ -1,9 +1,15 @@
 <template>
-  <div id="add-overlay" @click="closeModal($event)">
+  <div class="editor-overlay" @click="closeModal($event)">
 
     <form action="#" id="form1" autocomplete="off" @submit="validate()"
-          @keydown.esc="closeModal($event, true)" :class="{disabled: knobSaveData.isPlaceholder}">
-      <div class="close" id="close" @click="closeModal($event)" />
+          @keydown.esc="closeModal($event, force = true)"
+          :class="{disabled: knobSaveData.isPlaceholder}">
+
+      <div class="close" @click="closeModal($event)">
+        <svg>
+          <use xlink:href="#close"></use>
+        </svg>
+      </div>
 
       <label for="knob_name">Name <span>Name for the knob</span></label>
       <input type="text" id="knob_name" ref="editorNameField" v-model="knobSaveData.name" required>
@@ -205,8 +211,10 @@ export default {
               </svg>`;
     },
 
-    closeModal(e, force) {
-      if (['add-overlay', 'close'].includes(e.target.id) || force) {
+    closeModal(e, force = false) {
+      const targetClassList = ['editor-overlay', 'close'];
+      const inTargetClassList = targetClassList.some((c) => e.target.classList.contains(c));
+      if (inTargetClassList || force) {
         this.$emit('switch-mode', { mode: 'normal' });
       }
     },
@@ -215,7 +223,7 @@ export default {
 </script>
 
 <style lang="scss">
-#add-overlay {
+.editor-overlay {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.15);
   top: 0;

@@ -2,7 +2,12 @@
   <div class="overlay" v-if="isActive" tabindex=-1 ref="window"
        @keydown.esc="cancel()" @keydown.enter="yes()">
     <div id="prompt">
-      <div class="close" @click="cancel()" />
+      <div class="close" @click="cancel()">
+        <svg>
+          <use xlink:href="#close"></use>
+        </svg>
+      </div>
+
       <div class="message">
         {{ propData.message }}
       </div>
