@@ -43,9 +43,9 @@ MQTT topic for sending IR codes.
 
 ### Screenshots
 
-![Irur dark UI screenshot][screenshot_dark]
+![Irur screenshots][irur-screensots-comp-1]
 
-![Irur light UI screenshot][screenshot_light]
+![Irur screenshots][irur-screensots-comp-2]
 
 Changelog is [here][changelog].
 
@@ -71,7 +71,7 @@ deploy:  Compile and upload the project to the HA server for Docker
          :type  sync:         bool, optional
          :param reload:       Reload and update addon over SSH
          :type  reload:       bool, optional
-    
+
          Arguments: bump_version=True, sync=True, reload=True
 lint     Lint and fix files
 serve    Compile with hot-reload for development
@@ -101,7 +101,7 @@ This project is licensed under the terms of the [MIT license][mit].
 [logo]: https://github.com/johanson/irur/blob/master/irur/logo.png?raw=true
 [tasmoconf]: https://github.com/johanson/irur/blob/master/irur/screenshots/tasmota.png?raw=true
 [mqttexplorer]: https://github.com/thomasnordquist/MQTT-Explorer
-[screenshot_dark]: https://github.com/johanson/irur/blob/master/irur/screenshots/screenshot-dark.png?raw=true
-[screenshot_light]: https://github.com/johanson/irur/blob/master/irur/screenshots/screenshot-light.png?raw=true
+[irur-screensots-comp-1]: https://github.com/johanson/irur/blob/master/irur/screenshots/irur-screensots-comp-1.png?raw=true
+[irur-screensots-comp-2]: https://github.com/johanson/irur/blob/master/irur/screenshots/irur-screensots-comp-2.png?raw=true
 [mit]: https://github.com/johanson/irur/blob/master/irur/LICENSE
 [changelog]: https://github.com/johanson/irur/blob/master/irur/CHANGELOG.md
