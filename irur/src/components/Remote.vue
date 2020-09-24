@@ -2,42 +2,65 @@
   <div>
     <vue-context ref="menu">
       <template slot-scope="child">
-        <li><a href="#" data-id="add" @click.prevent="menu($event, child.data)">Add</a></li>
-        <li><a href="#" data-id="edit" @click.prevent="menu($event, child.data)">Edit</a></li>
-        <li><a href="#" data-id="sort" @click.prevent="menu($event, child.data)">Sort</a></li>
-        <li><a href="#" data-id="remove" @click.prevent="menu($event, child.data)">Remove</a></li>
+        <li>
+          <a href="#" data-id="add" @click.prevent="menu($event, child.data)"
+            >Add</a
+          >
+        </li>
+        <li>
+          <a href="#" data-id="edit" @click.prevent="menu($event, child.data)"
+            >Edit</a
+          >
+        </li>
+        <li>
+          <a href="#" data-id="sort" @click.prevent="menu($event, child.data)"
+            >Sort</a
+          >
+        </li>
+        <li>
+          <a href="#" data-id="remove" @click.prevent="menu($event, child.data)"
+            >Remove</a
+          >
+        </li>
       </template>
     </vue-context>
-
-  <draggable id="remote" v-model="filteredDB" draggable=".item" @change="$emit('sort')"
-             :disabled="(this.layout.mode == 'sort') ? false : true">
-
-      <div class="add" slot="footer" draggable="false"
-          @click="$emit('switch-mode', { mode: 'add' })">
+    <draggable
+      id="remote"
+      v-model="filteredDB"
+      draggable=".item"
+      @change="$emit('sort')"
+      :disabled="this.layout.mode == 'sort' ? false : true"
+    >
+      <div class="add" slot="footer" draggable="false" @click="addKnob()">
         <div class="glyph">
-          <svg class="icon">
-            <use xlink:href="#add"></use>
-          </svg>
+          <svg><use xlink:href="#add"></use></svg>
         </div>
       </div>
 
-      <div v-for="(el, index) in filteredDB" :key="el.id"
-           :title="!el.isPlaceholder ? el.name : false" @click="sendIr(el.id, el.isPlaceholder);"
-           @contextmenu.prevent="$refs.menu.open($event, {id: el.id, index})"
-           class="item" :data-placeholder="el.isPlaceholder || false">
-
+      <div
+        v-for="(el, index) in filteredDB"
+        :key="el.id"
+        :title="!el.isPlaceholder ? el.name : false"
+        @click="sendIr(el.id, el.isPlaceholder)"
+        @contextmenu.prevent="$refs.menu.open($event, { id: el.id, index })"
+        class="item"
+        :data-placeholder="el.isPlaceholder || false"
+      >
         <div v-if="el.icon" class="glyph">
-          <svg class="icon" :style="(`fill: ${el.color};`)">
-            <use :xlink:href="(`#${el.icon}`)"></use>
+          <svg :style="`fill: ${el.color};`">
+            <use :xlink:href="`#${el.icon}`"></use>
           </svg>
         </div>
 
-        <div v-else :class="(`no-icon len-${el.name.length}`)" :style="(`style: ${el.color};`)">
+        <div
+          v-else
+          :class="`no-icon len-${el.name.length}`"
+          :style="`style: ${el.color};`"
+        >
           {{ el.name }}
         </div>
       </div>
-  </draggable>
-
+    </draggable>
   </div>
 </template>
 
@@ -87,24 +110,35 @@ export default {
   methods: {
     menu(e, knob) {
       const mode = e.target.dataset.id;
-      this.$emit('switch-mode', { mode, id: knob.id, index: knob.index });
+      this.$emit('switch-mode', { mode, id: knob.id });
       if (mode === 'remove') {
-        const { name, isPlaceholder } = this.data[this.layout.activeTab].knobs[knob.index];
-        let removeName = name;
-        if (isPlaceholder) removeName = 'placeholder';
-        this.$emit('remove', removeName);
+        const activeKnob = this.data[this.layout.activeTab].knobs[knob.index];
+        let { name } = activeKnob;
+        if (activeKnob.isPlaceholder) name = 'placeholder';
+
+        this.$emit('remove', {
+          message: `Are you sure you want to delete knob named “${name}”?`,
+          callback: 'removeKnob',
+          data: knob.id,
+        });
       }
+    },
+
+    addKnob() {
+      this.$emit('switch-mode', { mode: 'add' });
     },
 
     sendIr(id, confirm) {
       if (!confirm || confirm === undefined) {
         const api = this.options.api.prefix;
         fetch(`${api}${this.options.api.send}${id}/`)
-          .then((resp) => {
+          .then(resp => {
             if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
-          }).then(() => {
+          })
+          .then(() => {
             this.loader = false;
-          }).catch((err) => {
+          })
+          .catch(err => {
             this.$toast.error(String(err));
             this.loader = false;
           });
@@ -143,7 +177,7 @@ export default {
     padding: 20px;
     pointer-events: none;
 
-    svg.icon {
+    svg {
       width: 100%;
       height: 100%;
       pointer-events: none;
@@ -151,7 +185,8 @@ export default {
     }
   }
 
-  .item, .add {
+  .item,
+  .add {
     display: flex;
     padding: 16px;
     max-width: 25%;
@@ -163,7 +198,7 @@ export default {
     position: relative;
 
     &::before {
-      content: "";
+      content: '';
       padding-top: 100%;
     }
 
@@ -172,7 +207,7 @@ export default {
       background-color: rgba(0, 0, 0, 0.02);
       transition: background-color 0.5s;
     }
-    &[data-placeholder="true"] {
+    &[data-placeholder='true'] {
       &:hover {
         background-color: initial;
         cursor: default;
@@ -231,8 +266,7 @@ export default {
   }
 
   .sort & .item {
-    cursor: move!important;
+    cursor: move !important;
   }
-
 }
 </style>

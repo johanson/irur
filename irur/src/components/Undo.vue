@@ -1,14 +1,13 @@
 <template>
-  <a href="#" @keydown.ctrl.90="undo"
-     @click.prevent="undo" ref="undoButton">
+  <a href="#" @keydown.ctrl.90="undo" v-if="isActive">
     <span>Undo</span>
-    <svg>
-      <use xlink:href="#fast-forward"></use>
-    </svg>
+    <svg><use xlink:href="#fast-forward"></use></svg>
   </a>
 </template>
 
 <script>
+const undoButtonTimeout = 5000;
+
 export default {
   props: {
     db: { type: Object, required: true },
@@ -16,30 +15,45 @@ export default {
 
   data() {
     return {
-      db_history: {},
+      dbHistory: {},
+      isActive: false,
     };
   },
 
-  mounted() {
-    this.$refs.undoButton.focus();
+  watch: {
+    isActive() {
+      if (this.isActive) {
+        window.addEventListener('keydown', this.keyDown);
+      } else {
+        window.removeEventListener('keydown', this.keyDown);
+      }
+    },
   },
 
   methods: {
-    undo() {
-      this.$emit('undo', this.db_history);
+    back() {
+      this.$emit('back', this.dbHistory);
+      this.isActive = false;
     },
 
     record() {
       // get rid of references
-      this.db_history = JSON.parse(JSON.stringify(this.db));
+      this.dbHistory = JSON.parse(JSON.stringify(this.db));
       this.timer();
-      this.$emit('show');
+      this.isActive = true;
     },
 
     timer() {
       setTimeout(() => {
-        this.$emit('timer');
-      }, 5000);
+        this.isActive = false;
+      }, undoButtonTimeout);
+    },
+
+    keyDown(KeyboardEvent) {
+      if (KeyboardEvent.key === 'Enter') {
+        this.back();
+        this.isActive = false;
+      }
     },
   },
 };
@@ -61,16 +75,24 @@ a {
   opacity: 0.5;
   color: var(--accent);
   transition: opacity 0.5s ease-in-out;
-
-  &.visible {
-    display: block;
-  }
+  animation-name: fadeBorder;
+  animation-duration: 2500ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 
   &:hover {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
   }
+  @keyframes fadeBorder {
+    0% {
+      border: 1px solid #1976d2;
+    }
 
+    100% {
+      border: 1px solid var(--accent);
+    }
+  }
   svg {
     height: 15px;
     width: 15px;
@@ -86,5 +108,4 @@ a {
     padding-right: 5px;
   }
 }
-
 </style>

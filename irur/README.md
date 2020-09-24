@@ -2,12 +2,10 @@
 
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
 
-
 Infrared Universal Remote webUI for Tasmota ESP8266 based devices over MQTT.
 Provides a simple web UI to record and manage buttons for your virtual IR remote. Supports ingress and an option to show in sidebar. Comes with around 150 icons, but you can also use text or emojis.
 
-![IRUR logo][logo]
----
+## ![IRUR logo][logo]
 
 ## Installation
 
@@ -17,11 +15,11 @@ Flash your ESP8266 board with Tasmota (tasmota-ir.bin) firmware. All the builds 
 
 ### Home Assistant
 
-* Supervisor ⇒ Add-on store ⇒ Click on the right-top menu ⇒ Add Repositories ⇒ https://github.com/johanson/irur ⇒ Add
+- Supervisor ⇒ Add-on store ⇒ Click on the right-top menu ⇒ Add Repositories ⇒ https://github.com/johanson/irur ⇒ Add
 
-* The repository should appear underneath the official and community add-ons.
+- The repository should appear underneath the official and community add-ons.
 
-*  Install the add-on, make sure you to configure correct topic(s) for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer][mqttexplorer] if you have problems figuring it out. HA provides MQTT broker's credentials automatically.
+- Install the add-on, make sure you to configure correct topic(s) for receiving and sending messages corresponding to your Tasmota configuration. You can use [MQTT Explorer][mqttexplorer] if you have problems figuring it out. HA provides MQTT broker's credentials automatically.
 
 ### Configuration
 
@@ -34,11 +32,13 @@ topic_send:
 ```
 topic_listen (str)
 ```
+
 MQTT topic for receiving IR codes
 
 ```
 topic_send   (list)
 ```
+
 MQTT topic for sending IR codes.
 
 ### Screenshots
@@ -48,6 +48,13 @@ MQTT topic for sending IR codes.
 ![Irur screenshots][irur-screensots-comp-2]
 
 Changelog is [here][changelog].
+
+## Keyboard Shortcuts
+
+`Shift+n` new knob  
+`Shift+t` new tab  
+`Esc` cancel/close  
+`Enter` save
 
 ## Development
 
@@ -81,8 +88,8 @@ If you prefer npm scripts: `npm run build` to build with webpack (or `npm run se
 
 ### Dependencies
 
-* Node.js
-* Express
+- Node.js
+- Express
 
 For developing: Vue cli, npm
 
@@ -91,6 +98,7 @@ For developing: Vue cli, npm
 Icons made by Roundicons, Freepik, Pixel perfect, hirschwolf, Kiranshastry, Good Ware, Becris, srip, dmitri13, surang, Nikita Golubev, Linector, Icongeek26, Smashicons, photo3idea_studio, bqlqn from [www.flaticon.com](https://www.flaticon.com/ "Flaticon")
 
 ---
+
 This project is licensed under the terms of the [MIT license][mit].
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg

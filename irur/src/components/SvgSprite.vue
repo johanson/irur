@@ -17,22 +17,23 @@ export default {
   methods: {
     load() {
       fetch('icons/sprite.svg')
-        .then((resp) => {
+        .then(resp => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
           }
           return resp.text();
         })
-        .then((data) => {
+        .then(data => {
           this.parse(data);
-        }).catch((err) => {
+        })
+        .catch(err => {
           this.$toast.error(String(err));
         });
     },
 
     parse(data) {
       const svg = document.getElementById('svg-sprite');
-      const parser = (new DOMParser()).parseFromString(data, 'text/xml');
+      const parser = new DOMParser().parseFromString(data, 'text/xml');
       const symbols = parser.getElementsByTagName('symbol');
       if (!symbols.length) {
         throw new Error('Cannot generate svg icons');

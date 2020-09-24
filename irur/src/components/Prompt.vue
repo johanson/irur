@@ -1,19 +1,19 @@
 <template>
-  <div class="overlay" v-if="isActive" tabindex=-1 ref="window"
-       @keydown.esc="cancel()" @keydown.enter="yes()">
-    <div id="prompt">
+  <div class="overlay" v-if="isActive">
+    <div class="prompt">
       <div class="close" @click="cancel()">
-        <svg>
-          <use xlink:href="#close"></use>
-        </svg>
+        <svg><use xlink:href="#close"></use></svg>
       </div>
-
       <div class="message">
-        {{ propData.message }}
+        {{ data.message }}
       </div>
       <div class="clearfix">
-        <button type="button" class="yes" @click.prevent="yes()">Yes</button>
-        <button type="button" class="cancel" @click.prevent="cancel()">Cancel</button>
+        <button type="button" class="confirm" @click.prevent="confirm()">
+          Yes
+        </button>
+        <button type="button" class="cancel" @click.prevent="cancel()">
+          Cancel
+        </button>
       </div>
     </div>
   </div>
@@ -22,42 +22,50 @@
 <script>
 export default {
   props: {
-    data: { type: Object, required: true },
+    params: { type: Object, required: true },
   },
 
   computed: {
-    propData() {
-      return this.data;
+    data() {
+      return this.params;
     },
     isActive() {
-      return (this.propData.callback && this.propData.message !== null);
+      return this.data.callback && this.data.message !== null;
     },
   },
 
   watch: {
     isActive() {
       if (this.isActive) {
-        // Wait until the DOM update cycle
-        this.$nextTick().then(() => {
-          this.$refs.window.focus();
-        });
+        window.addEventListener('keydown', this.keyDown);
+      } else {
+        window.removeEventListener('keydown', this.keyDown);
       }
     },
   },
 
   methods: {
-    yes() {
+    confirm() {
       this.$emit('callback', true);
     },
 
     cancel() {
       this.$emit('callback', false);
     },
+
+    keyDown(KeyboardEvent) {
+      if (KeyboardEvent.key === 'Enter') {
+        this.confirm();
+      }
+      if (KeyboardEvent.key === 'Escape') {
+        this.cancel();
+      }
+    },
   },
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .overlay {
   position: fixed;
   background-color: rgba(0, 0, 0, 0.25);
@@ -70,7 +78,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
-#prompt {
+.prompt {
   position: fixed;
   z-index: 101;
   top: 100px;
@@ -84,7 +92,7 @@ export default {
   }
   button {
     padding: 0 15px;
-    &.yes {
+    &.confirm {
       opacity: 1;
       margin-right: 10px;
     }

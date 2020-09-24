@@ -1,22 +1,43 @@
 <template>
   <div id="tabs">
     <vue-context ref="menu">
-      <template slot-scope="child">
-        <li><a data-name="add" @click.prevent="menu($event, child.data)">Add</a></li>
-        <li><a data-name="rename" @click.prevent="menu($event, child.data)">Rename</a></li>
-        <li><a data-name="remove" @click.prevent="menu($event, child.data)"
-               v-if="child.data !== 'default'" >Remove</a></li>
+      <template slot-scope="a">
+        <li>
+          <a data-name="add" @click.prevent="menu($event, a.data)">Add</a>
+        </li>
+        <li>
+          <a data-name="rename" @click.prevent="menu($event, a.data)">Rename</a>
+        </li>
+        <li>
+          <a
+            v-if="a.data !== 'default'"
+            data-name="remove"
+            @click.prevent="menu($event, a.data)"
+            >Remove</a
+          >
+        </li>
       </template>
     </vue-context>
-
-    <div class="tab" v-for="(item, key) in db" @contextmenu.prevent="$refs.menu.open($event, key)"
-         :key="key" :data-id="key" @click="switchTab(key)"
-         :class="{ active: layout.activeTab === key }" >
-      <input type="text" v-if="layout.mode === 'tab-rename' && layout.activeTab === key"
-             v-model="tabSaveData.name" :ref="(`tab-${key}`)" @blur="saveTab()"
-             @focus="tabSaveData.name = item.name" @keyup.enter="$event.target.blur()">
+    <div
+      class="tab"
+      v-for="(item, key) in db"
+      :key="key"
+      :data-id="key"
+      :class="{ active: layout.activeTab === key }"
+      @contextmenu.prevent="$refs.menu.open($event, key)"
+      @click="switchTab(key)"
+    >
+      <input
+        type="text"
+        v-model="tabSaveData.name"
+        :ref="`tab-${key}`"
+        v-if="layout.mode === 'tab-rename' && layout.activeTab === key"
+        @blur="saveTab()"
+        @focus="tabSaveData.name = item.name"
+        @keyup.enter="$event.target.blur()"
+      />
       <span v-else>
-        {{item.name}}
+        {{ item.name }}
       </span>
     </div>
   </div>
@@ -75,11 +96,11 @@ export default {
     },
 
     removeTab(id) {
-      if (id === this.layout.activeTab) {
-        // Go back to default tab if deleting the active tab
-        this.$emit('switch-tab', 'default');
-      }
-      this.$emit('remove', id);
+      this.$emit('remove', {
+        message: `Are you sure you want to delete tab named “${this.db[id].name}”?`,
+        callback: 'removeTab',
+        data: id,
+      });
     },
 
     menu(e, id) {
