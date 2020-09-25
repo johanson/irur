@@ -126,6 +126,12 @@ def lint():
 
 
 @task
+def test():
+    """Run unit tests with jest."""
+    local("node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit")
+
+
+@task
 def api():
     """Start a node server for the backend api."""
     print(
