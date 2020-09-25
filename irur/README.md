@@ -51,10 +51,12 @@ Changelog is [here][changelog].
 
 ## Keyboard Shortcuts
 
-`Shift+n` new knob  
-`Shift+t` new tab  
-`Esc` cancel/close  
-`Enter` save
+```
+Shift+N: New knob
+Shift+T: New tab
+Esc:     Cancel/Close
+Enter:   Save (while editing)
+```
 
 ## Development
 
