@@ -65,11 +65,13 @@ $ fab -l
 Available commands:
 
 api      Start a node server for the backend api.
-build    Compile and minify for production.
+build    Compile and minify for production and push to live (master).
          :param bump_version: Bump addon version number before
                               building, defaults to `True`
          :type  bump_version: bool, optional
-         Arguments: bump_version=False
+         :param push:         Push to master branch, defaults to `False`
+         :type  push:         bool, optional
+         Arguments: bump_version=False, push=False
 deploy:  Compile and upload the project to the HA server for Docker.
          :param bump_version: Bump addon version number before
                               pushing to remote server, defaults to `True`

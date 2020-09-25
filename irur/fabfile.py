@@ -3,9 +3,9 @@
 import os
 import json
 import fabric.contrib.project as project
-from fabric.api import hosts, local, run
+from fabric.api import hosts, local, run, prompt, settings
 from fabric.decorators import task
-from fabric.colors import green
+from fabric.colors import green, yellow
 from dotenv import load_dotenv
 
 
@@ -111,12 +111,32 @@ def serve():
 
 
 @task
-def build(bump_version="False"):
-    """Compile and minify for production."""
-    print(bump_version)
+def build(bump_version="False", push="False"):
+    """Compile and minify for production and push to live (master).
+
+    :param bump_version: Bump addon version number before
+                         building, defaults to `True`
+    :type  bump_version: bool, optional
+    :param push:         Push to master branch, defaults to `False`
+    :type  push:         bool, optional
+    """
     if bump_version == "True":
         bump()
     local("node_modules/@vue/cli-service/bin/vue-cli-service.js build")
+
+    if push == "True":
+        push_to_live = prompt(
+            yellow("Commit and push to live (master)? [y/N]"), default="N"
+        )
+
+        if push_to_live == "Y":
+            conf = config.file
+            version = conf["version"]
+            with settings(warn_only=True):
+                local("git add config.json; git add dist")
+                local("git commit -m '{0}'".format(version))
+                local("git push origin master")
+                print(green("All the changes are now live"))
 
 
 @task
