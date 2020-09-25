@@ -21,5 +21,5 @@ Vue.component('Prompt', Prompt);
 Vue.use(VueToast, { position: 'bottom' });
 
 new Vue({
-  render: (h) => h(App),
+  render: h => h(App),
 }).$mount('#app');

@@ -22,8 +22,8 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -31,7 +31,6 @@ body {
   color: var(--accent);
   font-size: 16px;
 }
-
 
 .hidden {
   display: none;
@@ -65,7 +64,7 @@ button {
   color: #f8f8f8;
   cursor: pointer;
   text-decoration: none;
-  transition: background .3s ease-out, opacity .3s ease-out;
+  transition: background 0.3s ease-out, opacity 0.3s ease-out;
   background-color: #1976d2;
   padding: 1px 6px;
   line-height: 40px;
@@ -80,7 +79,7 @@ button {
 button:hover,
 button:active {
   background: #1565c0;
-  transition: background .3s ease-out, opacity .3s ease-out;
+  transition: background 0.3s ease-out, opacity 0.3s ease-out;
 }
 
 button:disabled,
@@ -98,7 +97,7 @@ button.disabled {
   width: 35px;
   height: 35px;
   cursor: pointer;
-  transition: background .3s ease-out;
+  transition: background 0.3s ease-out;
   background-color: #ff7c7c;
 
   svg {
@@ -113,7 +112,7 @@ button.disabled {
   }
 
   &:hover {
-    transition: background .3s ease-out;
+    transition: background 0.3s ease-out;
     background-color: #ff3d3d;
   }
 }
@@ -131,15 +130,13 @@ vue-context
   $item-hover-bg: rgba(0, 0, 0, 0.1);
 
   &,
-
   & ul {
     background-color: $menu-bg;
     background-clip: padding-box;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
     border: 1px solid $menu-border;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-      0 3px 1px -2px rgba(0, 0, 0, 0.2),
-      0 1px 5px 0 rgba(0, 0, 0, 0.12);
+      0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     display: block;
     margin: 0;
     padding: 10px 0;
@@ -151,13 +148,13 @@ vue-context
     max-height: calc(100% - 50px);
     overflow-y: auto;
 
-    >li {
+    > li {
       margin: 0;
       position: relative;
 
-      >a {
+      > a {
         display: block;
-        padding: .5rem 1.5rem;
+        padding: 0.5rem 1.5rem;
         font-weight: 400;
         color: $item-color;
         text-decoration: none;
@@ -183,13 +180,13 @@ vue-context
   }
 
   &__sub {
-    >a:after {
-      content: "\2bc8";
+    > a:after {
+      content: '\2bc8';
       float: right;
       padding-left: 1rem;
     }
 
-    >ul {
+    > ul {
       display: none;
     }
   }
@@ -203,58 +200,58 @@ vue-toast-notification
 
 @keyframes fadeOut {
   from {
-    opacity: 1
+    opacity: 1;
   }
 
   to {
-    opacity: 0
+    opacity: 0;
   }
 }
 
 .fadeOut {
-  animation-name: fadeOut
+  animation-name: fadeOut;
 }
 
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translate3d(0, -100%, 0)
+    transform: translate3d(0, -100%, 0);
   }
 
   to {
     opacity: 1;
-    transform: none
+    transform: none;
   }
 }
 
 .fadeInDown {
-  animation-name: fadeInDown
+  animation-name: fadeInDown;
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translate3d(0, 100%, 0)
+    transform: translate3d(0, 100%, 0);
   }
 
   to {
     opacity: 1;
-    transform: none
+    transform: none;
   }
 }
 
 .fadeInUp {
-  animation-name: fadeInUp
+  animation-name: fadeInUp;
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 150ms ease-out
+  transition: opacity 150ms ease-out;
 }
 
 .fade-enter,
 .fade-leave-to {
-  opacity: 0
+  opacity: 0;
 }
 
 .v-notices {
@@ -267,83 +264,83 @@ vue-toast-notification
   padding: 2em;
   overflow: hidden;
   z-index: 1052;
-  pointer-events: none
+  pointer-events: none;
 }
 
 .v-notices .v-toast {
   display: inline-flex;
   align-items: center;
   animation-duration: 150ms;
-  margin: .5em 0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
-  border-radius: .25em;
+  margin: 0.5em 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+  border-radius: 0.25em;
   pointer-events: auto;
-  opacity: .92;
+  opacity: 0.92;
   color: #fff;
   min-height: 3em;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .v-notices .v-toast .v-toast-text {
   margin: 0;
-  padding: .5em 1em;
-  word-break: break-word
+  padding: 0.5em 1em;
+  word-break: break-word;
 }
 
 .v-notices .v-toast .v-toast-icon {
-  display: none
+  display: none;
 }
 
 .v-notices .v-toast-success {
-  background-color: #28a745
+  background-color: #28a745;
 }
 
 .v-notices .v-toast-info {
-  background-color: #17a2b8
+  background-color: #17a2b8;
 }
 
 .v-notices .v-toast-warning {
-  background-color: #ffc107
+  background-color: #ffc107;
 }
 
 .v-notices .v-toast-error {
-  background-color: #dc3545
+  background-color: #dc3545;
 }
 
 .v-notices .v-toast-default {
-  background-color: #343a40
+  background-color: #343a40;
 }
 
 .v-notices .v-toast.is-top,
 .v-notices .v-toast.is-bottom {
-  align-self: center
+  align-self: center;
 }
 
 .v-notices .v-toast.is-top-right,
 .v-notices .v-toast.is-bottom-right {
-  align-self: flex-end
+  align-self: flex-end;
 }
 
 .v-notices .v-toast.is-top-left,
 .v-notices .v-toast.is-bottom-left {
-  align-self: flex-start
+  align-self: flex-start;
 }
 
 .v-notices.is-top {
-  flex-direction: column
+  flex-direction: column;
 }
 
 .v-notices.is-bottom {
-  flex-direction: column-reverse
+  flex-direction: column-reverse;
 }
 
 .v-notices.is-custom-parent {
-  position: absolute
+  position: absolute;
 }
 
 @media screen and (max-width: 768px) {
   .v-notices {
     padding: 0;
-    position: fixed !important
+    position: fixed !important;
   }
 }
