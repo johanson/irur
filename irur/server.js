@@ -67,7 +67,10 @@ const init = () => {
   const testDatabase = path.join(__dirname, 'dev_db.json');
   const homeAssistantDatabase = path.join('/data/db.json');
 
-  let db; let topicListen; let topicSend; let portWithPrefix;
+  let db;
+  let topicListen;
+  let topicSend;
+  let portWithPrefix;
   if (flags === '--dev') {
     topicListen = env.MQTT_TOPIC_LISTEN;
     topicSend = env.MQTT_TOPIC_SEND.split(', ');
@@ -76,7 +79,9 @@ const init = () => {
     portWithPrefix = `:${env.SERVER_PORT}`;
   } else {
     db = homeAssistantDatabase;
-    const homeAssistantOptions = JSON.parse(fs.readFileSync('/data/options.json', 'utf8'));
+    const homeAssistantOptions = JSON.parse(
+      fs.readFileSync('/data/options.json', 'utf8')
+    );
     topicListen = homeAssistantOptions.topic_listen;
     topicSend = homeAssistantOptions.topic_send;
     env.SERVER_PORT = 8099;
@@ -104,7 +109,9 @@ const init = () => {
 
 const { db, options } = init();
 const conf = { ...options, ...{ mqttMatch: false } };
-log.info(`Database: ${db} \nConfiguration: ${JSON.stringify(options, null, 2)}`);
+log.info(
+  `Database: ${db} \nConfiguration: ${JSON.stringify(options, null, 2)}`
+);
 
 const client = mqtt.connect(conf.mqtt);
 
@@ -116,8 +123,7 @@ app.get('/', (req, res) => {
 app.get('/api/db/load/', (req, res) => {
   res.header('Content-Type', 'application/json');
 
-  if (fs.existsSync(db)
-  && fs.readFileSync(db, 'utf8') !== '') {
+  if (fs.existsSync(db) && fs.readFileSync(db, 'utf8') !== '') {
     res.sendFile(db);
   } else {
     const message = `${db} does not exist, creating new database`;
@@ -156,7 +162,7 @@ app.get('/api/ir/receive/', (req, res) => {
         setTimeout(wait, 500);
       }
     }
-  }());
+  })();
 });
 
 app.get('/api/ir/send/:id', (req, res) => {
@@ -198,7 +204,9 @@ client.on('connect', () => {
 });
 
 client.on('error', () => {
-  log.error('Cannot connect to MQTT server, check your server settings and credentials');
+  log.error(
+    'Cannot connect to MQTT server, check your server settings and credentials'
+  );
 });
 
 client.on('offline', () => {
