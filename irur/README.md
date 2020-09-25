@@ -95,7 +95,7 @@ For developing: Vue cli, npm
 
 # Credits
 
-Icons made by Roundicons, Freepik, Pixel perfect, hirschwolf, Kiranshastry, Good Ware, Becris, srip, dmitri13, surang, Nikita Golubev, Linector, Icongeek26, Smashicons, photo3idea_studio, bqlqn from [www.flaticon.com](https://www.flaticon.com/ "Flaticon")
+Icons made by Roundicons, Freepik, Pixel perfect, hirschwolf, Kiranshastry, Good Ware, Becris, srip, dmitri13, surang, Nikita Golubev, Linector, Icongeek26, Smashicons, photo3idea_studio, bqlqn from [www.flaticon.com](https://www.flaticon.com/ 'Flaticon')
 
 ---
 
