@@ -1,5 +1,5 @@
 <template>
-  <a href="#" @keydown.ctrl.90="undo" v-if="isActive">
+  <a href="#" @keydown.ctrl.90="undo" @click="back()" v-if="isActive">
     <span>Undo</span>
     <svg><use xlink:href="#fast-forward"></use></svg>
   </a>
@@ -15,7 +15,7 @@ export default {
 
   data() {
     return {
-      dbHistory: {},
+      dbHistory: null,
       isActive: false,
     };
   },

@@ -7,12 +7,7 @@
 
     <prompt :params="prompt" @callback="promptCallback($event)" />
 
-    <undo
-      ref="undo"
-      :db="db"
-      @back="(db = $event), sync()"
-      @click.native="$refs.undo.back()"
-    />
+    <undo ref="undo" :db="db" @back="(db = $event), sync()" />
 
     <tabs
       ref="tabs"
