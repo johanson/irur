@@ -29,7 +29,7 @@ describe('Undo.vue', () => {
   });
 
   it('Click of the button which should make the button hide itself', async () => {
-    button.trigger('click');
+    await button.trigger('click');
     expect(data.isActive).toBe(false);
   });
 });
