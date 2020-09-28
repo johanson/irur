@@ -111,7 +111,6 @@ app.get('/', (req, res) => {
 
 app.get('/api/db/load/', (req, res) => {
   res.header('Content-Type', 'application/json');
-
   if (fs.existsSync(db) && fs.readFileSync(db, 'utf8') !== '') {
     res.sendFile(db);
   } else {

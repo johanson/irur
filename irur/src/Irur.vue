@@ -150,7 +150,8 @@ export default {
 
     loadDatabase() {
       const api = this.settings.api.prefix;
-      fetch(`${api}${this.settings.api.load}`)
+      const fetchDatabase = fetch(`${api}${this.settings.api.load}`);
+      fetchDatabase
         .then(resp => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
@@ -173,7 +174,8 @@ export default {
 
     loadSettings() {
       const api = this.settings.api.prefix;
-      fetch(`${api}${this.settings.api.settings}`)
+      const fetchSettings = fetch(`${api}${this.settings.api.settings}`);
+      fetchSettings
         .then(resp => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
@@ -227,14 +229,16 @@ export default {
     },
 
     editKnob(data) {
-      const activeTabKnobs = this.db[this.layout.activeTab].knobs;
-      if (this.layout.mode === 'edit') {
-        const index = activeTabKnobs.findIndex(item => item.id === data.id);
-        this.db[this.layout.activeTab].knobs[index] = data;
-      } else if (this.layout.mode === 'add') {
-        activeTabKnobs.push(data);
+      const knobs = this.db[this.layout.activeTab].knobs;
+      const i = knobs.findIndex(item => item.id === data.id);
+      if (i == -1) {
+        // No match found, create a new knob
+        knobs.push(data);
+      } else {
+        knobs[i] = data;
       }
-      this.sync();
+
+      this.sync('normal');
     },
 
     removeKnob(knobId) {

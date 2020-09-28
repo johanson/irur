@@ -165,7 +165,6 @@ export default {
   methods: {
     save() {
       this.$emit('edit', this.knobSaveData);
-      this.$emit('switch-mode', { mode: 'normal' });
     },
 
     add() {
@@ -177,7 +176,7 @@ export default {
         name: '',
         mqtt: '',
         icon: '',
-        color: this.cssVar('--accent'),
+        color: '',
         mqttTopics: this.settings.mqttTopics,
       };
       // Check the radio button for the first MQTT topic by default
@@ -192,9 +191,7 @@ export default {
       const activeTabKnobs = this.db[this.layout.activeTab].knobs;
       const index = activeTabKnobs.findIndex(item => item.id === id);
       this.knobSaveData = JSON.parse(JSON.stringify(activeTabKnobs[index]));
-      if (this.knobSaveData.color === undefined) {
-        this.knobSaveData.color = this.cssVar('--accent');
-      }
+      this.knobSaveData.color ? this.knobSaveData.color : '';
       this.colors = { hex: this.knobSaveData.color };
       this.$nextTick().then(() => {
         this.$refs.editorNameField.focus();
@@ -243,16 +240,12 @@ export default {
     },
 
     validate() {
-      const dat = this.knobSaveData;
-      const required = [dat.name, dat.mqtt, dat.id, dat.mqttTopics];
-      if (
-        !dat.isPlaceholder &&
-        required.some(x => x === '' || x === undefined)
-      ) {
+      const a = this.knobSaveData;
+      const required = [a.name, a.mqtt, a.id, a.mqttTopics];
+      if (!a.isPlaceholder && required.some(x => x === '' || x === undefined)) {
         this.$toast.error('Name, id, mqtt and topic required');
       } else {
         this.save();
-        this.mode = 'normal';
       }
     },
 

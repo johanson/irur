@@ -16,7 +16,8 @@ export default {
 
   methods: {
     load() {
-      fetch('icons/sprite.svg')
+      const fetchSVG = fetch('icons/sprite.svg');
+      fetchSVG
         .then(resp => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
