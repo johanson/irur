@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.7
+
+- Fix the learning mode
+
 ## 0.6.1
 
 - Add confirmation prompt
@@ -16,7 +20,7 @@
 
 - Get theme from Home Assistant instead of relying on hard coded light/dark
 - Remove dark_theme from the configuration
-- Improved drag-and-drop sorting 
+- Improved drag-and-drop sorting
 
 ## 0.4.1
 
