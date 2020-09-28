@@ -23,16 +23,18 @@
       ref="remote"
       :db="db"
       :layout="layout"
-      :options="options"
+      :settings="settings"
       @switch-mode="switchMode($event)"
       @sort="sync('sort')"
       @remove="prompt = $event"
+      @editor="showEditor($event)"
     />
 
     <editor
+      ref="editor"
       :db="db"
       :layout="layout"
-      :options="options"
+      :settings="settings"
       @switch-mode="switchMode($event)"
       @edit="editKnob($event)"
       @loading="layout.showLoader = $event"
@@ -58,10 +60,9 @@ export default {
         },
         showUndo: false,
         activeTab: 'default',
-        activeEdit: {},
         icons: [],
       },
-      options: {
+      settings: {
         api: {
           prefix: `${this.getHostname()}api/`,
           receive: 'ir/receive/',
@@ -70,9 +71,8 @@ export default {
           load: 'db/load/',
           settings: 'settings/',
         },
-        settings: {
-          topic_send: '',
-        },
+        hostname: '',
+        mqttTopics: [],
       },
       db: {
         default: {
@@ -149,8 +149,8 @@ export default {
     },
 
     loadDatabase() {
-      const api = this.options.api.prefix;
-      fetch(`${api}${this.options.api.load}`)
+      const api = this.settings.api.prefix;
+      fetch(`${api}${this.settings.api.load}`)
         .then(resp => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
@@ -172,8 +172,8 @@ export default {
     },
 
     loadSettings() {
-      const api = this.options.api.prefix;
-      fetch(`${api}${this.options.api.settings}`)
+      const api = this.settings.api.prefix;
+      fetch(`${api}${this.settings.api.settings}`)
         .then(resp => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
@@ -181,7 +181,8 @@ export default {
           return resp.json();
         })
         .then(json => {
-          this.options.settings = json;
+          this.settings.hostname = json.hostname;
+          this.settings.mqttTopics = json.mqttTopics;
           this.layout.loading.settings = false;
         })
         .catch(err => {
@@ -189,16 +190,26 @@ export default {
         });
     },
 
-    switchMode(o) {
+    showEditor(o) {
       const { mode, id } = o;
-      this.layout.mode = mode;
-      this.layout.activeEdit = { id };
+      switch (mode) {
+        case 'add':
+          this.$refs.editor.add();
+          break;
+        case 'edit':
+          this.$refs.editor.edit(id);
+          break;
+      }
+    },
+
+    switchMode(o) {
+      this.layout.mode = o.mode;
       if (this.layout.mode === 'normal') this.loader = false;
     },
 
     sync(mode = 'normal') {
-      const api = this.options.api.prefix;
-      fetch(`${api}${this.options.api.save}`, {
+      const api = this.settings.api.prefix;
+      fetch(`${api}${this.settings.api.save}`, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',

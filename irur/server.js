@@ -7,20 +7,10 @@ const mqtt = require('mqtt');
 const { execSync } = require('child_process');
 
 const { env } = process;
-require('dotenv').config();
-
 const flags = process.argv.slice(2)[0];
 
 const app = express();
 app.use(bodyParser.json(), cors(), express.static('dist'));
-
-// Redirect non trailing slash to trailing slash
-app.use((req, res, next) => {
-  if (!req.url.endsWith('/')) {
-    res.redirect(301, `${req.url}/`);
-  }
-  next();
-});
 
 // Just a logging wrapper around bashio
 const log = {
@@ -64,35 +54,29 @@ const log = {
 };
 
 const init = () => {
-  const testDatabase = path.join(__dirname, 'dev_db.json');
-  const homeAssistantDatabase = path.join('/data/db.json');
+  let db, topicListen, topicSend, hostname;
 
-  let db;
-  let topicListen;
-  let topicSend;
-  let portWithPrefix;
   if (flags === '--dev') {
+    require('dotenv').config();
     topicListen = env.MQTT_TOPIC_LISTEN;
-    topicSend = env.MQTT_TOPIC_SEND.split(', ');
-    db = testDatabase;
-    env.HOSTNAME = 'http://localhost';
-    portWithPrefix = `:${env.SERVER_PORT}`;
+    topicSend = env.MQTT_TOPIC_SEND.split(',');
+    db = path.join(__dirname, 'dev_db.json');
+    hostname = `http://localhost:${env.SERVER_PORT}/`;
   } else {
-    db = homeAssistantDatabase;
+    db = path.join('/data/db.json');
     const homeAssistantOptions = JSON.parse(
       fs.readFileSync('/data/options.json', 'utf8')
     );
     topicListen = homeAssistantOptions.topic_listen;
     topicSend = homeAssistantOptions.topic_send;
     env.SERVER_PORT = 8099;
-    portWithPrefix = '';
+    hostname = env.HOSTNAME;
   }
 
   // Create empty db if it doesn't exist
   if (!fs.existsSync(db)) fs.openSync(db, 'a');
 
-  const options = {
-    mqttMatch: false,
+  const conf = {
     mqtt: {
       host: env.MQTT_HOST,
       port: env.MQTT_PORT,
@@ -100,20 +84,25 @@ const init = () => {
       username: env.MQTT_USER,
       password: env.MQTT_PASSWORD,
     },
-    hostname: `${env.HOSTNAME}${portWithPrefix}/`,
+    hostname: hostname,
     topic_listen: topicListen,
     topic_send: topicSend,
+    mqttMatch: false,
   };
-  return { db, options };
+  return { db, conf };
 };
 
-const { db, options } = init();
-const conf = { ...options, ...{ mqttMatch: false } };
-log.info(
-  `Database: ${db} \nConfiguration: ${JSON.stringify(options, null, 2)}`
-);
-
+const { db, conf } = init();
+log.info(`Database: ${db} \nConfiguration: ${JSON.stringify(conf, null, 2)}`);
 const client = mqtt.connect(conf.mqtt);
+
+// Redirect non trailing slash to trailing slash
+app.use((req, res, next) => {
+  if (!req.url.endsWith('/')) {
+    res.redirect(301, `${req.url}/`);
+  }
+  next();
+});
 
 app.get('/', (req, res) => {
   res.header('Authorization', `Bearer: ${process.env.SUPERVISOR_TOKEN}`);
@@ -133,7 +122,11 @@ app.get('/api/db/load/', (req, res) => {
 });
 
 app.get('/api/settings/', (req, res) => {
-  res.json(conf);
+  const response = {
+    hostname: conf.hostname,
+    mqttTopics: conf.topic_send,
+  };
+  res.json(response);
 });
 
 app.post('/api/db/save/', (req, res) => {

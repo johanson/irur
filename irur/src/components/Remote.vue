@@ -42,7 +42,13 @@
         :key="el.id"
         :title="!el.isPlaceholder ? el.name : false"
         @click="sendIr(el.id, el.isPlaceholder)"
-        @contextmenu.prevent="$refs.menu.open($event, { id: el.id, index })"
+        @contextmenu.prevent="
+          $refs.menu.open($event, {
+            id: el.id,
+            name: el.name || 'placeholder',
+            index,
+          })
+        "
         class="item"
         :data-placeholder="el.isPlaceholder || false"
       >
@@ -76,7 +82,7 @@ export default {
   props: {
     db: { type: Object, required: true },
     layout: { type: Object, required: true },
-    options: { type: Object, required: true },
+    settings: { type: Object, required: true },
   },
 
   watch: {
@@ -110,28 +116,38 @@ export default {
   methods: {
     menu(e, knob) {
       const mode = e.target.dataset.id;
-      this.$emit('switch-mode', { mode, id: knob.id });
-      if (mode === 'remove') {
-        const activeKnob = this.data[this.layout.activeTab].knobs[knob.index];
-        let { name } = activeKnob;
-        if (activeKnob.isPlaceholder) name = 'placeholder';
-
-        this.$emit('remove', {
-          message: `Are you sure you want to delete knob named “${name}”?`,
-          callback: 'removeKnob',
-          data: knob.id,
-        });
+      switch (mode) {
+        case 'add':
+          this.addKnob();
+          break;
+        case 'edit':
+          this.editKnob(knob.id);
+          break;
+        case 'sort':
+          this.$emit('switch-mode', { mode: 'sort' });
+          break;
+        case 'remove':
+          this.$emit('remove', {
+            message: `Are you sure you want to delete knob named “${knob.name}”?`,
+            callback: 'removeKnob',
+            data: knob.id,
+          });
+          break;
       }
     },
 
     addKnob() {
-      this.$emit('switch-mode', { mode: 'add' });
+      this.$emit('editor', { mode: 'add', id: null });
+    },
+
+    editKnob(id) {
+      this.$emit('editor', { mode: 'edit', id });
     },
 
     sendIr(id, confirm) {
       if (!confirm || confirm === undefined) {
-        const api = this.options.api.prefix;
-        fetch(`${api}${this.options.api.send}${id}/`)
+        const api = this.settings.api.prefix;
+        fetch(`${api}${this.settings.api.send}${id}/`)
           .then(resp => {
             if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
           })

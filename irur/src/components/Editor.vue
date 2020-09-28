@@ -40,14 +40,14 @@
         <span>Add new topics from HA configuration</span>
       </label>
       <div id="knob_mqtt_topic">
-        <p v-for="(item, index) in options.settings.topic_send" :key="index">
+        <p v-for="(item, index) in settings.mqttTopics" :key="index">
           <input
             type="radio"
             required
             :ref="`mqtt-checkbox-${index}`"
             :id="`mqtt-label-${index}`"
             :value="item"
-            v-model="knobSaveData.topic_send"
+            v-model="knobSaveData.mqttTopics"
           />
           <label :for="`mqtt-label-${index}`">{{ item }}</label>
         </p>
@@ -56,7 +56,7 @@
       <label for="knob_id"
         >Unique id
         <span class="mono">
-          $ curl {{ options.settings.hostname }}{{ options.api.send
+          $ curl {{ settings.hostname }}{{ settings.api.send
           }}{{ knobSaveData.id }}/
         </span>
       </label>
@@ -129,50 +129,10 @@ export default {
   props: {
     db: { type: Object, required: true },
     layout: { type: Object, required: true },
-    options: { type: Object, required: true },
+    settings: { type: Object, required: true },
   },
 
   watch: {
-    layout: {
-      deep: true,
-      handler(old, value) {
-        if (value.mode === 'add') {
-          this.colors = { hex: this.cssVar('--accent') };
-          this.knobSaveData = {
-            isPlaceholder: false,
-            id: this.genUID(),
-            name: '',
-            mqtt: '',
-            icon: '',
-            color: this.cssVar('--accent'),
-            topic_send: this.options.settings.topic_send,
-          };
-          // Check the radio button for the first MQTT topic if there's only one
-          if (this.options.settings.topic_send.length === 1) {
-            [this.knobSaveData.topic_send] = this.options.settings.topic_send;
-          }
-          this.$nextTick().then(() => {
-            this.$refs.editorNameField.focus();
-          });
-        }
-
-        if (value.mode === 'edit') {
-          // get rid of references
-          const activeTabKnobs = this.db[this.layout.activeTab].knobs;
-          const { id } = this.layout.activeEdit;
-          const index = activeTabKnobs.findIndex(item => item.id === id);
-          this.knobSaveData = JSON.parse(JSON.stringify(activeTabKnobs[index]));
-          if (this.knobSaveData.color === undefined) {
-            this.knobSaveData.color = this.cssVar('--accent');
-          }
-          this.colors = { hex: this.knobSaveData.color };
-          this.$nextTick().then(() => {
-            this.$refs.editorNameField.focus();
-          });
-        }
-      },
-    },
-
     colors(value) {
       this.knobSaveData.color = value.hex;
     },
@@ -185,7 +145,7 @@ export default {
         id: '',
         name: '',
         mqtt: '',
-        topic_send: '',
+        mqttTopics: '',
         icon: '',
         color: this.cssVar('--accent'),
       },
@@ -208,6 +168,39 @@ export default {
       this.$emit('switch-mode', { mode: 'normal' });
     },
 
+    add() {
+      this.$emit('switch-mode', { mode: 'add' });
+      this.colors = { hex: this.cssVar('--accent') };
+      this.knobSaveData = {
+        isPlaceholder: false,
+        id: this.genUID(),
+        name: '',
+        mqtt: '',
+        icon: '',
+        color: this.cssVar('--accent'),
+        mqttTopics: this.settings.mqttTopics,
+      };
+      // Check the radio button for the first MQTT topic by default
+      this.knobSaveData.mqttTopics = this.settings.mqttTopics[0];
+      this.$nextTick().then(() => {
+        this.$refs.editorNameField.focus();
+      });
+    },
+
+    edit(id) {
+      this.$emit('switch-mode', { mode: 'edit' });
+      const activeTabKnobs = this.db[this.layout.activeTab].knobs;
+      const index = activeTabKnobs.findIndex(item => item.id === id);
+      this.knobSaveData = JSON.parse(JSON.stringify(activeTabKnobs[index]));
+      if (this.knobSaveData.color === undefined) {
+        this.knobSaveData.color = this.cssVar('--accent');
+      }
+      this.colors = { hex: this.knobSaveData.color };
+      this.$nextTick().then(() => {
+        this.$refs.editorNameField.focus();
+      });
+    },
+
     recordIR() {
       const self = this;
       this.$emit('loading', true);
@@ -223,7 +216,7 @@ export default {
         clearTimeout(mqttListeningTimeout);
       }
 
-      fetch(`${this.options.api.prefix}${this.options.api.receive}`, {
+      fetch(`${this.settings.api.prefix}${this.settings.api.receive}`, {
         signal: controller.signal,
       })
         .then(resp => {
@@ -251,7 +244,7 @@ export default {
 
     validate() {
       const dat = this.knobSaveData;
-      const required = [dat.name, dat.mqtt, dat.id, dat.topic_send];
+      const required = [dat.name, dat.mqtt, dat.id, dat.mqttTopics];
       if (
         !dat.isPlaceholder &&
         required.some(x => x === '' || x === undefined)
