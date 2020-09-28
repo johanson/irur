@@ -133,7 +133,7 @@ def build(bump_version="False", push="False"):
             conf = config.file
             version = conf["version"]
             with settings(warn_only=True):
-                local("git add config.json; git add dist; git add CHANGELOG.md;")
+                local("git add config.json dist CHANGELOG.md")
                 local("git commit -m '{0}'".format(version))
                 local("git push origin master")
                 print(green("All the changes are now live"))
