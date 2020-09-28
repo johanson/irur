@@ -129,7 +129,7 @@ def build(bump_version="False", push="False"):
             yellow("Commit and push to live (master)? [y/N]"), default="N"
         )
 
-        if push_to_live == "Y":
+        if push_to_live == "Y" or "y":
             conf = config.file
             version = conf["version"]
             with settings(warn_only=True):
