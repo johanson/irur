@@ -146,9 +146,11 @@ def lint():
 
 
 @task
-def test():
+def test(arg=""):
     """Run unit tests with jest."""
-    local("node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit")
+    local(
+        "node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit {0}".format(arg)
+    )
 
 
 @task
