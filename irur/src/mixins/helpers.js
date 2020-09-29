@@ -15,7 +15,9 @@ export default {
     },
 
     cssVar(prop) {
-      return getComputedStyle(document.documentElement).getPropertyValue(prop);
+      return getComputedStyle(document.documentElement)
+        .getPropertyValue(prop)
+        .trimStart();
     },
 
     scaffoldDB() {
