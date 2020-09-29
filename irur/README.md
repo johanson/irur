@@ -87,6 +87,8 @@ deploy:  Compile and upload the project to the HA server for Docker.
 lint     Lint and fix files.
 serve    Compile with hot-reload for development.
 test     Run unit tests with jest.
+         :param unit:         Unit name
+         :type  unit:         string, optional
 ```
 
 If you prefer npm scripts: `npm run build` to build with webpack (or `npm run serve` for development), `node server.js --dev` to start the server.
