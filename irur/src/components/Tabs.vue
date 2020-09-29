@@ -45,7 +45,7 @@
 
 <script>
 import VueContext from 'vue-context';
-import Helpers from '../mixins/helpers';
+import Helpers from '@/mixins/helpers';
 
 export default {
   mixins: [Helpers],
@@ -126,6 +126,7 @@ export default {
   user-select: none;
   padding-left: 10px;
   white-space: nowrap;
+  position: relative;
   .tab {
     display: inline-block;
     position: relative;

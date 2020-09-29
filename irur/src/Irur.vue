@@ -72,7 +72,7 @@ export default {
           settings: 'settings/',
         },
         hostname: '',
-        mqttTopics: [],
+        topic_send: [],
       },
       db: {
         default: {
@@ -184,7 +184,7 @@ export default {
         })
         .then(json => {
           this.settings.hostname = json.hostname;
-          this.settings.mqttTopics = json.mqttTopics;
+          this.settings.topic_send = json.topic_send;
           this.layout.loading.settings = false;
         })
         .catch(err => {

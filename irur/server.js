@@ -123,7 +123,7 @@ app.get('/api/db/load/', (req, res) => {
 app.get('/api/settings/', (req, res) => {
   const response = {
     hostname: conf.hostname,
-    mqttTopics: conf.topic_send,
+    topic_send: conf.topic_send,
   };
   res.json(response);
 });

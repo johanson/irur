@@ -40,14 +40,14 @@
         <span>Add new topics from HA configuration</span>
       </label>
       <div id="knob_mqtt_topic">
-        <p v-for="(item, index) in settings.mqttTopics" :key="index">
+        <p v-for="(item, index) in settings.topic_send" :key="index">
           <input
             type="radio"
             required
             :ref="`mqtt-checkbox-${index}`"
             :id="`mqtt-label-${index}`"
             :value="item"
-            v-model="knobSaveData.mqttTopics"
+            v-model="knobSaveData.topic_send"
           />
           <label :for="`mqtt-label-${index}`">{{ item }}</label>
         </p>
@@ -145,7 +145,7 @@ export default {
         id: '',
         name: '',
         mqtt: '',
-        mqttTopics: '',
+        topic_send: '',
         icon: '',
         color: '',
       },
@@ -177,10 +177,8 @@ export default {
         mqtt: '',
         icon: '',
         color: '',
-        mqttTopics: this.settings.mqttTopics,
+        topic_send: this.settings.topic_send[0],
       };
-      // Check the radio button for the first MQTT topic by default
-      this.knobSaveData.mqttTopics = this.settings.mqttTopics[0];
       this.$nextTick().then(() => {
         this.$refs.editorNameField.focus();
       });
@@ -241,7 +239,7 @@ export default {
 
     validate() {
       const a = this.knobSaveData;
-      const required = [a.name, a.mqtt, a.id, a.mqttTopics];
+      const required = [a.name, a.mqtt, a.id, a.topic_send];
       if (!a.isPlaceholder && required.some(x => x === '' || x === undefined)) {
         this.$toast.error('Name, id, mqtt and topic required');
       } else {

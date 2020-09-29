@@ -20,6 +20,12 @@ html {
   outline: 0;
 }
 
+.clearfix::after {
+  content: '';
+  clear: both;
+  display: table;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
