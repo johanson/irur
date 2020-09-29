@@ -100,7 +100,7 @@
         >
       </label>
       <input type="text" id="knob_color" v-model="knobSaveData.color" />
-      <slider-picker v-model="colors"></slider-picker>
+      <slider-picker v-model="colors" @input="colorCheck()"></slider-picker>
 
       <div class="placeholder">
         <input
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { Slider } from 'vue-color';
+import Slider from 'vue-color/src/components/Slider';
 import Helpers from '../mixins/helpers';
 
 export default {
@@ -147,9 +147,9 @@ export default {
         mqtt: '',
         mqttTopics: '',
         icon: '',
-        color: this.cssVar('--accent'),
+        color: '',
       },
-      colors: { hex: this.cssVar('--accent') },
+      colors: {},
       icons: [],
     };
   },
@@ -169,7 +169,7 @@ export default {
 
     add() {
       this.$emit('switch-mode', { mode: 'add' });
-      this.colors = { hex: this.cssVar('--accent') };
+      this.colors = {};
       this.knobSaveData = {
         isPlaceholder: false,
         id: this.genUID(),
@@ -246,6 +246,13 @@ export default {
         this.$toast.error('Name, id, mqtt and topic required');
       } else {
         this.save();
+      }
+    },
+
+    colorCheck() {
+      // Give a default value from the accent color when the user first starts dragging the color slider
+      if (!this.knobSaveData.color) {
+        this.colors = { hex: this.cssVar('--accent') };
       }
     },
 
