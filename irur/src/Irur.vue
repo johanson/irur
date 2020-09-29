@@ -211,14 +211,16 @@ export default {
 
     sync(mode = 'normal') {
       const api = this.settings.api.prefix;
-      fetch(`${api}${this.settings.api.save}`, {
+      const syncUpdates = fetch(`${api}${this.settings.api.save}`, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
         method: 'POST',
         body: JSON.stringify(this.db),
-      })
+      });
+
+      syncUpdates
         .then(resp => {
           this.layout.mode = mode;
           if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
