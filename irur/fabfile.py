@@ -48,6 +48,7 @@ rsync_local_dir = os.path.dirname(os.path.realpath(__file__)) + "/"
 exclude_dirs = ["node_modules", "src"]
 exclude = " ".join(["--exclude '{0}'".format(item) for item in exclude_dirs])
 rsync_extra_opts = "--archive --compress {0} --stats".format(exclude)
+vue_cli = "node_modules/@vue/cli-service/bin/vue-cli-service.js"
 
 
 @hosts(rsync_remote)
@@ -107,7 +108,7 @@ def deploy(bump_version="True", sync="True", reload="True"):
 @task
 def serve():
     """Compile with hot-reload for development."""
-    local("node_modules/@vue/cli-service/bin/vue-cli-service.js serve")
+    local("{0} serve".format(vue_cli))
 
 
 @task
@@ -122,7 +123,8 @@ def build(bump_version="False", push="False"):
     """
     if bump_version == "True":
         bump()
-    local("node_modules/@vue/cli-service/bin/vue-cli-service.js build")
+
+    local("{0} build".format(vue_cli))
 
     if push == "True":
         push_to_live = prompt(
@@ -142,15 +144,17 @@ def build(bump_version="False", push="False"):
 @task
 def lint():
     """Lint and fix files."""
-    local("node_modules/@vue/cli-service/bin/vue-cli-service.js lint")
+    local("{0} lint".format(vue_cli))
 
 
 @task
-def test(arg=""):
-    """Run unit tests with jest."""
-    local(
-        "node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit {0}".format(arg)
-    )
+def test(unit=""):
+    """Run unit tests with jest.
+
+    :param unit:         Unit name
+    :type  unit:         string, optional
+    """
+    local("{0} test:unit {1}".format(vue_cli, unit))
 
 
 @task
