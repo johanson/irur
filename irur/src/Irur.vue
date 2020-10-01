@@ -39,6 +39,8 @@
       @edit="editKnob($event)"
       @loading="layout.showLoader = $event"
     />
+
+    <help :db="db" @save="prompt = $event" />
   </div>
 </template>
 
@@ -278,6 +280,10 @@ export default {
       this.$refs.undo.record();
       this.$delete(this.db, id);
       this.sync();
+    },
+
+    saveDBManualEdit(e) {
+      console.log(e);
     },
 
     promptCallback(answer) {

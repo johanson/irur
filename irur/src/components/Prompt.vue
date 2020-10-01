@@ -11,7 +11,7 @@
         <button type="button" class="confirm" @click.prevent="confirm()">
           Yes
         </button>
-        <button type="button" class="cancel" @click.prevent="cancel()">
+        <button type="button" class="secondary" @click.prevent="cancel()">
           Cancel
         </button>
       </div>
@@ -91,16 +91,9 @@ export default {
     margin-bottom: 20px;
   }
   button {
-    padding: 0 15px;
     &.confirm {
       opacity: 1;
       margin-right: 10px;
-    }
-    &.cancel {
-      opacity: 0.5;
-    }
-    &.cancel:hover {
-      opacity: 1;
     }
   }
 }

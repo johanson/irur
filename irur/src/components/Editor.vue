@@ -5,7 +5,7 @@
       id="form1"
       autocomplete="off"
       @submit="validate()"
-      @keydown.esc="closeModal($event, (force = true))"
+      @keydown.esc="closeModal(true)"
       :class="{ disabled: knobSaveData.isPlaceholder }"
     >
       <div class="close" @click="closeModal($event)">
@@ -119,7 +119,7 @@
 
 <script>
 import Slider from 'vue-color/src/components/Slider';
-import Helpers from '../mixins/helpers';
+import Helpers from '@/mixins/helpers';
 
 export default {
   mixins: [Helpers],
@@ -222,7 +222,7 @@ export default {
         })
         .then(json => {
           flip();
-          self.knobSaveData.mqtt = json.mqtt;
+          self.knobSaveData.mqtt = json.irCode;
           this.$toast.info('Ir code received');
         })
         .catch(err => {
@@ -260,12 +260,20 @@ export default {
               </svg>`;
     },
 
-    closeModal(e, force = false) {
+    closeModal(e) {
+      let inTargetClassList = false;
       const targetClassList = ['editor-overlay', 'close'];
-      const inTargetClassList = targetClassList.some(c =>
-        e.target.classList.contains(c)
-      );
-      if (inTargetClassList || force) {
+
+      if (typeof e === 'boolean') {
+        // Force close
+        inTargetClassList = true;
+      } else {
+        inTargetClassList = targetClassList.some(c =>
+          e.target.classList.contains(c)
+        );
+      }
+
+      if (inTargetClassList) {
         this.$emit('switch-mode', { mode: 'normal' });
       }
     },

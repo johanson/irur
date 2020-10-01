@@ -1,13 +1,14 @@
 import Vue from 'vue';
 import VueToast from 'vue-toast-notification';
-import App from './Irur.vue';
-import SvgSprite from './components/SvgSprite.vue';
-import Undo from './components/Undo.vue';
-import Editor from './components/Editor.vue';
-import Tabs from './components/Tabs.vue';
-import Remote from './components/Remote.vue';
-import Prompt from './components/Prompt.vue';
-import './assets/app.scss';
+import App from '@/Irur.vue';
+import SvgSprite from '@/components/SvgSprite.vue';
+import Undo from '@/components/Undo.vue';
+import Editor from '@/components/Editor.vue';
+import Tabs from '@/components/Tabs.vue';
+import Remote from '@/components/Remote.vue';
+import Prompt from '@/components/Prompt.vue';
+import Help from '@/components/Help.vue';
+import '@/assets/app.scss';
 
 Vue.config.productionTip = false;
 
@@ -17,6 +18,7 @@ Vue.component('Editor', Editor);
 Vue.component('Tabs', Tabs);
 Vue.component('Remote', Remote);
 Vue.component('Prompt', Prompt);
+Vue.component('Help', Help);
 
 Vue.use(VueToast, { position: 'bottom' });
 

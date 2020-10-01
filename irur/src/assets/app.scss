@@ -70,22 +70,32 @@ button {
   color: #f8f8f8;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.3s ease-out, opacity 0.3s ease-out;
+  transition: background 0.2s ease-out, opacity 0.2s ease-out;
   background-color: #1976d2;
-  padding: 1px 6px;
+  padding: 0 15px;
   line-height: 40px;
   height: 40px;
   overflow: hidden;
   border: none;
-  font-size: 16px;
+  text-transform: uppercase;
+  font-size: 14px;
   font-family: Arial, Helvetica, sans-serif;
   text-shadow: 0px 0px 1px #000;
+}
+
+.secondary {
+  transition: opacity 0.2s ease-out;
+  opacity: 0.65;
+  &:hover {
+    transition: opacity 0.2s ease-out;
+    opacity: 1;
+  }
 }
 
 button:hover,
 button:active {
   background: #1565c0;
-  transition: background 0.3s ease-out, opacity 0.3s ease-out;
+  transition: background 0.2s ease-out, opacity 0.2s ease-out;
 }
 
 button:disabled,
@@ -103,7 +113,7 @@ button.disabled {
   width: 35px;
   height: 35px;
   cursor: pointer;
-  transition: background 0.3s ease-out;
+  transition: background 0.2s ease-out;
   background-color: #ff7c7c;
 
   svg {
@@ -118,7 +128,7 @@ button.disabled {
   }
 
   &:hover {
-    transition: background 0.3s ease-out;
+    transition: background 0.2s ease-out;
     background-color: #ff3d3d;
   }
 }

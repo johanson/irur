@@ -145,7 +145,7 @@ app.get('/api/ir/receive/', (req, res) => {
   let counter = 0;
   (function wait() {
     if (conf.mqttMatch.length) {
-      res.json({ mqtt: conf.mqttMatch });
+      res.json({ status: 'success', irCode: conf.mqttMatch });
     } else {
       counter = 0.5 + counter;
       if (counter === 5) {
