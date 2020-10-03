@@ -157,13 +157,14 @@ export default {
   computed: {
     filteredIcons() {
       return this.layout.icons.filter(
-        x => x.toLowerCase().indexOf(this.knobSaveData.icon.toLowerCase()) > -1
+        (x) =>
+          x.toLowerCase().indexOf(this.knobSaveData.icon.toLowerCase()) > -1
       );
     },
   },
 
   watch: {
-    colorPicker: _.throttle(function(hex) {
+    colorPicker: _.throttle(function (hex) {
       this.knobSaveData.color = hex;
     }, 400),
   },
@@ -178,7 +179,7 @@ export default {
       this.colorPicker = '';
       this.knobSaveData = {
         isPlaceholder: false,
-        id: this.genUID(),
+        id: this.$_genUID(),
         name: '',
         mqtt: '',
         icon: '',
@@ -193,7 +194,7 @@ export default {
     edit(id) {
       this.$emit('switch-mode', { mode: 'edit' });
       const activeTabKnobs = this.db[this.layout.activeTab].knobs;
-      const index = activeTabKnobs.findIndex(item => item.id === id);
+      const index = activeTabKnobs.findIndex((item) => item.id === id);
       this.knobSaveData = JSON.parse(JSON.stringify(activeTabKnobs[index]));
       this.colorPicker = this.knobSaveData.color;
       this.$nextTick().then(() => {
@@ -219,18 +220,18 @@ export default {
       fetch(`${this.settings.api.prefix}${this.settings.api.receive}`, {
         signal: controller.signal,
       })
-        .then(resp => {
+        .then((resp) => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
           }
           return resp.json();
         })
-        .then(json => {
+        .then((json) => {
           flip();
           self.knobSaveData.mqtt = json.irCode;
           this.$toast.info('Ir code received');
         })
-        .catch(err => {
+        .catch((err) => {
           flip();
           if (err.name === 'AbortError') {
             this.$toast.info(
@@ -248,7 +249,7 @@ export default {
       this.knobSaveData.color = this.convertHex(dat.color);
       if (
         !dat.isPlaceholder &&
-        required.some(x => x === '' || x === undefined)
+        required.some((x) => x === '' || x === undefined)
       ) {
         this.$toast.error('Name, id, mqtt and topic required');
       } else {
@@ -267,7 +268,7 @@ export default {
         hex = hex
           .substring(1)
           .split('')
-          .map(function(h) {
+          .map(function (h) {
             return h + h;
           })
           .join('');
@@ -284,7 +285,7 @@ export default {
         // Force close
         inTargetClassList = true;
       } else {
-        inTargetClassList = targetClassList.some(c =>
+        inTargetClassList = targetClassList.some((c) =>
           e.target.classList.contains(c)
         );
       }

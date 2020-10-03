@@ -1,13 +1,10 @@
 export default {
   methods: {
-    genUID() {
-      // $_
-      return Math.random()
-        .toString(36)
-        .slice(-8);
+    $_genUID() {
+      return Math.random().toString(36).slice(-8);
     },
 
-    getHostname() {
+    $_getHostname() {
       let hostname = '';
       if (process.env.NODE_ENV === 'development') {
         hostname = `http://localhost:${process.env.VUE_APP_SERVER_PORT}/`;
@@ -15,13 +12,13 @@ export default {
       return hostname;
     },
 
-    cssVar(prop) {
+    $_cssVar(prop) {
       return getComputedStyle(document.documentElement)
         .getPropertyValue(prop)
         .trimStart();
     },
 
-    scaffoldDB() {
+    $_scaffoldDB() {
       return {
         default: {
           name: 'Default',

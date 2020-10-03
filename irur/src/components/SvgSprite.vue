@@ -18,16 +18,16 @@ export default {
     load() {
       const fetchSVG = fetch('icons/sprite.svg');
       fetchSVG
-        .then(resp => {
+        .then((resp) => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
           }
           return resp.text();
         })
-        .then(data => {
+        .then((data) => {
           this.parse(data);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error(String(err));
         });
     },

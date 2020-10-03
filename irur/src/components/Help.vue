@@ -80,7 +80,7 @@ export default {
         // Force close
         inTargetClassList = true;
       } else {
-        inTargetClassList = targetClassList.some(c =>
+        inTargetClassList = targetClassList.some((c) =>
           e.target.classList.contains(c)
         );
       }
