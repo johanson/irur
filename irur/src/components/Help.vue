@@ -118,9 +118,12 @@ export default {
     z-index: 10;
     width: 25px;
     height: 25px;
-    display: block;
-    position: absolute;
+    display: none;
+    position: fixed;
     opacity: 0.5;
+    .normal & {
+      display: block;
+    }
     &:hover {
       opacity: 1;
     }
