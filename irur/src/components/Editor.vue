@@ -92,15 +92,23 @@
         />
       </div>
 
-      <label for="knob_color"
+      <label for="color-picker"
         >Color
         <span
-          >Color for the icon. Leave blank for default that depends on the
+          >Colorpicker for the icon. Leave blank for default that depends on the
           parent theme.</span
         >
       </label>
-      <input type="text" id="knob_color" v-model="knobSaveData.color" />
-      <slider-picker v-model="colors" @input="colorCheck()"></slider-picker>
+      <div class="color-picker clearfix">
+        <input type="color" value="#000000" v-model="colorPicker" />
+        <input
+          id="color-picker"
+          type="text"
+          class="color-picker-value"
+          maxlength="7"
+          v-model="knobSaveData.color"
+        />
+      </div>
 
       <div class="placeholder">
         <input
@@ -118,24 +126,16 @@
 </template>
 
 <script>
-import Slider from 'vue-color/src/components/Slider';
 import Helpers from '@/mixins/helpers';
+import _ from 'lodash';
 
 export default {
   mixins: [Helpers],
-  components: {
-    'slider-picker': Slider,
-  },
+  components: {},
   props: {
     db: { type: Object, required: true },
     layout: { type: Object, required: true },
     settings: { type: Object, required: true },
-  },
-
-  watch: {
-    colors(value) {
-      this.knobSaveData.color = value.hex;
-    },
   },
 
   data() {
@@ -149,8 +149,8 @@ export default {
         icon: '',
         color: '',
       },
-      colors: {},
       icons: [],
+      colorPicker: '',
     };
   },
 
@@ -162,6 +162,12 @@ export default {
     },
   },
 
+  watch: {
+    colorPicker: _.throttle(function(hex) {
+      this.knobSaveData.color = hex;
+    }, 400),
+  },
+
   methods: {
     save() {
       this.$emit('edit', this.knobSaveData);
@@ -169,7 +175,7 @@ export default {
 
     add() {
       this.$emit('switch-mode', { mode: 'add' });
-      this.colors = {};
+      this.colorPicker = '';
       this.knobSaveData = {
         isPlaceholder: false,
         id: this.genUID(),
@@ -189,8 +195,7 @@ export default {
       const activeTabKnobs = this.db[this.layout.activeTab].knobs;
       const index = activeTabKnobs.findIndex(item => item.id === id);
       this.knobSaveData = JSON.parse(JSON.stringify(activeTabKnobs[index]));
-      this.knobSaveData.color ? this.knobSaveData.color : '';
-      this.colors = { hex: this.knobSaveData.color };
+      this.colorPicker = this.knobSaveData.color;
       this.$nextTick().then(() => {
         this.$refs.editorNameField.focus();
       });
@@ -238,19 +243,16 @@ export default {
     },
 
     validate() {
-      const a = this.knobSaveData;
-      const required = [a.name, a.mqtt, a.id, a.topic_send];
-      if (!a.isPlaceholder && required.some(x => x === '' || x === undefined)) {
+      const dat = this.knobSaveData;
+      const required = [dat.name, dat.mqtt, dat.id, dat.topic_send];
+      this.knobSaveData.color = this.convertHex(dat.color);
+      if (
+        !dat.isPlaceholder &&
+        required.some(x => x === '' || x === undefined)
+      ) {
         this.$toast.error('Name, id, mqtt and topic required');
       } else {
         this.save();
-      }
-    },
-
-    colorCheck() {
-      // Give a default value from the accent color when the user first starts dragging the color slider
-      if (!this.knobSaveData.color) {
-        this.colors = { hex: this.cssVar('--accent') };
       }
     },
 
@@ -258,6 +260,20 @@ export default {
       return `<svg class="icon" style="fill: ${this.knobSaveData.color}">
                 <use xlink:href="#${icon}"></use>
               </svg>`;
+    },
+
+    convertHex(hex) {
+      if (hex.startsWith('#') && hex.length === 4) {
+        hex = hex
+          .substring(1)
+          .split('')
+          .map(function(h) {
+            return h + h;
+          })
+          .join('');
+        return `#${hex}`;
+      }
+      return hex;
     },
 
     closeModal(e) {
@@ -304,6 +320,28 @@ export default {
     line-height: 38px;
     padding: 0 8px;
     width: 100%;
+  }
+
+  .color-picker {
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: var(--background-shade);
+    margin-bottom: 10px;
+    input[type='color'] {
+      border: none;
+      border-bottom: 1px solid #979797;
+      border-top: 1px solid #979797;
+      height: 40px;
+      width: 38px;
+      padding-left: 2px;
+      margin-bottom: 0;
+      float: left;
+      max-width: 100px;
+    }
+    .color-picker-value {
+      width: calc(100% - 38px);
+      margin-bottom: 0;
+    }
   }
 
   input,
@@ -366,7 +404,7 @@ export default {
 
   & .disabled {
     input[type='text'],
-    #knob_mqtt_topic,
+    input[type='color'] #knob_mqtt_topic,
     #glyphs,
     .vc-slider,
     #mqtt button {
