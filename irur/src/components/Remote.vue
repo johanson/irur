@@ -61,7 +61,7 @@
         <div
           v-else
           :class="`no-icon len-${el.name.length}`"
-          :style="`style: ${el.color};`"
+          :style="`color: ${el.color};`"
         >
           {{ el.name }}
         </div>
