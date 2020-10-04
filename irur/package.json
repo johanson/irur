@@ -21,7 +21,6 @@
     "lodash.throttle": "4.1.1",
     "mqtt": "4.2.1",
     "vue": "2.6.12",
-    "vue-color": "2.7.1",
     "vue-context": "6.0.0",
     "vue-toast-notification": "0.5.4",
     "vuedraggable": "2.24.1"
