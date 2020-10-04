@@ -24,6 +24,7 @@
         </li>
       </template>
     </vue-context>
+
     <draggable
       id="remote"
       v-model="filteredDB"
@@ -31,7 +32,7 @@
       @change="$emit('sort')"
       :disabled="this.layout.mode == 'sort' ? false : true"
     >
-      <div class="add" slot="footer" draggable="false" @click="addKnob()">
+      <div class="add-item" slot="footer" draggable="false" @click="addKnob()">
         <div class="glyph">
           <svg><use xlink:href="#add"></use></svg>
         </div>
@@ -49,7 +50,7 @@
             index,
           })
         "
-        class="item"
+        class="knob"
         :data-placeholder="el.isPlaceholder || false"
       >
         <div v-if="el.icon" class="glyph">
@@ -201,8 +202,33 @@ export default {
     }
   }
 
-  .item,
-  .add {
+  .add-item {
+    &:hover {
+      background: none;
+    }
+
+    .glyph svg {
+      fill: var(--accent);
+      width: 50%;
+      height: 50%;
+      transform: translateX(0%) translateY(50%);
+      opacity: 0.1;
+      pointer-events: initial;
+      transition: opacity 0.5s ease-in-out;
+
+      &:hover {
+        opacity: 0.8;
+        transition: opacity 0.5s ease-in-out;
+      }
+
+      use {
+        pointer-events: none;
+      }
+    }
+  }
+
+  .knob,
+  .add-item {
     display: flex;
     padding: 16px;
     max-width: 25%;
@@ -256,32 +282,7 @@ export default {
     }
   }
 
-  .add {
-    &:hover {
-      background: none;
-    }
-
-    .glyph svg {
-      fill: var(--accent);
-      width: 50%;
-      height: 50%;
-      transform: translateX(0%) translateY(50%);
-      opacity: 0.1;
-      pointer-events: initial;
-      transition: opacity 0.5s ease-in-out;
-
-      &:hover {
-        opacity: 0.8;
-        transition: opacity 0.5s ease-in-out;
-      }
-
-      use {
-        pointer-events: none;
-      }
-    }
-  }
-
-  .sort & .item {
+  .mode-sort & .knob {
     cursor: move !important;
   }
 }

@@ -1,6 +1,6 @@
 <template>
-  <div class="overlay" v-if="isActive">
-    <div class="prompt">
+  <div class="container" v-if="isActive">
+    <div id="prompt">
       <div class="close" @click="cancel()">
         <svg><use xlink:href="#close"></use></svg>
       </div>
@@ -37,6 +37,7 @@ export default {
   watch: {
     isActive() {
       if (this.isActive) {
+        this.$emit('switch-mode', { mode: 'prompt' });
         window.addEventListener('keydown', this.keyDown);
       } else {
         window.removeEventListener('keydown', this.keyDown);
@@ -46,10 +47,12 @@ export default {
 
   methods: {
     confirm() {
+      this.closeModal();
       this.$emit('callback', true);
     },
 
     cancel() {
+      this.closeModal();
       this.$emit('callback', false);
     },
 
@@ -61,24 +64,20 @@ export default {
         this.cancel();
       }
     },
+
+    closeModal() {
+      this.$emit('switch-mode', { mode: 'normal' });
+    },
   },
 };
 </script>
 
-<style scoped lang="scss">
-.overlay {
-  position: fixed;
-  background-color: rgba(0, 0, 0, 0.25);
-  top: 0;
-  left: 0;
-  min-height: 100vh;
-  width: 100%;
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.prompt {
+<style lang="scss">
+#prompt {
+  @at-root.container {
+    display: flex;
+    justify-content: center;
+  }
   position: fixed;
   z-index: 101;
   top: 100px;
@@ -91,10 +90,8 @@ export default {
     margin-bottom: 20px;
   }
   button {
-    &.confirm {
-      opacity: 1;
-      margin-right: 10px;
-    }
+    margin-right: 10px;
+    max-width: 125px;
   }
 }
 </style>

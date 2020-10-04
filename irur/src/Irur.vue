@@ -1,11 +1,18 @@
 <template>
-  <div id="app" tabindex="0" ref="app" :class="layout.mode">
+  <div id="app" tabindex="0" ref="app" :class="`mode-${layout.mode}`">
     <div id="loader" v-if="layout.showLoader" />
+
+    <div id="overlay" />
+
     <svg-sprite
       @loaded="(layout.icons = $event), (layout.loading.svg = true)"
     />
 
-    <prompt :params="prompt" @callback="promptCallback($event)" />
+    <prompt
+      :params="prompt"
+      @switch-mode="switchMode($event)"
+      @callback="promptCallback($event)"
+    />
 
     <undo ref="undo" :db="db" @back="(db = $event), sync()" />
 
@@ -40,7 +47,11 @@
       @loading="layout.showLoader = $event"
     />
 
-    <help :db="db" @save="prompt = $event" />
+    <settings
+      :db="db"
+      @switch-mode="switchMode($event)"
+      @save="prompt = $event"
+    />
   </div>
 </template>
 
@@ -52,12 +63,12 @@ import Editor from '@/components/Editor.vue';
 import Tabs from '@/components/Tabs.vue';
 import Remote from '@/components/Remote.vue';
 import Prompt from '@/components/Prompt.vue';
-import Help from '@/components/Help.vue';
+import Settings from '@/components/Settings.vue';
 import '@/assets/app.scss';
 
 export default {
   name: 'App',
-  components: { SvgSprite, Undo, Editor, Tabs, Remote, Prompt, Help },
+  components: { SvgSprite, Undo, Editor, Tabs, Remote, Prompt, Settings },
   mixins: [Helpers],
 
   data() {
@@ -328,50 +339,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-#loader {
-  position: fixed;
-  top: 8px;
-  right: 8px;
-  z-index: 101;
-  background: rgba(0 0 0 / 0.8);
-  width: 100vw;
-  height: 100vh;
-  margin: -10px -10px 0 0;
-
-  &:after {
-    content: '';
-    top: 200px;
-    right: calc(50% - 30px);
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    background: url(~@/assets/loading.svg) no-repeat;
-    background-size: 60px 60px;
-    will-change: scroll-position;
-    animation-name: spin;
-    animation-duration: 1800ms;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
-    backface-visibility: hidden;
-    transform: transale3d(0, 0, 0);
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-      opacity: 0.4;
-    }
-
-    75% {
-      opacity: 0.8;
-    }
-
-    100% {
-      transform: rotate(360deg);
-      opacity: 0.4;
-    }
-  }
-}
-</style>

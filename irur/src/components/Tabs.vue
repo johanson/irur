@@ -18,6 +18,7 @@
         </li>
       </template>
     </vue-context>
+
     <div
       class="tab"
       v-for="(item, key) in db"
@@ -77,7 +78,7 @@ export default {
     },
 
     addTab() {
-      const uid = this.genUID();
+      const uid = this.$_genUID();
       this.tabSaveData = {
         name: 'New',
         id: uid,
