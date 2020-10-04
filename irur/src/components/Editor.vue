@@ -107,6 +107,7 @@
           class="color-picker-value"
           maxlength="7"
           v-model="knobSaveData.color"
+          @keyup="syncColorPicker()"
         />
       </div>
 
@@ -150,7 +151,7 @@ export default {
         color: '',
       },
       icons: [],
-      colorPicker: '',
+      colorPicker: '#ffffff',
     };
   },
 
@@ -261,6 +262,13 @@ export default {
       return `<svg class="icon" style="fill: ${this.knobSaveData.color}">
                 <use xlink:href="#${icon}"></use>
               </svg>`;
+    },
+
+    syncColorPicker() {
+      const hex = this.knobSaveData.color;
+      if (hex.startsWith('#') && hex.length === 7) {
+        this.colorPicker = hex;
+      }
     },
 
     convertHex(hex) {
