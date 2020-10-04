@@ -1,6 +1,6 @@
 <template>
   <div id="settings">
-    <div class="icon" @click.prevent="show()">
+    <div class="btn" @click.prevent="show()">
       <svg><use xlink:href="#gear-2"></use></svg>
     </div>
     <div class="window" v-if="isActive">
@@ -95,7 +95,7 @@ export default {
 
 <style lang="scss">
 #settings {
-  .icon {
+  .btn {
     cursor: pointer;
     bottom: 5px;
     right: 5px;
@@ -125,14 +125,12 @@ export default {
     z-index: 1001;
     background-color: var(--background);
     color: #fff;
-    width: 90vw;
+    width: calc(100% - 40px);
     max-width: 700px;
-    min-width: 320px;
-    margin: 0px auto;
+    min-width: 250px;
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     top: 40px;
+    margin-bottom: 40px;
     button {
       margin: 5px;
     }
@@ -145,7 +143,7 @@ export default {
     display: block;
     width: calc(100% - 20px);
     max-height: 600px;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 180px);
     min-height: 100px;
     color: var(--accent);
     background: var(--background-shade);

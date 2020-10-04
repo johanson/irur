@@ -78,13 +78,14 @@ export default {
     display: flex;
     justify-content: center;
   }
-  position: fixed;
+  position: absolute;
   z-index: 101;
   top: 100px;
   background: var(--background);
   color: var(--accent);
   width: 250px;
   padding: 15px;
+  top: 40px;
   .message {
     margin-top: 25px;
     margin-bottom: 20px;

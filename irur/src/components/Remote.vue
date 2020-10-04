@@ -1,24 +1,24 @@
 <template>
   <div>
     <vue-context ref="menu">
-      <template slot-scope="child">
+      <template slot-scope="c">
         <li>
-          <a href="#" data-id="add" @click.prevent="menu($event, child.data)"
+          <a href="#" data-id="add" @click.prevent="menu($event, c.data)"
             >Add</a
           >
         </li>
         <li>
-          <a href="#" data-id="edit" @click.prevent="menu($event, child.data)"
+          <a href="#" data-id="edit" @click.prevent="menu($event, c.data)"
             >Edit</a
           >
         </li>
         <li>
-          <a href="#" data-id="sort" @click.prevent="menu($event, child.data)"
+          <a href="#" data-id="sort" @click.prevent="menu($event, c.data)"
             >Sort</a
           >
         </li>
         <li>
-          <a href="#" data-id="remove" @click.prevent="menu($event, child.data)"
+          <a href="#" data-id="remove" @click.prevent="menu($event, c.data)"
             >Remove</a
           >
         </li>
@@ -32,7 +32,12 @@
       @change="$emit('sort')"
       :disabled="this.layout.mode == 'sort' ? false : true"
     >
-      <div class="add-item" slot="footer" draggable="false" @click="addKnob()">
+      <div
+        class="knob add-item"
+        slot="footer"
+        draggable="false"
+        @click="addKnob()"
+      >
         <div class="glyph">
           <svg><use xlink:href="#add"></use></svg>
         </div>
@@ -202,33 +207,7 @@ export default {
     }
   }
 
-  .add-item {
-    &:hover {
-      background: none;
-    }
-
-    .glyph svg {
-      fill: var(--accent);
-      width: 50%;
-      height: 50%;
-      transform: translateX(0%) translateY(50%);
-      opacity: 0.1;
-      pointer-events: initial;
-      transition: opacity 0.5s ease-in-out;
-
-      &:hover {
-        opacity: 0.8;
-        transition: opacity 0.5s ease-in-out;
-      }
-
-      use {
-        pointer-events: none;
-      }
-    }
-  }
-
-  .knob,
-  .add-item {
+  .knob {
     display: flex;
     padding: 16px;
     max-width: 25%;
@@ -278,6 +257,31 @@ export default {
     @media screen and (min-width: 1200px) {
       .no-icon {
         font-size: 80px;
+      }
+    }
+  }
+
+  .add-item {
+    &:hover {
+      background: none;
+    }
+
+    .glyph svg {
+      fill: var(--accent);
+      width: 50%;
+      height: 50%;
+      transform: translateX(0%) translateY(50%);
+      opacity: 0.1;
+      pointer-events: initial;
+      transition: opacity 0.5s ease-in-out;
+
+      &:hover {
+        opacity: 0.8;
+        transition: opacity 0.5s ease-in-out;
+      }
+
+      use {
+        pointer-events: none;
       }
     }
   }

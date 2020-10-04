@@ -292,7 +292,7 @@ export default {
   top: 40px;
   margin-bottom: 40px;
   max-width: 700px;
-  width: 90vw;
+  width: calc(100% - 40px);
   z-index: 101;
   text-align: right;
   padding: 10px 0;
