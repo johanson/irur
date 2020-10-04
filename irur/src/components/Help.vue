@@ -9,9 +9,8 @@
           <svg><use xlink:href="#close"></use></svg>
         </div>
         <textarea ref="data" v-model="data" />
-        <button class="secondary" @click="copyToClipboard()">
-          Copy to clipboard
-        </button>
+        <button class="secondary" @click="copyToClipboard()">Copy</button>
+        <button @click="dataExport()">Export</button>
         <button @click="save()">Save</button>
       </div>
     </div>
@@ -23,22 +22,12 @@ export default {
   data() {
     return {
       isActive: false,
+      data: {},
     };
   },
 
   props: {
     db: { type: Object, required: true },
-  },
-
-  computed: {
-    data: {
-      set() {
-        this.data = this.db;
-      },
-      get() {
-        return JSON.stringify(this.db, null, 2);
-      },
-    },
   },
 
   watch: {
@@ -54,6 +43,7 @@ export default {
   methods: {
     show() {
       this.isActive = true;
+      this.data = JSON.stringify(this.db, null, 2);
     },
 
     save() {
@@ -66,6 +56,24 @@ export default {
       this.closeModal(true);
     },
 
+    dataExport() {
+      try {
+        const contents = JSON.stringify(this.db, null, 2);
+        const blob = new Blob([contents], { type: 'octet/stream' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        document.body.appendChild(link);
+        link.style = 'display: none;';
+        link.href = url;
+        link.download = 'irur_backup.txt';
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.$toast.success(`Export successful, check your downloads folder`);
+      } catch (err) {
+        this.$toast.success(`Cannot export file: ${err.message}`);
+      }
+    },
+
     copyToClipboard() {
       this.$refs.data.focus();
       this.$refs.data.select();
@@ -74,7 +82,7 @@ export default {
 
     closeModal(e) {
       let inTargetClassList = false;
-      const targetClassList = ['overlay', 'close'];
+      const targetClassList = ['close'];
 
       if (typeof e === 'boolean') {
         // Force close

@@ -293,7 +293,18 @@ export default {
     },
 
     saveDBManualEdit(e) {
-      console.log(e);
+      const data = JSON.parse(e);
+      try {
+        if ({}.hasOwnProperty.call(data, 'default')) {
+          this.db = data;
+          this.sync();
+        } else {
+          throw new Error(`Invalid json or missing 'default' property`);
+        }
+        this.$toast.success(`Changes saved successfully`);
+      } catch (err) {
+        this.$toast.error(`Cannot save the changes: ${err.message}`);
+      }
     },
 
     promptCallback(answer) {
