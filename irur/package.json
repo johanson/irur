@@ -73,7 +73,10 @@
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not dead"
+    "not dead",
+    "not op_mini all",
+    "not ie > 0",
+    "not kaios > 0"
   ],
   "jest": {
     "preset": "@vue/cli-plugin-unit-jest"
