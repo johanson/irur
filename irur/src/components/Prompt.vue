@@ -74,10 +74,6 @@ export default {
 
 <style lang="scss">
 #prompt {
-  @at-root.container {
-    display: flex;
-    justify-content: center;
-  }
   position: absolute;
   z-index: 101;
   top: 100px;
@@ -86,10 +82,17 @@ export default {
   width: 250px;
   padding: 15px;
   top: 40px;
+
+  @at-root.container {
+    display: flex;
+    justify-content: center;
+  }
+
   .message {
     margin-top: 25px;
     margin-bottom: 20px;
   }
+
   button {
     margin-right: 10px;
     max-width: 125px;

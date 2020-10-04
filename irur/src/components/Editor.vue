@@ -284,6 +284,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
 #editor {
   background: var(--background);
@@ -296,6 +297,7 @@ export default {
   z-index: 101;
   text-align: right;
   padding: 10px 0;
+
   .mode-add &,
   .mode-edit & {
     display: block;
@@ -317,6 +319,7 @@ export default {
     overflow: hidden;
     background-color: var(--background-shade);
     margin-bottom: 10px;
+
     input[type='color'] {
       border: none;
       border-bottom: 1px solid #979797;
@@ -328,6 +331,7 @@ export default {
       float: left;
       max-width: 100px;
     }
+
     .color-picker-value {
       width: calc(100% - 38px);
       margin-bottom: 0;
@@ -437,6 +441,7 @@ export default {
     padding-top: 10px;
     padding-left: 10px;
     margin-bottom: 10px;
+
     label {
       font-weight: normal;
       font-size: 1em;

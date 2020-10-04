@@ -128,6 +128,7 @@ export default {
   padding-left: 10px;
   white-space: nowrap;
   position: relative;
+
   .tab {
     display: inline-block;
     position: relative;

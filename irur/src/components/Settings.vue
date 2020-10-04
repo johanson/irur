@@ -119,6 +119,7 @@ export default {
       fill: var(--accent);
     }
   }
+
   .window {
     text-align: right;
     display: block;
@@ -131,9 +132,11 @@ export default {
     position: absolute;
     top: 40px;
     margin-bottom: 40px;
+
     button {
       margin: 5px;
     }
+
     button + button {
       margin-left: 0;
     }
@@ -152,6 +155,7 @@ export default {
     margin-top: 35px;
     font-family: monospace;
     border: none;
+
     &:focus {
       border-color: rgba(25, 118, 210, 0.7);
       border-bottom-width: 1px;

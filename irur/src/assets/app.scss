@@ -88,11 +88,13 @@ button:active {
   background: #1565c0;
   transition: background 0.2s ease-out, opacity 0.2s ease-out;
 }
+
 button:disabled,
 button.disabled {
   cursor: not-allowed;
   opacity: 0.75;
 }
+
 button.secondary {
   transition: opacity 0.2s ease-out;
   opacity: 0.65;
