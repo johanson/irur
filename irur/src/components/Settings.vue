@@ -1,18 +1,16 @@
 <template>
-  <div id="help">
+  <div id="settings">
     <div class="icon" @click.prevent="show()">
       <svg><use xlink:href="#gear-2"></use></svg>
     </div>
-    <div class="overlay" v-if="isActive" @click="closeModal($event)">
-      <div class="window">
-        <div class="close">
-          <svg><use xlink:href="#close"></use></svg>
-        </div>
-        <textarea ref="data" v-model="data" />
-        <button class="secondary" @click="copyToClipboard()">Copy</button>
-        <button @click="dataExport()">Export</button>
-        <button @click="save()">Save</button>
+    <div class="window" v-if="isActive">
+      <div class="close" @click="closeModal()">
+        <svg><use xlink:href="#close"></use></svg>
       </div>
+      <textarea ref="data" v-model="data" />
+      <button class="secondary" @click="copyToClipboard()">Copy</button>
+      <button @click="dataExport()">Export</button>
+      <button @click="save()">Save</button>
     </div>
   </div>
 </template>
@@ -43,6 +41,7 @@ export default {
   methods: {
     show() {
       this.isActive = true;
+      this.$emit('switch-mode', { mode: 'settings' });
       this.data = JSON.stringify(this.db, null, 2);
     },
 
@@ -53,7 +52,7 @@ export default {
         callback: 'saveDBManualEdit',
         data: this.data,
       });
-      this.closeModal(true);
+      this.closeModal();
     },
 
     dataExport() {
@@ -80,27 +79,14 @@ export default {
       document.execCommand('copy');
     },
 
-    closeModal(e) {
-      let inTargetClassList = false;
-      const targetClassList = ['close'];
-
-      if (typeof e === 'boolean') {
-        // Force close
-        inTargetClassList = true;
-      } else {
-        inTargetClassList = targetClassList.some((c) =>
-          e.target.classList.contains(c)
-        );
-      }
-
-      if (inTargetClassList) {
-        this.isActive = false;
-      }
+    closeModal() {
+      this.isActive = false;
+      this.$emit('switch-mode', { mode: 'normal' });
     },
 
     keyDown(KeyboardEvent) {
       if (KeyboardEvent.key === 'Escape') {
-        this.isActive = false;
+        this.closeModal();
       }
     },
   },
@@ -108,17 +94,7 @@ export default {
 </script>
 
 <style lang="scss">
-#help {
-  .overlay {
-    position: fixed;
-    background-color: rgba(0, 0, 0, 0.25);
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 99;
-  }
-
+#settings {
   .icon {
     cursor: pointer;
     bottom: 5px;
@@ -129,7 +105,7 @@ export default {
     display: none;
     position: fixed;
     opacity: 0.5;
-    .normal & {
+    .mode-normal & {
       display: block;
     }
     &:hover {
