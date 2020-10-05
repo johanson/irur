@@ -154,13 +154,13 @@ export default {
       if (!confirm || confirm === undefined) {
         const api = this.settings.api.prefix;
         fetch(`${api}${this.settings.api.send}${id}/`)
-          .then((resp) => {
+          .then(resp => {
             if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
           })
           .then(() => {
             this.loader = false;
           })
-          .catch((err) => {
+          .catch(err => {
             this.$toast.error(String(err));
             this.loader = false;
           });

@@ -121,7 +121,7 @@ export default {
         }
         // Check if all initial loading flags are set and disable loading icon
         if (val.showLoader) {
-          if (Object.keys(val.loading).every((k) => val.loading[k])) {
+          if (Object.keys(val.loading).every(k => val.loading[k])) {
             this.layout.showLoader = false;
           }
         }
@@ -138,12 +138,12 @@ export default {
 
   methods: {
     loadTheme() {
-      const getHomeAssistantCSSvar = (prop) => {
+      const getHomeAssistantCSSvar = prop => {
         const top = window.top.document.documentElement;
         return getComputedStyle(top).getPropertyValue(`--${prop}`);
       };
 
-      const getCSSvar = (arr) => {
+      const getCSSvar = arr => {
         let match = '';
         for (let i = 0; i < arr.length; i += 1) {
           if (getHomeAssistantCSSvar(arr[i]) !== '') {
@@ -175,13 +175,13 @@ export default {
       const api = this.settings.api.prefix;
       const fetchDatabase = fetch(`${api}${this.settings.api.load}`);
       fetchDatabase
-        .then((resp) => {
+        .then(resp => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
           }
           return resp.json();
         })
-        .then((json) => {
+        .then(json => {
           if (json.status === 'error') {
             this.db = this.$_scaffoldDB();
             this.sync();
@@ -190,7 +190,7 @@ export default {
             this.layout.loading.db = false;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$toast.error(String(err));
         });
     },
@@ -199,18 +199,18 @@ export default {
       const api = this.settings.api.prefix;
       const fetchSettings = fetch(`${api}${this.settings.api.settings}`);
       fetchSettings
-        .then((resp) => {
+        .then(resp => {
           if (!resp.ok) {
             throw new Error(`API HTTP status ${resp.status}`);
           }
           return resp.json();
         })
-        .then((json) => {
+        .then(json => {
           this.settings.hostname = json.hostname;
           this.settings.topic_send = json.topic_send;
           this.layout.loading.settings = false;
         })
-        .catch((err) => {
+        .catch(err => {
           this.$toast.error(String(err));
         });
     },
@@ -244,18 +244,18 @@ export default {
       });
 
       syncUpdates
-        .then((resp) => {
+        .then(resp => {
           this.layout.mode = mode;
           if (!resp.ok) throw new Error(`API HTTP status ${resp.status}`);
         })
-        .catch((err) => {
+        .catch(err => {
           this.$toast.error(String(err));
         });
     },
 
     editKnob(data) {
       const knobs = this.db[this.layout.activeTab].knobs;
-      const i = knobs.findIndex((item) => item.id === data.id);
+      const i = knobs.findIndex(item => item.id === data.id);
       if (i == -1) {
         // No match found, create a new knob
         knobs.push(data);
@@ -268,7 +268,7 @@ export default {
 
     removeKnob(knobId) {
       const activeTabKnobs = this.db[this.layout.activeTab].knobs;
-      const index = activeTabKnobs.findIndex((item) => item.id === knobId);
+      const index = activeTabKnobs.findIndex(item => item.id === knobId);
       this.$refs.undo.record();
       this.$delete(activeTabKnobs, index);
       this.sync();
@@ -321,7 +321,7 @@ export default {
     promptCallback(answer) {
       const { callback, data } = this.prompt;
       if (answer && callback) this[callback](data);
-      Object.keys(this.prompt).forEach((key) => {
+      Object.keys(this.prompt).forEach(key => {
         this.prompt[key] = undefined;
       });
     },

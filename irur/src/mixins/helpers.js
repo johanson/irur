@@ -1,7 +1,9 @@
 export default {
   methods: {
     $_genUID() {
-      return Math.random().toString(36).slice(-8);
+      return Math.random()
+        .toString(36)
+        .slice(-8);
     },
 
     $_getHostname() {
