@@ -3,6 +3,7 @@ describe('Tabs component', () => {
   it('Create a new tab', () => {
     cy.visit('/');
     cy.get('#loading').should('not.be.visible');
+    cy.wait(500);
     cy.window().then(win => {
       win.app.__vue__.resetDB();
     });
