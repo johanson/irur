@@ -79,7 +79,8 @@ export default {
   top: 100px;
   background: var(--background);
   color: var(--accent);
-  width: 250px;
+  width: 270px;
+
   padding: 15px;
   top: 40px;
 
