@@ -318,6 +318,11 @@ export default {
       }
     },
 
+    resetDB() {
+      this.db = this.$_scaffoldDB();
+      this.sync();
+    },
+
     promptCallback(answer) {
       const { callback, data } = this.prompt;
       if (answer && callback) this[callback](data);

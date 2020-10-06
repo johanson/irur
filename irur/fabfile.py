@@ -154,7 +154,7 @@ def test():
 
 
 @task
-def api():
+def api(args):
     """Start a node server for the backend api."""
     print(
         green(
@@ -163,7 +163,7 @@ def api():
             )
         )
     ),
-    local("node server.js --dev")
+    local("node server.js --dev {0}".format(args))
 
 
 @task
