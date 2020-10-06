@@ -28,7 +28,7 @@
     <draggable
       id="remote"
       v-model="filteredDB"
-      draggable=".item"
+      draggable=".knob"
       @change="$emit('sort')"
       :disabled="this.layout.mode == 'sort' ? false : true"
     >
