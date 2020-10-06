@@ -304,6 +304,7 @@ export default {
     },
 
     saveDBManualEdit(e) {
+      this.$refs.undo.record();
       const data = JSON.parse(e);
       try {
         if ({}.hasOwnProperty.call(data, 'default')) {

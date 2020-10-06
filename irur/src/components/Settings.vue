@@ -50,7 +50,8 @@ export default {
     save() {
       // Database updated
       this.$emit('save', {
-        message: 'Are you sure you want to save the changes?',
+        message:
+          'Are you sure you want to save the changes? This will overwrite your current database.',
         callback: 'saveDBManualEdit',
         data: this.data,
       });
