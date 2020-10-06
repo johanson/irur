@@ -8,9 +8,11 @@
         <svg><use xlink:href="#close"></use></svg>
       </div>
       <textarea ref="data" v-model="data" />
-      <button class="secondary" @click="copyToClipboard()">Copy</button>
-      <button @click="dataExport()">Export</button>
-      <button @click="save()">Save</button>
+      <button class="copy secondary" @click="copyToClipboard()">
+        Copy
+      </button>
+      <button @click="dataExport()" class="export">Export</button>
+      <button @click="save()" class="save">Save</button>
     </div>
   </div>
 </template>
