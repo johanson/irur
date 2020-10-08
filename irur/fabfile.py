@@ -149,7 +149,7 @@ def lint():
 
 @task
 def test():
-    """Run unit tests with cypress."""
+    """Run unit tests with Cypress."""
     local("npm run test")
 
 

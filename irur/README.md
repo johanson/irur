@@ -86,9 +86,7 @@ deploy:  Compile and upload the project to the HA server for Docker.
          Arguments: bump_version=True, sync=True, reload=True
 lint     Lint and fix files.
 serve    Compile with hot-reload for development.
-test     Run unit tests with jest.
-         :param unit:         Unit name
-         :type  unit:         string, optional
+test     Run unit tests with Cypress.
 ```
 
 If you prefer npm scripts: `npm run build` to build with webpack (or `npm run serve` for development), `node server.js --dev` to start the server.
@@ -98,7 +96,7 @@ If you prefer npm scripts: `npm run build` to build with webpack (or `npm run se
 - Node.js
 - Express
 
-For developing: Vue cli, npm
+For developing: Vue cli, npm. Testing: Cypress.
 
 # Credits
 

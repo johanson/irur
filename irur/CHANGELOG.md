@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.6.7
+## 1.0
 
-- Fix the learning mode
+- Add settings export/edit mode
 
 ## 0.6.1
 
