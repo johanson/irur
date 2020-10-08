@@ -9,7 +9,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit",
+    "test": "cypress run --browser chrome --config video=false",
     "api": "node server.js --dev"
   },
   "dependencies": {
@@ -18,34 +18,30 @@
     "cors": "2.8.5",
     "dotenv": "8.2.0",
     "express": "4.17.1",
+    "lodash.throttle": "4.1.1",
+    "minimist": "^1.2.5",
     "mqtt": "4.2.1",
-    "vue": "2.6.12",
-    "vue-color": "2.7.1",
+    "vue": "^2.6.11",
     "vue-context": "6.0.0",
-    "vue-toast-notification": "0.5.0",
+    "vue-toast-notification": "0.5.4",
     "vuedraggable": "2.24.1"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/vue": "^5.0.4",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-unit-jest": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-prettier": "^6.0.0",
-    "@vue/test-utils": "^1.1.0",
     "babel-eslint": "^10.1.0",
+    "cypress": "^5.3.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-vue": "^6.2.2",
     "prettier": "^1.19.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
-    "vue-jest": "^3.0.7",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
-    "root": true,
     "env": {
       "node": true
     },
@@ -57,25 +53,15 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {},
-    "overrides": [
-      {
-        "files": [
-          "**/__tests__/*.{j,t}s?(x)",
-          "**/tests/unit/**/*.spec.{j,t}s?(x)"
-        ],
-        "env": {
-          "jest": true
-        }
-      }
-    ]
+    "root": true,
+    "rules": {}
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not dead"
-  ],
-  "jest": {
-    "preset": "@vue/cli-plugin-unit-jest"
-  }
+    "not dead",
+    "not op_mini all",
+    "not ie > 0",
+    "not kaios > 0"
+  ]
 }

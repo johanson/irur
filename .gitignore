@@ -7,6 +7,9 @@ dev_db.json
 .DS_Store
 
 node_modules/
+irur/cypress/videos/
+irur/cypress/screenshots/
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

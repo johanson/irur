@@ -5,9 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const mqtt = require('mqtt');
 const { execSync } = require('child_process');
-
 const { env } = process;
-const flags = process.argv.slice(2)[0];
+const flag = require('minimist')(process.argv.slice(2));
 
 const app = express();
 app.use(bodyParser.json(), cors(), express.static('dist'));
@@ -29,7 +28,7 @@ const log = {
   },
 
   info(msg) {
-    if (flags === '--dev') {
+    if (flag.dev) {
       console.log(msg);
     } else {
       this.bashio(msg, 'info');
@@ -37,7 +36,7 @@ const log = {
   },
 
   error(msg) {
-    if (flags === '--dev') {
+    if (flag.dev) {
       console.error(msg);
     } else {
       this.bashio(msg, 'error');
@@ -45,7 +44,7 @@ const log = {
   },
 
   warn(msg) {
-    if (flags === '--dev') {
+    if (flag.dev) {
       console.warn(msg);
     } else {
       this.bashio(msg, 'warn');
@@ -56,7 +55,7 @@ const log = {
 const init = () => {
   let db, topicListen, topicSend, hostname;
 
-  if (flags === '--dev') {
+  if (flag.dev) {
     require('dotenv').config();
     topicListen = env.MQTT_TOPIC_LISTEN;
     topicSend = env.MQTT_TOPIC_SEND.split(',');
@@ -73,8 +72,19 @@ const init = () => {
     hostname = env.HOSTNAME;
   }
 
-  // Create empty db if it doesn't exist
+  // Create an empty db if it doesn't exist
   if (!fs.existsSync(db)) fs.openSync(db, 'a');
+
+  // Clear the conents of db when reset flag set
+  if (flag.dev && flag.reset) {
+    fs.truncate(db, 0, err => {
+      if (err) {
+        console.error(`Cannot clear database. ${err.message}`);
+      } else {
+        console.warn('Server started with --reset flag, database cleared');
+      }
+    });
+  }
 
   const conf = {
     mqtt: {
@@ -145,7 +155,7 @@ app.get('/api/ir/receive/', (req, res) => {
   let counter = 0;
   (function wait() {
     if (conf.mqttMatch.length) {
-      res.json({ mqtt: conf.mqttMatch });
+      res.json({ status: 'success', irCode: conf.mqttMatch });
     } else {
       counter = 0.5 + counter;
       if (counter === 5) {

@@ -148,17 +148,13 @@ def lint():
 
 
 @task
-def test(unit=""):
-    """Run unit tests with jest.
-
-    :param unit:         Unit name
-    :type  unit:         string, optional
-    """
-    local("{0} test:unit {1}".format(vue_cli, unit))
+def test():
+    """Run unit tests with Cypress."""
+    local("npm run test")
 
 
 @task
-def api():
+def api(args):
     """Start a node server for the backend api."""
     print(
         green(
@@ -167,7 +163,7 @@ def api():
             )
         )
     ),
-    local("node server.js --dev")
+    local("node server.js --dev {0}".format(args))
 
 
 @task

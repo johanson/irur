@@ -1,5 +1,5 @@
 <template>
-  <a href="#" @keydown.ctrl.90="undo" @click="back()" v-if="isActive">
+  <a href="#" id="undo" @keydown.ctrl.90="undo" @click="back()" v-if="isActive">
     <span>Undo</span>
     <svg><use xlink:href="#fast-forward"></use></svg>
   </a>
@@ -59,10 +59,10 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-a {
+<style lang="scss">
+#undo {
   user-select: none;
-  z-index: 1053;
+  z-index: 1001;
   position: fixed;
   text-transform: uppercase;
   bottom: 10px;
@@ -84,15 +84,7 @@ a {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
   }
-  @keyframes fadeBorder {
-    0% {
-      border: 1px solid #1976d2;
-    }
 
-    100% {
-      border: 1px solid var(--accent);
-    }
-  }
   svg {
     height: 15px;
     width: 15px;
@@ -106,6 +98,16 @@ a {
     height: 20px;
     float: left;
     padding-right: 5px;
+  }
+
+  @keyframes fadeBorder {
+    0% {
+      border: 1px solid #1976d2;
+    }
+
+    100% {
+      border: 1px solid var(--accent);
+    }
   }
 }
 </style>

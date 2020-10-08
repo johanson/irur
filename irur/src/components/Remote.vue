@@ -1,37 +1,42 @@
 <template>
-  <div>
+  <div id="remote">
     <vue-context ref="menu">
-      <template slot-scope="child">
+      <template slot-scope="c">
         <li>
-          <a href="#" data-id="add" @click.prevent="menu($event, child.data)"
+          <a href="#" data-name="add" @click.prevent="menu($event, c.data)"
             >Add</a
           >
         </li>
         <li>
-          <a href="#" data-id="edit" @click.prevent="menu($event, child.data)"
+          <a href="#" data-name="edit" @click.prevent="menu($event, c.data)"
             >Edit</a
           >
         </li>
         <li>
-          <a href="#" data-id="sort" @click.prevent="menu($event, child.data)"
+          <a href="#" data-name="sort" @click.prevent="menu($event, c.data)"
             >Sort</a
           >
         </li>
         <li>
-          <a href="#" data-id="remove" @click.prevent="menu($event, child.data)"
+          <a href="#" data-name="remove" @click.prevent="menu($event, c.data)"
             >Remove</a
           >
         </li>
       </template>
     </vue-context>
     <draggable
-      id="remote"
+      id="draggable"
       v-model="filteredDB"
-      draggable=".item"
+      draggable=".knob"
       @change="$emit('sort')"
       :disabled="this.layout.mode == 'sort' ? false : true"
     >
-      <div class="add" slot="footer" draggable="false" @click="addKnob()">
+      <div
+        class="knob add-item"
+        slot="footer"
+        draggable="false"
+        @click="addKnob()"
+      >
         <div class="glyph">
           <svg><use xlink:href="#add"></use></svg>
         </div>
@@ -49,7 +54,7 @@
             index,
           })
         "
-        class="item"
+        class="knob"
         :data-placeholder="el.isPlaceholder || false"
       >
         <div v-if="el.icon" class="glyph">
@@ -61,7 +66,7 @@
         <div
           v-else
           :class="`no-icon len-${el.name.length}`"
-          :style="`style: ${el.color};`"
+          :style="`color: ${el.color};`"
         >
           {{ el.name }}
         </div>
@@ -115,7 +120,7 @@ export default {
 
   methods: {
     menu(e, knob) {
-      const mode = e.target.dataset.id;
+      const mode = e.target.dataset.name;
       switch (mode) {
         case 'add':
           this.addKnob();
@@ -165,7 +170,7 @@ export default {
 </script>
 
 <style lang="scss">
-#remote {
+#draggable {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -201,8 +206,7 @@ export default {
     }
   }
 
-  .item,
-  .add {
+  .knob {
     display: flex;
     padding: 16px;
     max-width: 25%;
@@ -256,7 +260,7 @@ export default {
     }
   }
 
-  .add {
+  .add-item {
     &:hover {
       background: none;
     }
@@ -281,7 +285,7 @@ export default {
     }
   }
 
-  .sort & .item {
+  .mode-sort & .knob {
     cursor: move !important;
   }
 }

@@ -1,6 +1,6 @@
 <template>
-  <div class="overlay" v-if="isActive">
-    <div class="prompt">
+  <div class="container" v-if="isActive">
+    <div id="prompt">
       <div class="close" @click="cancel()">
         <svg><use xlink:href="#close"></use></svg>
       </div>
@@ -11,7 +11,7 @@
         <button type="button" class="confirm" @click.prevent="confirm()">
           Yes
         </button>
-        <button type="button" class="cancel" @click.prevent="cancel()">
+        <button type="button" class="secondary" @click.prevent="cancel()">
           Cancel
         </button>
       </div>
@@ -37,6 +37,7 @@ export default {
   watch: {
     isActive() {
       if (this.isActive) {
+        this.$emit('switch-mode', { mode: 'prompt' });
         window.addEventListener('keydown', this.keyDown);
       } else {
         window.removeEventListener('keydown', this.keyDown);
@@ -46,10 +47,12 @@ export default {
 
   methods: {
     confirm() {
+      this.closeModal();
       this.$emit('callback', true);
     },
 
     cancel() {
+      this.closeModal();
       this.$emit('callback', false);
     },
 
@@ -61,47 +64,39 @@ export default {
         this.cancel();
       }
     },
+
+    closeModal() {
+      this.$emit('switch-mode', { mode: 'normal' });
+    },
   },
 };
 </script>
 
-<style scoped lang="scss">
-.overlay {
-  position: fixed;
-  background-color: rgba(0, 0, 0, 0.25);
-  top: 0;
-  left: 0;
-  min-height: 100vh;
-  width: 100%;
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.prompt {
-  position: fixed;
+<style lang="scss">
+#prompt {
+  position: absolute;
   z-index: 101;
   top: 100px;
   background: var(--background);
   color: var(--accent);
-  width: 250px;
+  width: 270px;
+
   padding: 15px;
+  top: 40px;
+
+  @at-root.container {
+    display: flex;
+    justify-content: center;
+  }
+
   .message {
     margin-top: 25px;
     margin-bottom: 20px;
   }
+
   button {
-    padding: 0 15px;
-    &.confirm {
-      opacity: 1;
-      margin-right: 10px;
-    }
-    &.cancel {
-      opacity: 0.5;
-    }
-    &.cancel:hover {
-      opacity: 1;
-    }
+    margin-right: 10px;
+    max-width: 125px;
   }
 }
 </style>

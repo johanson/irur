@@ -70,14 +70,15 @@ button {
   color: #f8f8f8;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.3s ease-out, opacity 0.3s ease-out;
+  transition: background 0.2s ease-out, opacity 0.2s ease-out;
   background-color: #1976d2;
-  padding: 1px 6px;
+  padding: 0 15px;
   line-height: 40px;
   height: 40px;
   overflow: hidden;
   border: none;
-  font-size: 16px;
+  text-transform: uppercase;
+  font-size: 14px;
   font-family: Arial, Helvetica, sans-serif;
   text-shadow: 0px 0px 1px #000;
 }
@@ -85,13 +86,22 @@ button {
 button:hover,
 button:active {
   background: #1565c0;
-  transition: background 0.3s ease-out, opacity 0.3s ease-out;
+  transition: background 0.2s ease-out, opacity 0.2s ease-out;
 }
 
 button:disabled,
 button.disabled {
   cursor: not-allowed;
   opacity: 0.75;
+}
+
+button.secondary {
+  transition: opacity 0.2s ease-out;
+  opacity: 0.65;
+  &:hover {
+    transition: opacity 0.2s ease-out;
+    opacity: 1;
+  }
 }
 
 .close {
@@ -103,7 +113,7 @@ button.disabled {
   width: 35px;
   height: 35px;
   cursor: pointer;
-  transition: background 0.3s ease-out;
+  transition: background 0.2s ease-out;
   background-color: #ff7c7c;
 
   svg {
@@ -118,8 +128,25 @@ button.disabled {
   }
 
   &:hover {
-    transition: background 0.3s ease-out;
+    transition: background 0.2s ease-out;
     background-color: #ff3d3d;
+  }
+}
+
+#overlay {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 99;
+  display: none;
+  #app.mode-add &,
+  #app.mode-edit &,
+  #app.mode-settings &,
+  #app.mode-prompt & {
+    display: block;
   }
 }
 
@@ -348,5 +375,50 @@ vue-toast-notification
   .v-notices {
     padding: 0;
     position: fixed !important;
+  }
+}
+
+#loader {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 1001;
+  background: rgba(0 0 0 / 0.8);
+  width: 100vw;
+  height: 100vh;
+  margin: -10px -10px 0 0;
+
+  &:after {
+    content: '';
+    top: 200px;
+    right: calc(50% - 30px);
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: url(~@/assets/loading.svg) no-repeat;
+    background-size: 60px 60px;
+    will-change: scroll-position;
+    animation-name: spin;
+    animation-duration: 1800ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    backface-visibility: hidden;
+    transform: transale3d(0, 0, 0);
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+      opacity: 0.4;
+    }
+
+    75% {
+      opacity: 0.8;
+    }
+
+    100% {
+      transform: rotate(360deg);
+      opacity: 0.4;
+    }
   }
 }
