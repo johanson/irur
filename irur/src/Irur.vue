@@ -114,7 +114,7 @@ export default {
   watch: {
     layout: {
       handler(val) {
-        if (val.mode === 'normal') {
+        if (val.mode === 'normal' || val.mode === 'sort') {
           window.addEventListener('keydown', this.keyDown);
         } else {
           window.removeEventListener('keydown', this.keyDown);
@@ -340,6 +340,11 @@ export default {
       if (KeyboardEvent.key === 'T') {
         // Shift + t, new tab
         this.$refs.tabs.addTab();
+      }
+      if (KeyboardEvent.key === 'Escape') {
+        if (this.layout.mode === 'sort') {
+          this.switchMode({ mode: 'normal' });
+        }
       }
     },
   },

@@ -1,9 +1,17 @@
 /* eslint-disable no-undef */
 describe('Remote component', () => {
-  it('XXX', () => {
+  it('Start sorting mode when clickin sort from the context menu', () => {
     cy.visit('/');
     cy.get('#loading').should('not.be.visible');
     cy.wait(500);
+    cy.get('#remote .knob:first-of-type').rightclick();
+    cy.get('#remote .v-context a[data-name=sort]').click();
+    cy.get('#app').should('have.class', 'mode-sort');
+  });
+
+  it('Esc exits sort mode', () => {
+    cy.get('body').trigger('keydown', { key: 'Escape' });
+    cy.get('#app').should('not.have.class', 'mode-sort');
   });
 });
 

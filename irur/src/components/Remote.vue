@@ -1,11 +1,5 @@
 <template>
-  <draggable
-    id="remote"
-    v-model="filteredDB"
-    draggable=".knob"
-    @change="$emit('sort')"
-    :disabled="this.layout.mode == 'sort' ? false : true"
-  >
+  <div id="remote">
     <vue-context ref="menu">
       <template slot-scope="c">
         <li>
@@ -30,48 +24,55 @@
         </li>
       </template>
     </vue-context>
-
-    <div
-      class="knob add-item"
-      slot="footer"
-      draggable="false"
-      @click="addKnob()"
+    <draggable
+      id="draggable"
+      v-model="filteredDB"
+      draggable=".knob"
+      @change="$emit('sort')"
+      :disabled="this.layout.mode == 'sort' ? false : true"
     >
-      <div class="glyph">
-        <svg><use xlink:href="#add"></use></svg>
-      </div>
-    </div>
-
-    <div
-      v-for="(el, index) in filteredDB"
-      :key="el.id"
-      :title="!el.isPlaceholder ? el.name : false"
-      @click="sendIr(el.id, el.isPlaceholder)"
-      @contextmenu.prevent="
-        $refs.menu.open($event, {
-          id: el.id,
-          name: el.name || 'placeholder',
-          index,
-        })
-      "
-      class="knob"
-      :data-placeholder="el.isPlaceholder || false"
-    >
-      <div v-if="el.icon" class="glyph">
-        <svg :style="`fill: ${el.color};`">
-          <use :xlink:href="`#${el.icon}`"></use>
-        </svg>
+      <div
+        class="knob add-item"
+        slot="footer"
+        draggable="false"
+        @click="addKnob()"
+      >
+        <div class="glyph">
+          <svg><use xlink:href="#add"></use></svg>
+        </div>
       </div>
 
       <div
-        v-else
-        :class="`no-icon len-${el.name.length}`"
-        :style="`color: ${el.color};`"
+        v-for="(el, index) in filteredDB"
+        :key="el.id"
+        :title="!el.isPlaceholder ? el.name : false"
+        @click="sendIr(el.id, el.isPlaceholder)"
+        @contextmenu.prevent="
+          $refs.menu.open($event, {
+            id: el.id,
+            name: el.name || 'placeholder',
+            index,
+          })
+        "
+        class="knob"
+        :data-placeholder="el.isPlaceholder || false"
       >
-        {{ el.name }}
+        <div v-if="el.icon" class="glyph">
+          <svg :style="`fill: ${el.color};`">
+            <use :xlink:href="`#${el.icon}`"></use>
+          </svg>
+        </div>
+
+        <div
+          v-else
+          :class="`no-icon len-${el.name.length}`"
+          :style="`color: ${el.color};`"
+        >
+          {{ el.name }}
+        </div>
       </div>
-    </div>
-  </draggable>
+    </draggable>
+  </div>
 </template>
 
 <script>
@@ -169,7 +170,7 @@ export default {
 </script>
 
 <style lang="scss">
-#remote {
+#draggable {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
