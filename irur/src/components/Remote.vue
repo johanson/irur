@@ -1,79 +1,77 @@
 <template>
-  <div>
+  <draggable
+    id="remote"
+    v-model="filteredDB"
+    draggable=".knob"
+    @change="$emit('sort')"
+    :disabled="this.layout.mode == 'sort' ? false : true"
+  >
     <vue-context ref="menu">
       <template slot-scope="c">
         <li>
-          <a href="#" data-id="add" @click.prevent="menu($event, c.data)"
+          <a href="#" data-name="add" @click.prevent="menu($event, c.data)"
             >Add</a
           >
         </li>
         <li>
-          <a href="#" data-id="edit" @click.prevent="menu($event, c.data)"
+          <a href="#" data-name="edit" @click.prevent="menu($event, c.data)"
             >Edit</a
           >
         </li>
         <li>
-          <a href="#" data-id="sort" @click.prevent="menu($event, c.data)"
+          <a href="#" data-name="sort" @click.prevent="menu($event, c.data)"
             >Sort</a
           >
         </li>
         <li>
-          <a href="#" data-id="remove" @click.prevent="menu($event, c.data)"
+          <a href="#" data-name="remove" @click.prevent="menu($event, c.data)"
             >Remove</a
           >
         </li>
       </template>
     </vue-context>
 
-    <draggable
-      id="remote"
-      v-model="filteredDB"
-      draggable=".knob"
-      @change="$emit('sort')"
-      :disabled="this.layout.mode == 'sort' ? false : true"
+    <div
+      class="knob add-item"
+      slot="footer"
+      draggable="false"
+      @click="addKnob()"
     >
-      <div
-        class="knob add-item"
-        slot="footer"
-        draggable="false"
-        @click="addKnob()"
-      >
-        <div class="glyph">
-          <svg><use xlink:href="#add"></use></svg>
-        </div>
+      <div class="glyph">
+        <svg><use xlink:href="#add"></use></svg>
+      </div>
+    </div>
+
+    <div
+      v-for="(el, index) in filteredDB"
+      :key="el.id"
+      :title="!el.isPlaceholder ? el.name : false"
+      @click="sendIr(el.id, el.isPlaceholder)"
+      @contextmenu.prevent="
+        $refs.menu.open($event, {
+          id: el.id,
+          name: el.name || 'placeholder',
+          index,
+        })
+      "
+      class="knob"
+      :data-placeholder="el.isPlaceholder || false"
+    >
+      <div v-if="el.icon" class="glyph">
+        <svg :style="`fill: ${el.color};`">
+          <use :xlink:href="`#${el.icon}`"></use>
+        </svg>
       </div>
 
       <div
-        v-for="(el, index) in filteredDB"
-        :key="el.id"
-        :title="!el.isPlaceholder ? el.name : false"
-        @click="sendIr(el.id, el.isPlaceholder)"
-        @contextmenu.prevent="
-          $refs.menu.open($event, {
-            id: el.id,
-            name: el.name || 'placeholder',
-            index,
-          })
-        "
-        class="knob"
-        :data-placeholder="el.isPlaceholder || false"
+        v-else
+        :class="`no-icon len-${el.name.length}`"
+        :style="`color: ${el.color};`"
       >
-        <div v-if="el.icon" class="glyph">
-          <svg :style="`fill: ${el.color};`">
-            <use :xlink:href="`#${el.icon}`"></use>
-          </svg>
-        </div>
-
-        <div
-          v-else
-          :class="`no-icon len-${el.name.length}`"
-          :style="`color: ${el.color};`"
-        >
-          {{ el.name }}
-        </div>
+        {{ el.name }}
       </div>
-    </draggable>
-  </div>
+    </div>
+  </draggable>
 </template>
 
 <script>
@@ -121,7 +119,7 @@ export default {
 
   methods: {
     menu(e, knob) {
-      const mode = e.target.dataset.id;
+      const mode = e.target.dataset.name;
       switch (mode) {
         case 'add':
           this.addKnob();
