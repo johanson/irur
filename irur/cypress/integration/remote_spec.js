@@ -8,7 +8,4 @@ describe('Remote component', () => {
 });
 
 // * sorting
-// * intercept sendIR? or just command/check for notifcaiton callback
-// * remove knob
-// * add knob (without adding text aka test context menubar
-// * edit knob
+// * intercept sendIR? or just command/check for notification promise

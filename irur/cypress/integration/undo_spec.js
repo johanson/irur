@@ -13,7 +13,7 @@ describe('Undo component', () => {
       .should('have.length', 3);
 
     cy.get('#remote .knob:first-of-type').rightclick();
-    cy.get('.v-context a[data-id=remove]').click();
+    cy.get('#remote .v-context a[data-name=remove]').click();
     cy.get('#prompt .confirm').click();
     cy.get('#remote')
       .find('.knob')

@@ -8,7 +8,7 @@ describe('Tabs component', () => {
       win.app.__vue__.resetDB();
     });
     cy.get('.tab').rightclick();
-    cy.get('.v-context a[data-name=add]').click();
+    cy.get('#tabs .v-context a[data-name=add]').click();
     cy.get('.tab.active input')
       .clear()
       .type('FooBar{enter}');
@@ -19,7 +19,7 @@ describe('Tabs component', () => {
     cy.get('.tab span')
       .contains('FooBar')
       .rightclick();
-    cy.get('.v-context a[data-name=rename]').click();
+    cy.get('#tabs .v-context a[data-name=rename]').click();
     cy.get('.tab.active input')
       .clear()
       .type('BarFoo{enter}');
@@ -30,7 +30,7 @@ describe('Tabs component', () => {
     cy.get('.tab span')
       .contains('BarFoo')
       .rightclick();
-    cy.get('.v-context a[data-name=remove]').click();
+    cy.get('#tabs .v-context a[data-name=remove]').click();
     cy.get('#prompt .confirm').click();
     cy.get('a#undo').should('be.visible');
     cy.get('#tabs')
