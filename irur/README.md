@@ -96,7 +96,7 @@ If you prefer npm scripts: `npm run build` to build with webpack (or `npm run se
 - Node.js
 - Express
 
-For developing: Vue cli, npm. Testing: Cypress.
+For developing: Vue cli, npm, Cypress (testing), pip3 Fabric3, pip3 python-dotenv
 
 # Credits
 
