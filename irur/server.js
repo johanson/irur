@@ -56,7 +56,11 @@ const init = () => {
   let db, topicListen, topicSend, hostname;
 
   if (flag.dev) {
-    require('dotenv').config();
+    const dotenvResult = require('dotenv').config();
+    if (dotenvResult.error) {
+      log.error('Missing .env file, aborting');
+      process.exit(1);
+    }
     topicListen = env.MQTT_TOPIC_LISTEN;
     topicSend = env.MQTT_TOPIC_SEND.split(',');
     db = path.join(__dirname, 'dev_db.json');
