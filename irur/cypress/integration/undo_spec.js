@@ -2,12 +2,12 @@
 describe('Undo component', () => {
   it('Delete an element and restore it', () => {
     cy.visit('/');
-    cy.get('#loading').should('not.be.visible');
     cy.wait(500);
-    cy.get('a#undo').should('not.be.visible');
+    cy.get('#loader').should('not.exist');
     cy.window().then(win => {
       win.app.__vue__.resetDB();
     });
+    cy.wait(500);
     cy.get('#remote')
       .find('.knob')
       .should('have.length', 3);

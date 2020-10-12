@@ -2,11 +2,12 @@
 describe('Editor component', () => {
   it('Not have #editor in DOM while not editing', () => {
     cy.visit('/');
-    cy.get('#loading').should('not.be.visible');
     cy.wait(500);
+    cy.get('#loader').should('not.exist');
     cy.window().then(win => {
       win.app.__vue__.resetDB();
     });
+    cy.wait(500);
     cy.get('#editor').should('not.be.visible');
   });
 

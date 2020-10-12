@@ -2,7 +2,11 @@
 describe('Remote component', () => {
   it('Start sorting mode when clickin sort from the context menu', () => {
     cy.visit('/');
-    cy.get('#loading').should('not.be.visible');
+    cy.wait(500);
+    cy.get('#loader').should('not.exist');
+    cy.window().then(win => {
+      win.app.__vue__.resetDB();
+    });
     cy.wait(500);
     cy.get('#remote .knob:first-of-type').rightclick();
     cy.get('#remote .v-context a[data-name=sort]').click();

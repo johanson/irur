@@ -2,11 +2,12 @@
 describe('Tabs component', () => {
   it('Create a new tab', () => {
     cy.visit('/');
-    cy.get('#loading').should('not.be.visible');
     cy.wait(500);
+    cy.get('#loader').should('not.exist');
     cy.window().then(win => {
       win.app.__vue__.resetDB();
     });
+    cy.wait(500);
     cy.get('.tab').rightclick();
     cy.get('#tabs .v-context a[data-name=add]').click();
     cy.get('.tab.active input')
