@@ -4,9 +4,7 @@
 
     <div id="overlay" />
 
-    <svg-sprite
-      @loaded="(layout.icons = $event), (layout.loading.svg = true)"
-    />
+    <svg-sprite @loaded="layout.icons = $event" />
 
     <prompt
       :params="prompt"
@@ -76,11 +74,6 @@ export default {
       layout: {
         mode: 'normal',
         showLoader: true,
-        loading: {
-          db: true,
-          settings: true,
-          svg: true,
-        },
         showUndo: false,
         activeTab: 'default',
         icons: [],
@@ -118,12 +111,6 @@ export default {
           window.addEventListener('keydown', this.keyDown);
         } else {
           window.removeEventListener('keydown', this.keyDown);
-        }
-        // Check if all initial loading flags are set and disable loading icon
-        if (val.showLoader) {
-          if (Object.keys(val.loading).every(k => val.loading[k])) {
-            this.layout.showLoader = false;
-          }
         }
       },
       deep: true,
@@ -187,7 +174,7 @@ export default {
             this.sync();
           } else {
             this.db = json;
-            this.layout.loading.db = false;
+            this.layout.showLoader = false;
           }
         })
         .catch(err => {
@@ -208,7 +195,6 @@ export default {
         .then(json => {
           this.settings.hostname = json.hostname;
           this.settings.topic_send = json.topic_send;
-          this.layout.loading.settings = false;
         })
         .catch(err => {
           this.$toast.error(String(err));
