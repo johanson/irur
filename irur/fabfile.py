@@ -148,6 +148,12 @@ def lint():
 
 
 @task
+def cy():
+    """Open Cypress."""
+    local("npx cypress open")
+
+
+@task
 def test():
     """Run unit tests with Cypress."""
     local("npm run test")
