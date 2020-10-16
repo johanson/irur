@@ -82,19 +82,18 @@
       />
     </div>
 
-    <label for="color-picker"
+    <label for="color_picker"
       >Color
       <span
         >Colorpicker for the icon. Leave blank for default that depends on the
         parent theme.</span
       >
     </label>
-    <div class="color-picker clearfix">
+    <div class="color_picker clearfix">
       <input type="color" value="#000000" v-model="colorPicker" />
       <input
-        id="color-picker"
+        id="color_picker"
         type="text"
-        class="color-picker-value"
         maxlength="7"
         v-model="knobSaveData.color"
         @keyup="syncColorPicker()"
@@ -313,7 +312,7 @@ export default {
     }
   }
 
-  .color-picker {
+  .color_picker {
     white-space: nowrap;
     overflow: hidden;
     background-color: var(--background-shade);
@@ -331,7 +330,7 @@ export default {
       max-width: 100px;
     }
 
-    .color-picker-value {
+    .input[type='text'] {
       width: calc(100% - 38px);
       margin-bottom: 0;
     }

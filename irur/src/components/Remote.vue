@@ -55,6 +55,7 @@
           })
         "
         class="knob"
+        :data-id="el.id"
         :data-placeholder="el.isPlaceholder || false"
       >
         <div v-if="el.icon" class="glyph">
