@@ -1,6 +1,6 @@
 {
   "name": "Irur",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "slug": "irur",
   "description": "Infrared Universal Remote webUI for Tasmota",
   "url": "https://github.com/johanson/irur",
