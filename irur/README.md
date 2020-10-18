@@ -1,6 +1,6 @@
 # IRUR: IR remote control add-on for Home Assistant
 
-![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
+![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armv7 Architecture][armv7-shield]
 
 Infrared Universal Remote webUI for Tasmota ESP8266 based devices over MQTT.
 Provides a simple web UI to record and manage buttons for your virtual IR remote. Supports ingress and an option to show in sidebar. Comes with around 150 icons, but you can also use text or emojis.
@@ -100,7 +100,7 @@ For developing: Vue cli, npm, Cypress (testing), pip3 Fabric3, pip3 python-doten
 
 # Credits
 
-Icons made by Roundicons, Freepik, Pixel perfect, hirschwolf, Kiranshastry, Good Ware, Becris, srip, dmitri13, surang, Nikita Golubev, Linector, Icongeek26, Smashicons, photo3idea_studio, bqlqn from [www.flaticon.com](https://www.flaticon.com/ 'Flaticon')
+Icons made by Roundicons, Freepik, Pixel perfect, hirschwolf, Kiranshastry, Good Ware, Becris, srip, dmitri13, surang, Nikita Golubev, Linector, Icongeek26, Smashicons, photo3idea_studio, bqlqn from [www.flaticon.com](https://www.flaticon.com/ "Flaticon")
 
 ---
 
@@ -108,9 +108,7 @@ This project is licensed under the terms of the [MIT license][mit].
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
-[armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
-[i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
 [logo]: https://github.com/johanson/irur/blob/master/irur/logo.png?raw=true
 [tasmoconf]: https://github.com/johanson/irur/blob/master/irur/screenshots/tasmota.png?raw=true
 [mqttexplorer]: https://github.com/thomasnordquist/MQTT-Explorer
