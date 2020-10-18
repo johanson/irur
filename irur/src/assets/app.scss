@@ -365,13 +365,12 @@ vue-toast-notification
 
 #loader {
   position: fixed;
-  top: 8px;
-  right: 8px;
-  z-index: 1001;
-  background: rgba(0 0 0 / 0.8);
-  width: 100vw;
-  height: 100vh;
-  margin: -10px -10px 0 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 99;
 
   &:after {
     content: '';
@@ -390,20 +389,20 @@ vue-toast-notification
     backface-visibility: hidden;
     transform: transale3d(0, 0, 0);
   }
+}
 
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-      opacity: 0.4;
-    }
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.4;
+  }
 
-    75% {
-      opacity: 0.8;
-    }
+  75% {
+    opacity: 0.8;
+  }
 
-    100% {
-      transform: rotate(360deg);
-      opacity: 0.4;
-    }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0.4;
   }
 }
