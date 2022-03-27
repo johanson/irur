@@ -19,7 +19,7 @@
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "lodash.throttle": "4.1.1",
-    "minimist": "1.2.5",
+    "minimist": "1.2.6",
     "mqtt": "4.2.1",
     "vue": "2.6.11",
     "vue-context": "6.0.0",
